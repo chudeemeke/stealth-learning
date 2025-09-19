@@ -8,6 +8,8 @@ Stealth Learning Games SPA - An educational platform delivering learning through
 
 ## Development Commands
 
+**IMPORTANT: This project uses pnpm exclusively. NEVER use npm or yarn.**
+
 ```bash
 # Install dependencies (using pnpm)
 pnpm install
