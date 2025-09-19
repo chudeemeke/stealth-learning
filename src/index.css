@@ -1,0 +1,306 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Root CSS Variables */
+:root {
+  /* Colors */
+  --color-primary: #4a90e2;
+  --color-secondary: #f39c12;
+  --color-success: #27ae60;
+  --color-danger: #e74c3c;
+  --color-warning: #f1c40f;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  /* Transitions */
+  --transition-fast: 150ms;
+  --transition-normal: 300ms;
+  --transition-slow: 500ms;
+}
+
+/* Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  height: 100%;
+  font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-attachment: fixed;
+}
+
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Utility Classes */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.safe-area-inset {
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+
+/* Animation Classes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--transition-normal) ease-out;
+}
+
+.animate-slide-up {
+  animation: slideInUp var(--transition-normal) ease-out;
+}
+
+.animate-slide-down {
+  animation: slideInDown var(--transition-normal) ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn var(--transition-normal) ease-out;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Loading States */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Focus Styles */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Disable focus outline for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* PWA Styles */
+.pwa-mode {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Age Group Specific Styles */
+.age-3-5 {
+  --button-size: 64px;
+  --font-size-base: 24px;
+  --border-radius: 20px;
+}
+
+.age-6-8 {
+  --button-size: 48px;
+  --font-size-base: 20px;
+  --border-radius: 16px;
+}
+
+.age-9 {
+  --button-size: 40px;
+  --font-size-base: 18px;
+  --border-radius: 12px;
+}
+
+/* Game Canvas Styles */
+.game-canvas {
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Accessibility - High Contrast Mode */
+@media (prefers-contrast: high) {
+  :root {
+    --color-primary: #0066cc;
+    --color-secondary: #ff6600;
+    --color-success: #008800;
+    --color-danger: #cc0000;
+  }
+  
+  body {
+    background: white;
+    color: black;
+  }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-primary: #5a9ff0;
+    --color-secondary: #ffb347;
+  }
+  
+  body.theme-auto {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  }
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* Mobile Specific Styles */
+@media (max-width: 640px) {
+  body {
+    font-size: 16px; /* Prevent iOS zoom on input focus */
+  }
+  
+  input,
+  textarea,
+  select {
+    font-size: 16px !important; /* Prevent iOS zoom */
+  }
+}
+
+/* Tablet Specific Styles */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .tablet-full-width {
+    width: 100% !important;
+  }
+}
+
+/* Desktop Specific Styles */
+@media (min-width: 1025px) {
+  .desktop-max-width {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}

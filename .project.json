@@ -1,0 +1,11 @@
+{
+  "type": "Projects",
+  "created": "2025-01-27",
+  "version": "0.1.0-dev",
+  "description": "Stealth learning games SPA for children ages 3-9 covering Maths, English, and Science",
+  "syncStatus": "current",
+  "lastModified": "2025-01-27",
+  "platform": "Cross-platform SPA (iPad, iPhone, Laptop)",
+  "targetAges": "3-9 years",
+  "subjects": ["Mathematics", "English", "Science"]
+}
