@@ -7,7 +7,7 @@ import { store } from './store';
 import './index.css';
 
 // Check if we're in development mode
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = (import.meta as any).env?.DEV || false;
 
 // Enable React DevTools in development
 if (isDevelopment) {
@@ -96,7 +96,7 @@ if (isDevelopment && 'PerformanceObserver' in window) {
     const lcpObserver = new PerformanceObserver((list) => {
       const entries = list.getEntries();
       const lastEntry = entries[entries.length - 1];
-      console.log('LCP:', lastEntry.renderTime || lastEntry.loadTime);
+      console.log('LCP:', (lastEntry as any).renderTime || (lastEntry as any).loadTime);
     });
     lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
   } catch (e) {
@@ -108,7 +108,7 @@ if (isDevelopment && 'PerformanceObserver' in window) {
     const fidObserver = new PerformanceObserver((list) => {
       const entries = list.getEntries();
       entries.forEach((entry) => {
-        console.log('FID:', entry.processingStart - entry.startTime);
+        console.log('FID:', (entry as any).processingStart - entry.startTime);
       });
     });
     fidObserver.observe({ entryTypes: ['first-input'] });

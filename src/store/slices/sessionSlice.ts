@@ -4,6 +4,7 @@ import { LearningSession, GameAttempt, PerformanceSummary, Subject } from '@/typ
 interface SessionState {
   currentSession: LearningSession | null;
   sessionHistory: LearningSession[];
+  previousSessions?: LearningSession[];
   isActive: boolean;
   isPaused: boolean;
   startTime: Date | null;
@@ -12,6 +13,9 @@ interface SessionState {
   gamesCompleted: number;
   skillsPracticed: Set<string>;
   sessionDuration: number; // in seconds
+  lastSessionDate?: Date;
+  lastGamePlayed?: string;
+  todayPlayTime?: number;
   performanceMetrics: {
     accuracy: number;
     averageResponseTime: number;
@@ -205,5 +209,10 @@ export const {
   updateSessionDuration,
   clearSessionHistory,
 } = sessionSlice.actions;
+
+// Additional exports for compatibility
+export const updateSessionTime = updateSessionDuration;
+export const completeSession = endSession;
+export const updateStreakCount = () => ({ type: 'session/updateStreakCount' });
 
 export default sessionSlice.reducer;

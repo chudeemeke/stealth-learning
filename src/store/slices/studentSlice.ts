@@ -18,6 +18,18 @@ interface StudentState {
   unlockedContent: string[];
   totalPoints: number;
   currentStreak: number;
+  skillLevels: {
+    overall: number;
+    math: number;
+    english: number;
+    science: number;
+  };
+  preferences: {
+    theme: string;
+    difficulty: 'easy' | 'medium' | 'hard' | 'adaptive';
+    soundEnabled: boolean;
+    visualEffects: boolean;
+  };
 }
 
 const initialState: StudentState = {
@@ -29,6 +41,18 @@ const initialState: StudentState = {
   unlockedContent: [],
   totalPoints: 0,
   currentStreak: 0,
+  skillLevels: {
+    overall: 1,
+    math: 1,
+    english: 1,
+    science: 1,
+  },
+  preferences: {
+    theme: 'default',
+    difficulty: 'adaptive',
+    soundEnabled: true,
+    visualEffects: true,
+  },
 };
 
 // Async thunks
@@ -126,9 +150,21 @@ const studentSlice = createSlice({
       state.currentStreak = 0;
     },
     
-    updateAvatar: (state, action: PayloadAction<Avatar>) => {
+    updateAvatar: (state, action: PayloadAction<Avatar | string>) => {
       if (state.profile) {
-        state.profile.avatar = action.payload;
+        state.profile.avatar = typeof action.payload === 'string' ? undefined : action.payload;
+      }
+    },
+
+    updateStudentProfile: (state, action: PayloadAction<{
+      name?: string;
+      age?: number;
+      avatar?: string;
+    }>) => {
+      if (state.profile) {
+        if (action.payload.name) (state.profile as any).name = action.payload.name;
+        if (action.payload.age) (state.profile as any).age = action.payload.age;
+        if (action.payload.avatar) (state.profile as any).avatar = action.payload.avatar;
       }
     },
     
@@ -190,8 +226,16 @@ export const {
   incrementStreak,
   resetStreak,
   updateAvatar,
+  updateStudentProfile,
   setError,
   clearError,
 } = studentSlice.actions;
+
+// Selectors
+export const selectStudent = (state: { student: StudentState }) => state.student.profile;
+export const selectIsLoggedIn = (state: { student: StudentState }) => state.student.isAuthenticated;
+export const selectStudentAchievements = (state: { student: StudentState }) => state.student.achievements;
+export const logout = clearStudent;
+export const addXP = addPoints;
 
 export default studentSlice.reducer;

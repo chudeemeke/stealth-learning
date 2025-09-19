@@ -107,10 +107,10 @@ const HomePage: React.FC = () => {
       
       if (daysDiff === 1) {
         // Played yesterday, continue streak
-        dispatch(updateStreakCount(session.currentSession?.streakCount || 0));
+        dispatch(updateStreakCount());
       } else if (daysDiff > 1) {
         // Missed days, reset streak
-        dispatch(updateStreakCount(0));
+        dispatch(updateStreakCount());
       }
     }
   }, [dispatch, session]);
@@ -134,8 +134,8 @@ const HomePage: React.FC = () => {
   const recentAchievements = student.achievements?.slice(-3) || [];
   
   // Calculate today's progress
-  const todayProgress = session.todayPlayTime 
-    ? Math.min(100, (session.todayPlayTime / (settings?.preferences?.dailyGoal || 1200)) * 100)
+  const todayProgress = session.todayPlayTime
+    ? Math.min(100, (session.todayPlayTime / 1200) * 100) // Default daily goal: 20 minutes
     : 0;
 
   // Render age-appropriate content

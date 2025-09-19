@@ -6,7 +6,7 @@ import {
   ZoneOfProximalDevelopment,
   SkillLevel,
   AdaptiveResponse,
-  ContentType,
+  MasteryLevel,
 } from '@/types';
 
 /**
@@ -409,7 +409,7 @@ export class AdaptiveLearningEngine {
     return Math.max(this.MIN_CONFIDENCE, Math.min(this.MAX_CONFIDENCE, newConfidence));
   }
   
-  private calculateMasteryLevel(rating: number, confidence: number): string {
+  private calculateMasteryLevel(rating: number, confidence: number): MasteryLevel {
     if (rating >= 1600 && confidence >= 0.8) return 'advanced';
     if (rating >= 1400 && confidence >= 0.6) return 'proficient';
     if (rating >= 1200 && confidence >= 0.4) return 'developing';

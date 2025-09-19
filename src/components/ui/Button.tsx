@@ -1,15 +1,15 @@
-import React, { ButtonHTMLAttributes } from 'react';
+import React, { ButtonHTMLAttributes, forwardRef, useCallback } from 'react';
 import { motion, HTMLMotionProps } from 'framer-motion';
 import { cn } from '@/utils/cn';
 import { AgeAwareComponentProps } from '@/types';
 import { useSound } from '@/hooks/useSound';
 import { useHaptic } from '@/hooks/useHaptic';
 
-export interface ButtonProps extends 
+export interface ButtonProps extends
   Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'>,
-  AgeAwareComponentProps {
-  variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'ghost';
-  size?: 'small' | 'medium' | 'large' | 'auto';
+  Partial<AgeAwareComponentProps> {
+  variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'ghost' | 'outline';
+  size?: 'small' | 'medium' | 'large' | 'auto' | 'sm' | 'lg';
   icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
   loading?: boolean;
@@ -17,10 +17,11 @@ export interface ButtonProps extends
   animated?: boolean;
   soundEnabled?: boolean;
   hapticEnabled?: boolean;
+  asChild?: boolean;
 }
 
-export const Button: React.FC<ButtonProps> = ({
-  ageGroup,
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
+  ageGroup = '6-8',
   variant = 'primary',
   size = 'auto',
   icon,
@@ -34,12 +35,16 @@ export const Button: React.FC<ButtonProps> = ({
   onClick,
   disabled = false,
   className,
+  asChild = false,
   ...props
-}) => {
-  const playSound = useSound();
-  const triggerHaptic = useHaptic();
+}, ref) => {
+  const { playSound } = useSound();
+  const { triggerHaptic } = useHaptic();
 
-  // Age-specific size classes
+  // Normalize size aliases for consistency
+  const normalizedSize = size === 'sm' ? 'small' : size === 'lg' ? 'large' : size;
+
+  // Age-specific size classes - comprehensive mapping
   const sizeClasses = {
     '3-5': {
       auto: 'min-h-[64px] px-6 py-4 text-2xl',
@@ -48,123 +53,134 @@ export const Button: React.FC<ButtonProps> = ({
       large: 'min-h-[80px] px-8 py-5 text-3xl',
     },
     '6-8': {
-      auto: 'min-h-[48px] px-5 py-3 text-xl',
-      small: 'min-h-[40px] px-4 py-2 text-lg',
-      medium: 'min-h-[48px] px-5 py-3 text-xl',
-      large: 'min-h-[56px] px-6 py-4 text-2xl',
+      auto: 'min-h-[48px] px-4 py-2 text-lg',
+      small: 'min-h-[40px] px-3 py-1.5 text-base',
+      medium: 'min-h-[48px] px-4 py-2 text-lg',
+      large: 'min-h-[56px] px-5 py-3 text-xl',
     },
     '9': {
-      auto: 'min-h-[40px] px-4 py-2 text-lg',
-      small: 'min-h-[32px] px-3 py-1 text-base',
-      medium: 'min-h-[40px] px-4 py-2 text-lg',
-      large: 'min-h-[48px] px-5 py-3 text-xl',
+      auto: 'min-h-[40px] px-3 py-1.5 text-base',
+      small: 'min-h-[32px] px-2 py-1 text-sm',
+      medium: 'min-h-[40px] px-3 py-1.5 text-base',
+      large: 'min-h-[48px] px-4 py-2 text-lg',
     },
   };
 
-  // Age-specific animation classes
-  const animationClasses = {
-    '3-5': animated ? 'transform transition-all hover:scale-110 active:scale-95' : '',
-    '6-8': animated ? 'transform transition-all hover:scale-105 active:scale-95' : '',
-    '9': animated ? 'transform transition-all hover:scale-102 active:scale-98' : '',
-  };
-
-  // Age-specific variant classes
+  // Age-specific variant classes with comprehensive color system
   const variantClasses = {
     '3-5': {
-      primary: 'bg-young-primary text-white hover:bg-yellow-500 shadow-lg',
-      secondary: 'bg-young-secondary text-white hover:bg-blue-500 shadow-lg',
-      success: 'bg-young-success text-white hover:bg-green-500 shadow-lg',
-      danger: 'bg-young-danger text-white hover:bg-red-500 shadow-lg',
-      ghost: 'bg-transparent text-young-primary hover:bg-young-primary/10',
+      primary: 'bg-blue-500 text-white hover:bg-blue-600 shadow-lg',
+      secondary: 'bg-purple-500 text-white hover:bg-purple-600 shadow-lg',
+      success: 'bg-green-500 text-white hover:bg-green-600 shadow-lg',
+      danger: 'bg-red-500 text-white hover:bg-red-600 shadow-lg',
+      ghost: 'text-blue-500 hover:bg-blue-100',
+      outline: 'border-2 border-blue-500 text-blue-500 hover:bg-blue-50',
     },
     '6-8': {
-      primary: 'bg-mid-primary text-white hover:bg-purple-600 shadow-md',
-      secondary: 'bg-mid-secondary text-white hover:bg-red-500 shadow-md',
-      success: 'bg-mid-success text-white hover:bg-green-600 shadow-md',
-      danger: 'bg-mid-danger text-white hover:bg-red-600 shadow-md',
-      ghost: 'bg-transparent text-mid-primary hover:bg-mid-primary/10',
+      primary: 'bg-blue-500 text-white hover:bg-blue-600 shadow-md',
+      secondary: 'bg-purple-500 text-white hover:bg-purple-600 shadow-md',
+      success: 'bg-green-500 text-white hover:bg-green-600 shadow-md',
+      danger: 'bg-red-500 text-white hover:bg-red-600 shadow-md',
+      ghost: 'text-blue-400 hover:bg-blue-100',
+      outline: 'border-2 border-blue-400 text-blue-400 hover:bg-blue-50',
     },
     '9': {
-      primary: 'bg-old-primary text-white hover:bg-blue-900 shadow',
-      secondary: 'bg-old-secondary text-white hover:bg-red-700 shadow',
-      success: 'bg-old-success text-white hover:bg-teal-700 shadow',
-      danger: 'bg-old-danger text-white hover:bg-red-800 shadow',
-      ghost: 'bg-transparent text-old-primary hover:bg-old-primary/10',
+      primary: 'bg-blue-500 text-white hover:bg-blue-600',
+      secondary: 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+      success: 'bg-green-500 text-white hover:bg-green-600',
+      danger: 'bg-red-500 text-white hover:bg-red-600',
+      ghost: 'text-gray-600 hover:bg-gray-100',
+      outline: 'border-2 border-gray-400 text-gray-600 hover:bg-gray-50',
     },
   };
 
-  // Age-specific font classes
-  const fontClasses = {
-    '3-5': 'font-young font-bold',
-    '6-8': 'font-mid font-semibold',
-    '9': 'font-old font-medium',
+  // Age-specific interaction feedback
+  const interactionFeedback = {
+    '3-5': {
+      scale: 1.1,
+      hapticStrength: 'medium' as const,
+      soundVolume: 0.8,
+    },
+    '6-8': {
+      scale: 1.05,
+      hapticStrength: 'light' as const,
+      soundVolume: 0.6,
+    },
+    '9': {
+      scale: 1.02,
+      hapticStrength: 'light' as const,
+      soundVolume: 0.4,
+    },
   };
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (disabled || loading) return;
+  const feedback = interactionFeedback[ageGroup];
+  const currentSizeClass = sizeClasses[ageGroup][normalizedSize as keyof typeof sizeClasses['3-5']];
+  const currentVariantClass = variantClasses[ageGroup][variant];
 
-    // Play sound effect
-    if (soundEnabled) {
-      playSound(variant === 'success' ? 'success' : 'click');
+  const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!disabled && !loading) {
+      if (soundEnabled) {
+        playSound('click', feedback.soundVolume);
+      }
+      if (hapticEnabled) {
+        triggerHaptic(feedback.hapticStrength);
+      }
+      onClick?.(e);
     }
+  }, [disabled, loading, soundEnabled, hapticEnabled, onClick, playSound, triggerHaptic, feedback]);
 
-    // Trigger haptic feedback
-    if (hapticEnabled) {
-      triggerHaptic('light');
-    }
+  // Loading spinner icon
+  const loadingIcon = loading ? <LoadingSpinner ageGroup={ageGroup} /> : null;
 
-    onClick?.(e);
-  };
-
-  const buttonClasses = cn(
-    'relative rounded-lg font-bold flex items-center justify-center gap-2',
-    'focus:outline-none focus:ring-4 focus:ring-opacity-50',
-    'disabled:opacity-50 disabled:cursor-not-allowed',
-    sizeClasses[ageGroup][size],
-    animationClasses[ageGroup],
-    variantClasses[ageGroup][variant],
-    fontClasses[ageGroup],
-    fullWidth && 'w-full',
-    loading && 'cursor-wait',
-    className
-  );
-
+  // Content arrangement based on icon position
   const content = (
     <>
-      {loading ? (
-        <LoadingSpinner ageGroup={ageGroup} />
-      ) : (
-        <>
-          {icon && iconPosition === 'left' && (
-            <span className="inline-flex">{icon}</span>
-          )}
-          <span>{children}</span>
-          {icon && iconPosition === 'right' && (
-            <span className="inline-flex">{icon}</span>
-          )}
-        </>
+      {loading && loadingIcon}
+      {!loading && icon && iconPosition === 'left' && (
+        <span className="mr-2">{icon}</span>
+      )}
+      {children}
+      {!loading && icon && iconPosition === 'right' && (
+        <span className="ml-2">{icon}</span>
       )}
     </>
   );
 
-  if (animated && ageGroup === '3-5') {
-    // Extra animations for youngest age group
+  // Touch target size classes for accessibility
+  const touchTargetClasses = {
+    '3-5': 'touch-target-large',
+    '6-8': 'touch-target-medium',
+    '9': 'touch-target-normal',
+  };
+
+  const buttonProps = {
+    ref,
+    className: cn(
+      'inline-flex items-center justify-center font-semibold transition-all rounded-lg',
+      'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500',
+      currentSizeClass,
+      currentVariantClass,
+      fullWidth && 'w-full',
+      disabled && 'opacity-50 cursor-not-allowed',
+      loading && 'opacity-75 cursor-wait',
+      animated && 'transform transition-transform',
+      touchTargetClasses[ageGroup],
+      className
+    ),
+    onClick: handleClick,
+    disabled: disabled || loading,
+    ...props
+  };
+
+  if (animated && !disabled && !loading) {
     return (
       <motion.button
-        className={buttonClasses}
-        onClick={handleClick}
-        disabled={disabled || loading}
-        whileHover={{ scale: 1.1 }}
+        ref={ref}
+        className={buttonProps.className}
+        onClick={buttonProps.onClick}
+        disabled={buttonProps.disabled}
+        whileHover={{ scale: feedback.scale }}
         whileTap={{ scale: 0.95 }}
-        animate={
-          loading
-            ? {
-                scale: [1, 1.05, 1],
-                transition: { repeat: Infinity, duration: 1.5 },
-              }
-            : {}
-        }
-        {...props}
       >
         {content}
       </motion.button>
@@ -172,16 +188,13 @@ export const Button: React.FC<ButtonProps> = ({
   }
 
   return (
-    <button
-      className={buttonClasses}
-      onClick={handleClick}
-      disabled={disabled || loading}
-      {...props}
-    >
+    <button {...buttonProps}>
       {content}
     </button>
   );
-};
+});
+
+Button.displayName = 'Button';
 
 // Loading spinner component
 const LoadingSpinner: React.FC<{ ageGroup: AgeAwareComponentProps['ageGroup'] }> = ({ ageGroup }) => {
@@ -214,3 +227,6 @@ const LoadingSpinner: React.FC<{ ageGroup: AgeAwareComponentProps['ageGroup'] }>
     </svg>
   );
 };
+
+// Default export for backward compatibility
+export default Button;

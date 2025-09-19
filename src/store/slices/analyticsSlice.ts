@@ -18,6 +18,16 @@ interface AnalyticsState {
     totalPointsEarned: number;
     longestStreak: number;
     favoriteSubject: Subject | null;
+    gamesPlayed: number;
+    totalScore: number;
+    averageAccuracy: number;
+    currentLoginStreak: number;
+    perfectGames: number;
+    bestStreak: number;
+    morningGames: number;
+    eveningGames: number;
+    uniqueGamesPlayed: number;
+    fastestGameTime?: number;
   };
   weeklyProgress: {
     [key: string]: {
@@ -60,6 +70,16 @@ const initialState: AnalyticsState = {
     totalPointsEarned: 0,
     longestStreak: 0,
     favoriteSubject: null,
+    gamesPlayed: 0,
+    totalScore: 0,
+    averageAccuracy: 0,
+    currentLoginStreak: 0,
+    perfectGames: 0,
+    bestStreak: 0,
+    morningGames: 0,
+    eveningGames: 0,
+    uniqueGamesPlayed: 0,
+    fastestGameTime: undefined,
   },
   weeklyProgress: {},
   skillProgress: new Map(),
@@ -210,6 +230,48 @@ const analyticsSlice = createSlice({
     },
     
     resetAnalytics: () => initialState,
+
+    trackEvent: (state, action: PayloadAction<{
+      category: string;
+      action: string;
+      label?: string;
+      value?: number;
+    }>) => {
+      // Track custom events for analytics
+      // In a real app, this would send to an analytics service
+      const { category, action: eventAction, label, value } = action.payload;
+
+      // Update relevant stats based on event
+      if (category === 'game') {
+        if (eventAction === 'start') {
+          state.totalStats.gamesPlayed += 1;
+          state.totalStats.totalGamesPlayed += 1;
+        } else if (eventAction === 'complete') {
+          if (value && value === 100) {
+            state.totalStats.perfectGames += 1;
+          }
+        }
+      }
+
+      // Track unique games
+      if (category === 'game' && eventAction === 'start' && label) {
+        // This would need proper tracking in a real implementation
+        state.totalStats.uniqueGamesPlayed = Math.min(
+          state.totalStats.uniqueGamesPlayed + 1,
+          10
+        );
+      }
+
+      // Track time-based games
+      const hour = new Date().getHours();
+      if (category === 'game' && eventAction === 'start') {
+        if (hour < 12) {
+          state.totalStats.morningGames += 1;
+        } else if (hour >= 20) {
+          state.totalStats.eveningGames += 1;
+        }
+      }
+    },
   },
 });
 
@@ -226,6 +288,7 @@ export const {
   setFavoriteSubject,
   calculateProgressRate,
   resetAnalytics,
+  trackEvent,
 } = analyticsSlice.actions;
 
 export default analyticsSlice.reducer;

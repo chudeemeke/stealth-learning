@@ -8,6 +8,10 @@ interface SettingsState {
     animationSpeed: 'slow' | 'normal' | 'fast';
     colorMode: 'bright' | 'soft' | 'high-contrast';
     autoSave: boolean;
+    soundEnabled: boolean;
+    musicEnabled: boolean;
+    visualEffects: boolean;
+    hapticEnabled: boolean;
   };
   audio: {
     masterVolume: number;
@@ -26,6 +30,8 @@ interface SettingsState {
     subtitles: boolean;
     largeText: boolean;
     colorBlindMode: 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia';
+    fontSize: 'small' | 'medium' | 'large' | 'extra-large';
+    screenReader: boolean;
   };
   privacy: {
     analyticsEnabled: boolean;
@@ -35,20 +41,26 @@ interface SettingsState {
   parental: {
     parentalControlsEnabled: boolean;
     timeLimit: number; // minutes per day
-    contentFilter: 'all' | 'age-appropriate' | 'curated';
+    contentFilter: 'all' | 'age-appropriate' | 'curated' | 'strict' | 'moderate' | 'relaxed';
     requirePinForSettings: boolean;
     requirePinForPurchases: boolean;
+    sessionDuration: number;
+    ageRestriction: boolean;
   };
 }
 
 const initialState: SettingsState = {
   app: {
-    theme: 'light',
+    theme: 'auto',
     language: 'en',
     fontSize: 'medium',
     animationSpeed: 'normal',
     colorMode: 'bright',
     autoSave: true,
+    soundEnabled: true,
+    musicEnabled: true,
+    visualEffects: true,
+    hapticEnabled: true,
   },
   audio: {
     masterVolume: 0.7,
@@ -67,6 +79,8 @@ const initialState: SettingsState = {
     subtitles: false,
     largeText: false,
     colorBlindMode: 'none',
+    fontSize: 'medium',
+    screenReader: false,
   },
   privacy: {
     analyticsEnabled: true,
@@ -76,9 +90,11 @@ const initialState: SettingsState = {
   parental: {
     parentalControlsEnabled: false,
     timeLimit: 0, // 0 = unlimited
-    contentFilter: 'age-appropriate',
+    contentFilter: 'moderate',
     requirePinForSettings: false,
     requirePinForPurchases: true,
+    sessionDuration: 30,
+    ageRestriction: true,
   },
 };
 
@@ -211,7 +227,19 @@ const settingsSlice = createSlice({
     updateSettings: (state, action: PayloadAction<Partial<SettingsState>>) => {
       return { ...state, ...action.payload };
     },
-    
+
+    updateAppSettings: (state, action: PayloadAction<Partial<SettingsState['app']>>) => {
+      state.app = { ...state.app, ...action.payload };
+    },
+
+    updateAccessibilitySettings: (state, action: PayloadAction<Partial<SettingsState['accessibility']>>) => {
+      state.accessibility = { ...state.accessibility, ...action.payload };
+    },
+
+    updateParentalControls: (state, action: PayloadAction<Partial<SettingsState['parental']>>) => {
+      state.parental = { ...state.parental, ...action.payload };
+    },
+
     // Reset settings to defaults
     resetSettings: () => initialState,
   },
@@ -246,6 +274,9 @@ export const {
   toggleRequirePinForSettings,
   toggleRequirePinForPurchases,
   updateSettings,
+  updateAppSettings,
+  updateAccessibilitySettings,
+  updateParentalControls,
   resetSettings,
 } = settingsSlice.actions;
 

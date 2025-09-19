@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Content, AdaptiveResponse, LearningContext, SkillLevel } from '@/types';
 
-interface AdaptiveState {
+export interface AdaptiveState {
   currentDifficulty: number;
   recommendedContent: Content[];
   learningPath: string[];
@@ -29,6 +29,14 @@ interface AdaptiveState {
     direction: 'increase' | 'decrease' | 'maintain';
     reason: string;
   };
+  recommendedDifficulty: {
+    math: number;
+    english: number;
+    science: number;
+  };
+  mathRating?: number;
+  englishRating?: number;
+  scienceRating?: number;
 }
 
 const initialState: AdaptiveState = {
@@ -58,6 +66,11 @@ const initialState: AdaptiveState = {
     timestamp: null,
     direction: 'maintain',
     reason: '',
+  },
+  recommendedDifficulty: {
+    math: 2,
+    english: 2,
+    science: 2,
   },
 };
 
@@ -220,6 +233,53 @@ const adaptiveSlice = createSlice({
     },
     
     resetAdaptive: () => initialState,
+
+    trackPerformance: (state, action: PayloadAction<{
+      subject: 'math' | 'english' | 'science';
+      difficulty: number;
+      correct: boolean;
+      responseTime: number;
+      hintsUsed: number;
+    }>) => {
+      const { subject, difficulty, correct, responseTime, hintsUsed } = action.payload;
+
+      // Update recent performance
+      state.recentPerformance.attempts += 1;
+      if (correct) state.recentPerformance.successes += 1;
+      state.recentPerformance.hintsUsed += hintsUsed;
+
+      // Update average response time
+      const currentAvg = state.recentPerformance.averageResponseTime;
+      const attempts = state.recentPerformance.attempts;
+      state.recentPerformance.averageResponseTime =
+        (currentAvg * (attempts - 1) + responseTime) / attempts;
+
+      // Adjust recommended difficulty for subject
+      const accuracy = (state.recentPerformance.successes / state.recentPerformance.attempts) * 100;
+
+      if (accuracy >= state.performanceThreshold.advance) {
+        state.recommendedDifficulty[subject] = Math.min(5, state.recommendedDifficulty[subject] + 0.2);
+      } else if (accuracy < state.performanceThreshold.decrease) {
+        state.recommendedDifficulty[subject] = Math.max(1, state.recommendedDifficulty[subject] - 0.2);
+      }
+    },
+
+    updateSkillProgress: (state, action: PayloadAction<{
+      subject: 'math' | 'english' | 'science';
+      points: number;
+      accuracy: number;
+    }>) => {
+      const { subject, accuracy } = action.payload;
+
+      // Adjust difficulty based on performance
+      if (accuracy >= 90) {
+        state.recommendedDifficulty[subject] = Math.min(5, state.recommendedDifficulty[subject] + 0.5);
+      } else if (accuracy >= 70) {
+        state.recommendedDifficulty[subject] = Math.min(5, state.recommendedDifficulty[subject] + 0.2);
+      } else if (accuracy < 50) {
+        state.recommendedDifficulty[subject] = Math.max(1, state.recommendedDifficulty[subject] - 0.3);
+      }
+    },
   },
 });
 
@@ -237,6 +297,8 @@ export const {
   setPerformanceThresholds,
   setDifficultyRange,
   resetAdaptive,
+  trackPerformance,
+  updateSkillProgress,
 } = adaptiveSlice.actions;
 
 export default adaptiveSlice.reducer;

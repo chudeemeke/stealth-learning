@@ -3,14 +3,14 @@ import { motion } from 'framer-motion';
 import { cn } from '@/utils/cn';
 import { AgeAwareComponentProps } from '@/types';
 
-export interface CardProps extends AgeAwareComponentProps {
+export interface CardProps extends Partial<AgeAwareComponentProps> {
   title?: string;
   description?: string;
   icon?: ReactNode;
   image?: string;
   footer?: ReactNode;
   children?: ReactNode;
-  variant?: 'default' | 'elevated' | 'outlined' | 'gradient';
+  variant?: 'default' | 'elevated' | 'outlined' | 'gradient' | 'interactive';
   interactive?: boolean;
   onClick?: () => void;
   badge?: {
@@ -21,7 +21,7 @@ export interface CardProps extends AgeAwareComponentProps {
 }
 
 export const Card: React.FC<CardProps> = ({
-  ageGroup,
+  ageGroup = '6-8',
   title,
   description,
   icon,
@@ -42,18 +42,21 @@ export const Card: React.FC<CardProps> = ({
       elevated: 'bg-white shadow-2xl',
       outlined: 'bg-transparent border-4 border-young-primary',
       gradient: 'bg-gradient-to-br from-yellow-300 to-orange-400 text-white',
+      interactive: 'bg-white border-4 border-young-primary shadow-lg hover:shadow-xl transition-shadow',
     },
     '6-8': {
       default: 'bg-white border-2 border-gray-200 shadow-md',
       elevated: 'bg-white shadow-xl',
       outlined: 'bg-transparent border-2 border-mid-primary',
       gradient: 'bg-gradient-to-br from-purple-400 to-pink-500 text-white',
+      interactive: 'bg-white border-2 border-gray-200 shadow-md hover:shadow-lg transition-shadow',
     },
     '9': {
       default: 'bg-white border border-gray-200 shadow',
       elevated: 'bg-white shadow-lg',
       outlined: 'bg-transparent border border-old-primary',
       gradient: 'bg-gradient-to-br from-blue-600 to-teal-600 text-white',
+      interactive: 'bg-white border border-gray-200 shadow hover:shadow-md transition-shadow',
     },
   };
 
@@ -307,3 +310,6 @@ export const GameCard: React.FC<CardProps & {
     </Card>
   );
 };
+
+// Default export for backward compatibility
+export default Card;

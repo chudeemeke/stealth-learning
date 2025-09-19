@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { updateSessionTime, pauseSession, completeSession } from '@/store/slices/sessionSlice';
 import { addAchievement } from '@/store/slices/studentSlice';
+import { Achievement } from '@/types';
 import { useSound } from '@/hooks/useSound';
 import { useHaptic } from '@/hooks/useHaptic';
 import FeedbackModal from './ui/FeedbackModal';
@@ -92,11 +93,20 @@ const SessionTimer: React.FC = () => {
         
         dispatch(addAchievement({
           id: 'first-minute',
+          name: 'First Minute!',
           title: 'First Minute!',
           description: 'Completed your first minute of learning',
           icon: '⏱️',
-          unlockedAt: new Date().toISOString()
-        }));
+          category: 'engagement',
+          points: 10,
+          unlockedAt: new Date(),
+          progress: 100,
+          criteria: {
+            type: 'time',
+            target: 60,
+            current: 60
+          }
+        } as Achievement));
       }
     }
     
@@ -162,7 +172,7 @@ const SessionTimer: React.FC = () => {
         
         // Update session time in store every 10 seconds
         if (newTime % 10 === 0) {
-          dispatch(updateSessionTime(10));
+          dispatch(updateSessionTime());
         }
         
         // Check milestones

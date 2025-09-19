@@ -2,7 +2,7 @@ import { useCallback, useRef, useEffect } from 'react';
 import { Howl } from 'howler';
 
 // Sound effect types
-export type SoundType = 
+export type SoundType =
   | 'click'
   | 'success'
   | 'error'
@@ -12,7 +12,16 @@ export type SoundType =
   | 'whoosh'
   | 'ding'
   | 'unlock'
-  | 'victory';
+  | 'victory'
+  | 'achievement'
+  | 'milestone'
+  | 'notification'
+  | 'pause'
+  | 'complete'
+  | 'logout'
+  | 'select'
+  | 'hint'
+  | 'warning';
 
 // Sound library configuration
 const soundLibrary: Record<SoundType, string> = {
@@ -26,6 +35,15 @@ const soundLibrary: Record<SoundType, string> = {
   ding: '/sounds/ding.mp3',
   unlock: '/sounds/unlock.mp3',
   victory: '/sounds/victory.mp3',
+  achievement: '/sounds/achievement.mp3',
+  milestone: '/sounds/milestone.mp3',
+  notification: '/sounds/notification.mp3',
+  pause: '/sounds/pause.mp3',
+  complete: '/sounds/complete.mp3',
+  logout: '/sounds/logout.mp3',
+  select: '/sounds/select.mp3',
+  hint: '/sounds/hint.mp3',
+  warning: '/sounds/warning.mp3',
 };
 
 // Cache for loaded sounds

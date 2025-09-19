@@ -6,6 +6,9 @@ export type AgeGroup = '3-5' | '6-8' | '9';
 // Learning subjects
 export type Subject = 'mathematics' | 'english' | 'science';
 
+// Difficulty levels
+export type DifficultyLevel = 'easy' | 'medium' | 'hard' | 'adaptive';
+
 // Mastery levels for adaptive learning
 export type MasteryLevel = 'novice' | 'developing' | 'proficient' | 'advanced';
 
@@ -22,8 +25,14 @@ export interface AgeAwareComponentProps {
 export interface StudentModel {
   id: string;
   username: string;
+  name?: string;
+  age?: number;
   ageGroup: AgeGroup;
   avatar?: Avatar;
+  level?: number;
+  xp?: number;
+  totalStars?: number;
+  streakCount?: number;
   learningStyle: LearningStyle;
   skillLevels: Map<string, SkillLevel>;
   performanceHistory: PerformanceRecord[];
@@ -65,6 +74,9 @@ export interface PerformanceRecord {
   contentDifficulty: number;
   score: number;
   feedback?: string;
+  contentType?: ContentType;
+  accuracy?: number;
+  difficulty?: DifficultyLevel;
 }
 
 // Avatar configuration
@@ -85,6 +97,7 @@ export interface StudentPreferences {
   colorMode: 'bright' | 'soft' | 'high-contrast';
   fontSize: 'small' | 'medium' | 'large';
   animationSpeed: 'slow' | 'normal' | 'fast';
+  theme?: string;
 }
 
 // Learning content
@@ -125,6 +138,10 @@ export interface ContentMetadata {
     motor: number;
     reading: number;
   };
+  visualElements?: string[];
+  hasAudio?: boolean;
+  hasNarration?: boolean;
+  interactive?: boolean;
 }
 
 // Game-specific types
@@ -160,11 +177,14 @@ export interface LearningSession {
   studentId: string;
   startedAt: Date;
   endedAt?: Date;
+  duration?: number;
   subject: Subject;
   gamesPlayed: GameAttempt[];
   skillsPracticed: string[];
   performanceSummary?: PerformanceSummary;
   engagementScore: number;
+  streakCount?: number;
+  progress?: number;
 }
 
 export interface GameAttempt {
@@ -258,12 +278,13 @@ export interface Subscription {
 export interface Achievement {
   id: string;
   name: string;
+  title?: string;
   description: string;
   icon: string;
   category: 'academic' | 'engagement' | 'social' | 'special';
   points: number;
   unlockedAt?: Date;
-  progress: number; // 0-100
+  progress?: number; // 0-100
   criteria: AchievementCriteria;
 }
 

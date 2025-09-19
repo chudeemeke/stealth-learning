@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { cn } from '@/utils/cn';
 import { AgeAwareComponentProps } from '@/types';
 
-export interface ProgressBarProps extends AgeAwareComponentProps {
-  current: number;
-  total: number;
+export interface ProgressBarProps extends Partial<AgeAwareComponentProps> {
+  current?: number;
+  total?: number;
+  progress?: number; // Alternative to current/total - direct percentage
+  value?: number; // Alias for current
+  max?: number; // Alias for total
   label?: string;
   showPercentage?: boolean;
   showStars?: boolean;
@@ -16,9 +19,12 @@ export interface ProgressBarProps extends AgeAwareComponentProps {
 }
 
 export const ProgressBar: React.FC<ProgressBarProps> = ({
-  ageGroup,
+  ageGroup = '6-8',
   current,
   total,
+  value,
+  max,
+  progress,
   label,
   showPercentage = false,
   showStars = false,
@@ -28,7 +34,10 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   variant = 'linear',
   className,
 }) => {
-  const percentage = Math.min(100, Math.max(0, (current / total) * 100));
+  // Normalize aliases and use progress prop if provided
+  const finalCurrent = current ?? value ?? 0;
+  const finalTotal = total ?? max ?? 100;
+  const percentage = progress !== undefined ? progress : Math.min(100, Math.max(0, (finalCurrent / finalTotal) * 100));
   const [displayPercentage, setDisplayPercentage] = useState(animated ? 0 : percentage);
 
   useEffect(() => {
@@ -86,7 +95,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   };
 
   if (variant === 'stepped' && ageGroup === '3-5') {
-    return <SteppedProgress current={current} total={total} animated={animated} />;
+    return <SteppedProgress current={finalCurrent} total={finalTotal} animated={animated} />;
   }
 
   if (variant === 'circular') {
@@ -169,12 +178,12 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       {/* Stars visualization for youngest age group */}
       {showStars && ageGroup === '3-5' && (
         <div className="flex gap-2 mt-3">
-          {Array.from({ length: total }, (_, i) => (
+          {Array.from({ length: finalTotal }, (_, i) => (
             <motion.div
               key={i}
               initial={{ scale: 0, rotate: -180 }}
-              animate={{ 
-                scale: i < current ? 1 : 0.8,
+              animate={{
+                scale: i < finalCurrent ? 1 : 0.8,
                 rotate: 0,
               }}
               transition={{
@@ -184,10 +193,10 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
               }}
             >
               <StarIcon
-                filled={i < current}
+                filled={i < finalCurrent}
                 className={cn(
                   'w-8 h-8 transition-colors',
-                  i < current ? 'text-yellow-400' : 'text-gray-300'
+                  i < finalCurrent ? 'text-yellow-400' : 'text-gray-300'
                 )}
               />
             </motion.div>
@@ -361,3 +370,6 @@ const CheckIcon: React.FC<{
     />
   </svg>
 );
+
+// Default export for backward compatibility
+export default ProgressBar;
