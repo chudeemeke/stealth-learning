@@ -116,7 +116,7 @@ function App() {
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
             
-            {/* Protected Routes */}
+            {/* Landing/Home Route */}
             <Route
               path="/"
               element={
@@ -125,7 +125,7 @@ function App() {
                     <HomePage />
                   </Layout>
                 ) : (
-                  <Navigate to="/login" replace />
+                  <LoginPage />
                 )
               }
             />
