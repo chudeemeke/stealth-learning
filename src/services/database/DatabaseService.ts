@@ -12,6 +12,8 @@ import {
   SyncQueue
 } from './schema';
 import { Achievement } from '@/types';
+import { ultraEncryption } from '@/services/security/UltraEncryptionService';
+import { inputValidator } from '@/services/security/InputValidationService';
 import CryptoJS from 'crypto-js';
 import {
   Subject,
@@ -23,9 +25,9 @@ import {
   SpacedRepetitionCard
 } from '@/types';
 
-// Encryption service for sensitive data
+// Legacy encryption service - DEPRECATED - Use UltraEncryptionService
 export class EncryptionService {
-  private static readonly SECRET_KEY = 'stealth-learning-secret-2024';
+  private static readonly SECRET_KEY = 'stealth-learning-secret-2024'; // SECURITY: This will be removed
 
   // Static methods (existing functionality)
   static encrypt(data: string): string {
@@ -626,25 +628,50 @@ export class DatabaseService {
    */
   async authenticateUser(email: string, password: string): Promise<{ success: boolean; user?: User; error?: string }> {
     try {
-      const user = await db.users.where('email').equals(email).first();
+      // 🔒 ULTRA-SECURE: Input validation and sanitization
+      const emailValidation = inputValidator.validateEmail(email);
+      if (!emailValidation.isValid) {
+        return { success: false, error: 'Invalid email format' };
+      }
+
+      if (!password || password.length < 8) {
+        return { success: false, error: 'Invalid password format' };
+      }
+
+      // Rate limiting check (simple implementation)
+      const rateLimitKey = `auth_attempts_${emailValidation.sanitized}`;
+      const attempts = parseInt(localStorage.getItem(rateLimitKey) || '0');
+      if (attempts >= 5) {
+        return { success: false, error: 'Too many login attempts. Please try again later.' };
+      }
+
+      const user = await db.users.where('email').equals(emailValidation.sanitized).first();
 
       if (!user) {
+        // Increment failed attempts
+        localStorage.setItem(rateLimitKey, (attempts + 1).toString());
         return { success: false, error: 'User not found' };
       }
 
       if (!user.passwordHash) {
+        localStorage.setItem(rateLimitKey, (attempts + 1).toString());
         return { success: false, error: 'Invalid credentials' };
       }
 
-      const isValidPassword = EncryptionService.verifyPassword(password, user.passwordHash);
+      // 🔒 ULTRA-SECURE: Use new ultra-secure password verification
+      const isValidPassword = await ultraEncryption.verifyPassword(password, user.passwordHash);
 
       if (!isValidPassword) {
+        localStorage.setItem(rateLimitKey, (attempts + 1).toString());
         return { success: false, error: 'Invalid password' };
       }
 
+      // Clear failed attempts on successful login
+      localStorage.removeItem(rateLimitKey);
+
       return { success: true, user };
     } catch (error) {
-      console.error('Authentication error:', error);
+      console.error('🔒 Authentication error:', error);
       return { success: false, error: 'Authentication failed' };
     }
   }

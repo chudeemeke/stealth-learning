@@ -3,6 +3,10 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { useAppSelector, useAppDispatch } from '@/store';
 
+// Ultra-secure services
+import { securityHeaders } from '@/utils/security-headers';
+import { coppaService } from '@/services/compliance/COPPAService';
+
 // Lazy load pages
 const HomePage = React.lazy(() => import('@/pages/HomePage'));
 const GameSelectPage = React.lazy(() => import('@/pages/GameSelectPage'));
@@ -63,18 +67,37 @@ function App() {
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        // Check for saved session
-        const savedStudentId = localStorage.getItem('studentId');
-        if (savedStudentId) {
-          // TODO: Load student profile from API
-          // await dispatch(loadStudent(savedStudentId));
+        console.log('🔒 Initializing ultra-secure Stealth Learning platform...');
+
+        // Initialize security services first
+        securityHeaders.setupCSPViolationReporting();
+
+        // Clean up expired data for COPPA compliance
+        await coppaService.cleanupExpiredData();
+
+        // Validate page security
+        const securityCheck = securityHeaders.validatePageSecurity();
+        if (!securityCheck.isSecure) {
+          console.warn('🔒 Security violations detected:', securityCheck.violations);
         }
-        
+
+        // Attempt to restore session from persisted state and JWT tokens
+        try {
+          const { restoreSession } = await import('@/store/slices/studentSlice');
+          await dispatch(restoreSession());
+          console.log('✅ Session restored successfully');
+        } catch (sessionError) {
+          console.log('ℹ️ No valid session to restore:', sessionError);
+          // This is expected for new users, don't treat as error
+        }
+
         // Preload critical assets
         await preloadAssets();
-        
+
+        console.log('✅ Ultra-secure platform initialized successfully');
+
       } catch (error) {
-        console.error('Failed to initialize app:', error);
+        console.error('🔒 CRITICAL: Failed to initialize secure platform:', error);
       } finally {
         setIsLoading(false);
       }
@@ -208,11 +231,15 @@ function App() {
             <Route
               path="/parent-dashboard"
               element={
-                <Layout>
-                  <React.Suspense fallback={<LoadingScreen />}>
-                    <ParentDashboard />
-                  </React.Suspense>
-                </Layout>
+                isAuthenticated ? (
+                  <Layout>
+                    <React.Suspense fallback={<LoadingScreen />}>
+                      <ParentDashboard />
+                    </React.Suspense>
+                  </Layout>
+                ) : (
+                  <Navigate to="/login" replace />
+                )
               }
             />
             

@@ -1,5 +1,8 @@
 import { DatabaseService } from '../database/DatabaseService';
 import { jwtService, JWTPayload, TokenPair } from './JWTService';
+import { ultraJWT } from '@/services/security/UltraJWTService';
+import { inputValidator } from '@/services/security/InputValidationService';
+import { coppaService } from '@/services/compliance/COPPAService';
 import type { User, ParentProfile, ChildProfile } from '../database/schema';
 import type { DifficultyLevel } from '../../types';
 
@@ -61,11 +64,32 @@ class AuthenticationService {
    */
   async loginParent(credentials: ParentLoginCredentials): Promise<AuthResult> {
     try {
-      console.log(`🔐 Attempting parent login for: ${credentials.email}`);
+      console.log(`🔐 Attempting ultra-secure parent login for: ${credentials.email}`);
 
-      // Authenticate user
+      // 🔒 ULTRA-SECURE: Validate input before processing
+      const emailValidation = inputValidator.validateEmail(credentials.email);
+      if (!emailValidation.isValid) {
+        return {
+          success: false,
+          error: 'Invalid email format'
+        };
+      }
+
+      const authValidation = inputValidator.validateAuthentication({
+        email: emailValidation.sanitized!,
+        password: credentials.password
+      });
+
+      if (!authValidation.isValid) {
+        return {
+          success: false,
+          error: authValidation.errors.join(', ')
+        };
+      }
+
+      // Authenticate user with ultra-secure database service
       const authResult = await this.dbService.authenticateUser(
-        credentials.email,
+        emailValidation.sanitized!,
         credentials.password
       );
 

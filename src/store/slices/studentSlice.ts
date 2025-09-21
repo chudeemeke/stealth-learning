@@ -66,6 +66,133 @@ export const loadStudent = createAsyncThunk(
   }
 );
 
+export const restoreSession = createAsyncThunk(
+  'student/restoreSession',
+  async () => {
+    const { authService } = await import('@/services/auth/AuthenticationService');
+
+    // Check if we have a valid session
+    const sessionData = authService.getCurrentSession();
+
+    if (!sessionData.isAuthenticated) {
+      throw new Error('No valid session found');
+    }
+
+    // Validate and refresh session if needed
+    const isValid = await authService.validateSession();
+    if (!isValid) {
+      throw new Error('Session validation failed');
+    }
+
+    // Get current user information
+    const currentUser = authService.getCurrentUser();
+    if (!currentUser) {
+      throw new Error('No current user found');
+    }
+
+    // Get user profile from database
+    const { DatabaseService } = await import('@/services/database/DatabaseService');
+    const dbService = DatabaseService.getInstance();
+
+    if (currentUser.userType === 'child' && currentUser.profileId) {
+      const childProfile = await dbService.getChildProfile(currentUser.profileId);
+      if (!childProfile) {
+        throw new Error('Child profile not found');
+      }
+
+      // Convert child profile to student model format
+      const studentProfile: StudentModel = {
+        id: childProfile.id,
+        username: childProfile.name, // Use name as username
+        name: childProfile.name,
+        ageGroup: childProfile.ageGroup,
+        avatar: {
+          id: childProfile.avatar.id,
+          type: 'character',
+          colorScheme: childProfile.avatar.colorScheme,
+          accessories: [],
+          unlocked: childProfile.avatar.unlocked
+        },
+        preferences: {
+          soundEnabled: childProfile.preferences.soundEnabled,
+          colorMode: childProfile.preferences.colorMode === 'calm' ? 'soft' : childProfile.preferences.colorMode,
+          fontSize: childProfile.preferences.fontSize,
+          animationSpeed: childProfile.preferences.animationSpeed,
+          musicVolume: childProfile.preferences.musicVolume,
+          effectsVolume: childProfile.preferences.effectsVolume,
+          subtitlesEnabled: childProfile.preferences.subtitlesEnabled
+        },
+        skillLevels: new Map(), // Initialize empty Map - will be populated from user progress
+        learningStyle: 'visual', // Default value
+        performanceHistory: [],
+        currentZPD: {
+          lowerBound: 1,
+          upperBound: 3,
+          optimalDifficulty: 2,
+          recommendedSkills: []
+        },
+        createdAt: childProfile.createdAt,
+        updatedAt: childProfile.updatedAt
+      };
+
+      return {
+        profile: studentProfile,
+        userType: currentUser.userType,
+        sessionData
+      };
+    } else if (currentUser.userType === 'parent') {
+      // For parent sessions, we don't need to convert to StudentModel
+      // The state should handle both student and parent profiles
+      const parentProfile = await dbService.getParentProfile(currentUser.userId);
+      if (!parentProfile) {
+        throw new Error('Parent profile not found');
+      }
+
+      // Get the parent user record to access email
+      const parentUser = await dbService.getUser(currentUser.userId);
+      if (!parentUser) {
+        throw new Error('Parent user record not found');
+      }
+
+      // Return a minimal StudentModel for parent to prevent errors
+      const parentStudentModel: StudentModel = {
+        id: parentProfile.id,
+        username: parentUser.email || parentProfile.firstName,
+        name: `${parentProfile.firstName} ${parentProfile.lastName}`,
+        ageGroup: '9+' as AgeGroup,
+        skillLevels: new Map(),
+        learningStyle: 'visual',
+        performanceHistory: [],
+        currentZPD: {
+          lowerBound: 1,
+          upperBound: 5,
+          optimalDifficulty: 3,
+          recommendedSkills: []
+        },
+        preferences: {
+          soundEnabled: true,
+          colorMode: 'bright',
+          fontSize: 'medium',
+          animationSpeed: 'normal',
+          musicVolume: 0.7,
+          effectsVolume: 0.8,
+          subtitlesEnabled: false
+        },
+        createdAt: parentProfile.createdAt,
+        updatedAt: parentProfile.updatedAt
+      };
+
+      return {
+        profile: parentStudentModel,
+        userType: currentUser.userType,
+        sessionData
+      };
+    }
+
+    throw new Error('Invalid user type');
+  }
+);
+
 export const updateSkillLevel = createAsyncThunk(
   'student/updateSkill',
   async ({ studentId, skill, update }: {
@@ -197,7 +324,25 @@ const studentSlice = createSlice({
         state.error = action.error.message || 'Failed to load student profile';
         state.isLoading = false;
       })
-      
+
+      // Restore session
+      .addCase(restoreSession.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(restoreSession.fulfilled, (state, action) => {
+        state.profile = action.payload.profile;
+        state.isAuthenticated = true;
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(restoreSession.rejected, (state, action) => {
+        state.isAuthenticated = false;
+        state.profile = null;
+        state.error = action.error.message || 'Failed to restore session';
+        state.isLoading = false;
+      })
+
       // Update skill level
       .addCase(updateSkillLevel.fulfilled, (state, action) => {
         if (state.profile) {
