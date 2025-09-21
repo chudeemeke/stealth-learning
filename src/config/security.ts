@@ -37,10 +37,13 @@ function validateEnvVar(key: string, value: string | undefined, minLength?: numb
     );
   }
 
-  // Check for common insecure values
-  const insecureValues = ['localhost', 'test', 'debug', 'default', 'secret', '123'];
-  if (insecureValues.some(insecure => value.toLowerCase().includes(insecure))) {
-    console.warn(`⚠️ WARNING: ${key} contains potentially insecure value. Consider using a more secure value.`);
+  // Check for common insecure values (only warn in production)
+  const environment = getEnvVar('VITE_APP_ENVIRONMENT', 'development');
+  if (environment === 'production') {
+    const insecureValues = ['localhost', 'test', 'debug', 'default', 'secret', '123'];
+    if (insecureValues.some(insecure => value.toLowerCase().includes(insecure))) {
+      console.warn(`⚠️ WARNING: ${key} contains potentially insecure value for production. Consider using a more secure value.`);
+    }
   }
 
   return value;
@@ -52,20 +55,29 @@ function validateEnvVar(key: string, value: string | undefined, minLength?: numb
 function validateURL(url: string): string {
   try {
     const parsed = new URL(url);
+    const environment = getEnvVar('VITE_APP_ENVIRONMENT', 'development');
 
-    // Enforce HTTPS in production
-    if (getEnvVar('VITE_APP_ENVIRONMENT') === 'production' && parsed.protocol !== 'https:') {
+    // Enforce HTTPS in production only
+    if (environment === 'production' && parsed.protocol !== 'https:') {
       throw new Error('🔒 SECURITY ERROR: HTTPS is required in production environment');
     }
 
-    // Block localhost in production
-    if (getEnvVar('VITE_APP_ENVIRONMENT') === 'production' &&
+    // Block localhost in production only
+    if (environment === 'production' &&
         (parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1')) {
       throw new Error('🔒 SECURITY ERROR: Localhost URLs not allowed in production');
     }
 
+    // In development, allow localhost
+    if (environment === 'development') {
+      console.log(`🔧 Development mode: Allowing ${url}`);
+    }
+
     return url;
   } catch (error) {
+    if (error instanceof Error && error.message.includes('SECURITY ERROR')) {
+      throw error;
+    }
     throw new Error(`🔒 SECURITY ERROR: Invalid URL format: ${error}`);
   }
 }
@@ -86,15 +98,19 @@ function createSecurityConfig(): SecurityConfig {
   console.log('🔒 Initializing ultra-secure configuration...');
 
   try {
+    // Get environment first to determine validation strictness
+    const environment = getEnvVar('VITE_APP_ENVIRONMENT', 'development');
+    const isDevelopment = environment === 'development';
+
     const config: SecurityConfig = {
       // API Configuration
       API_URL: validateURL(validateEnvVar('VITE_API_URL', getEnvVar('VITE_API_URL'))),
       API_TIMEOUT: parseInt(getEnvVar('VITE_API_TIMEOUT', '10000')),
 
-      // Cryptographic Keys (minimum lengths for security)
-      ENCRYPTION_KEY: validateEnvVar('VITE_ENCRYPTION_KEY', getEnvVar('VITE_ENCRYPTION_KEY'), 32),
-      JWT_SECRET: validateEnvVar('VITE_JWT_SECRET', getEnvVar('VITE_JWT_SECRET'), 32),
-      PEPPER_SECRET: validateEnvVar('VITE_PEPPER_SECRET', getEnvVar('VITE_PEPPER_SECRET'), 64),
+      // Cryptographic Keys (relaxed validation in development)
+      ENCRYPTION_KEY: validateEnvVar('VITE_ENCRYPTION_KEY', getEnvVar('VITE_ENCRYPTION_KEY'), isDevelopment ? 20 : 32),
+      JWT_SECRET: validateEnvVar('VITE_JWT_SECRET', getEnvVar('VITE_JWT_SECRET'), isDevelopment ? 20 : 32),
+      PEPPER_SECRET: validateEnvVar('VITE_PEPPER_SECRET', getEnvVar('VITE_PEPPER_SECRET'), isDevelopment ? 30 : 64),
 
       // Application Environment
       APP_ENVIRONMENT: (getEnvVar('VITE_APP_ENVIRONMENT', 'development') as SecurityConfig['APP_ENVIRONMENT']),
@@ -123,6 +139,28 @@ function createSecurityConfig(): SecurityConfig {
 
   } catch (error) {
     console.error('❌ Security configuration failed:', error);
+
+    // In development, provide fallback configuration instead of throwing
+    const environment = getEnvVar('VITE_APP_ENVIRONMENT', 'development');
+    if (environment === 'development') {
+      console.warn('🔧 Using fallback development configuration due to validation errors');
+      return {
+        API_URL: 'http://localhost:4000/api',
+        API_TIMEOUT: 10000,
+        ENCRYPTION_KEY: 'development-encryption-key-fallback',
+        JWT_SECRET: 'development-jwt-secret-fallback',
+        PEPPER_SECRET: 'development-pepper-secret-fallback',
+        APP_ENVIRONMENT: 'development',
+        ENABLE_ANALYTICS: false,
+        ENABLE_DEBUG_MODE: true,
+        ENABLE_SOURCE_MAPS: true,
+        ENABLE_PARENTAL_VERIFICATION: true,
+        DATA_RETENTION_DAYS: 365,
+        CSP_ENABLED: false, // Disable CSP in fallback mode
+        SECURE_COOKIES: false,
+      };
+    }
+
     throw error;
   }
 }

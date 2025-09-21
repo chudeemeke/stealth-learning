@@ -69,16 +69,32 @@ function App() {
       try {
         console.log('🔒 Initializing ultra-secure Stealth Learning platform...');
 
-        // Initialize security services first
-        securityHeaders.setupCSPViolationReporting();
+        // Initialize security services first (with error handling)
+        try {
+          securityHeaders.setupCSPViolationReporting();
+          console.log('✅ Security headers initialized');
+        } catch (error) {
+          console.warn('⚠️ Security headers initialization failed:', error);
+        }
 
-        // Clean up expired data for COPPA compliance
-        await coppaService.cleanupExpiredData();
+        try {
+          // Clean up expired data for COPPA compliance
+          await coppaService.cleanupExpiredData();
+          console.log('✅ COPPA service initialized');
+        } catch (error) {
+          console.warn('⚠️ COPPA service initialization failed:', error);
+        }
 
-        // Validate page security
-        const securityCheck = securityHeaders.validatePageSecurity();
-        if (!securityCheck.isSecure) {
-          console.warn('🔒 Security violations detected:', securityCheck.violations);
+        try {
+          // Validate page security
+          const securityCheck = securityHeaders.validatePageSecurity();
+          if (!securityCheck.isSecure) {
+            console.warn('🔒 Security violations detected:', securityCheck.violations);
+          } else {
+            console.log('✅ Page security validated');
+          }
+        } catch (error) {
+          console.warn('⚠️ Security validation failed:', error);
         }
 
         // Attempt to restore session from persisted state and JWT tokens
