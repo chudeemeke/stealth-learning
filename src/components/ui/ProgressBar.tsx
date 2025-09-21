@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import { AgeAwareComponentProps } from '@/types';
+import { createGlassStyle, glassPresets } from '@/utils/glassmorphism';
 
 export interface ProgressBarProps extends Partial<AgeAwareComponentProps> {
   current?: number;
@@ -15,7 +16,10 @@ export interface ProgressBarProps extends Partial<AgeAwareComponentProps> {
   animated?: boolean;
   color?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
   size?: 'small' | 'medium' | 'large';
-  variant?: 'linear' | 'circular' | 'stepped';
+  variant?: 'linear' | 'circular' | 'stepped' | 'glass';
+  glass?: boolean;
+  glassPreset?: keyof typeof glassPresets;
+  className?: string;
 }
 
 export const ProgressBar: React.FC<ProgressBarProps> = ({
@@ -32,6 +36,8 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   color = 'primary',
   size = 'medium',
   variant = 'linear',
+  glass = false,
+  glassPreset = 'subtle',
   className,
 }) => {
   // Normalize aliases and use progress prop if provided
@@ -51,46 +57,49 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     }
   }, [percentage, animated]);
 
-  // Age-specific configurations
+  const normalizedAgeGroup = ageGroup;
+
+  // Apple-inspired age-specific configurations
   const sizeClasses = {
     '3-5': {
-      small: 'h-6',
-      medium: 'h-8',
-      large: 'h-12',
+      small: 'h-6 rounded-apple-lg',
+      medium: 'h-8 rounded-apple-xl',
+      large: 'h-12 rounded-apple-2xl',
     },
     '6-8': {
-      small: 'h-4',
-      medium: 'h-6',
-      large: 'h-8',
+      small: 'h-4 rounded-apple-md',
+      medium: 'h-6 rounded-apple-lg',
+      large: 'h-8 rounded-apple-xl',
     },
-    '9': {
-      small: 'h-2',
-      medium: 'h-3',
-      large: 'h-4',
+    '9+': {
+      small: 'h-3 rounded-apple-sm',
+      medium: 'h-4 rounded-apple-md',
+      large: 'h-6 rounded-apple-lg',
     },
   };
 
+  // Apple system color gradients
   const colorClasses = {
     '3-5': {
-      primary: 'from-yellow-400 to-yellow-500',
-      secondary: 'from-blue-400 to-blue-500',
-      success: 'from-green-400 to-green-500',
-      warning: 'from-orange-400 to-orange-500',
-      danger: 'from-red-400 to-red-500',
+      primary: 'from-system-yellow to-system-orange',
+      secondary: 'from-system-green to-system-teal',
+      success: 'from-system-green to-system-teal',
+      warning: 'from-system-orange to-system-yellow',
+      danger: 'from-system-red to-system-pink',
     },
     '6-8': {
-      primary: 'from-purple-400 to-purple-600',
-      secondary: 'from-pink-400 to-red-500',
-      success: 'from-green-400 to-green-600',
-      warning: 'from-yellow-400 to-orange-500',
-      danger: 'from-red-400 to-red-600',
+      primary: 'from-system-blue to-system-indigo',
+      secondary: 'from-system-purple to-system-pink',
+      success: 'from-system-green to-system-teal',
+      warning: 'from-system-orange to-system-yellow',
+      danger: 'from-system-red to-system-pink',
     },
-    '9': {
-      primary: 'from-blue-600 to-blue-800',
-      secondary: 'from-red-500 to-red-700',
-      success: 'from-teal-500 to-teal-700',
-      warning: 'from-orange-500 to-orange-700',
-      danger: 'from-red-600 to-red-800',
+    '9+': {
+      primary: 'from-system-indigo to-system-blue',
+      secondary: 'from-system-teal to-system-blue',
+      success: 'from-system-green to-system-teal',
+      warning: 'from-system-orange to-system-yellow',
+      danger: 'from-system-red to-system-pink',
     },
   };
 
@@ -102,11 +111,29 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     return (
       <CircularProgress
         percentage={displayPercentage}
-        ageGroup={ageGroup}
+        ageGroup={normalizedAgeGroup}
         color={color}
         size={size}
         label={label}
         showPercentage={showPercentage}
+        glass={glass}
+        glassPreset={glassPreset}
+      />
+    );
+  }
+
+  if (variant === 'glass' || glass) {
+    return (
+      <GlassProgress
+        percentage={displayPercentage}
+        ageGroup={normalizedAgeGroup}
+        color={color}
+        size={size}
+        label={label}
+        showPercentage={showPercentage}
+        glassPreset={glassPreset}
+        animated={animated}
+        className={className}
       />
     );
   }
@@ -119,7 +146,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
             'font-medium',
             ageGroup === '3-5' && 'text-xl font-young',
             ageGroup === '6-8' && 'text-lg font-mid',
-            ageGroup === '9' && 'text-base font-old'
+            ageGroup === '9+' && 'text-base font-old'
           )}>
             {label}
           </span>
@@ -132,19 +159,20 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       )}
 
       <div className={cn(
-        'relative w-full bg-gray-200 rounded-full overflow-hidden',
-        sizeClasses[ageGroup][size]
+        'relative w-full bg-apple-gray-200 overflow-hidden shadow-apple-xs',
+        sizeClasses[normalizedAgeGroup][size]
       )}>
         <motion.div
           className={cn(
-            'h-full bg-gradient-to-r rounded-full',
-            colorClasses[ageGroup][color]
+            'h-full bg-gradient-to-r relative overflow-hidden',
+            sizeClasses[normalizedAgeGroup][size].replace('h-', ''),
+            colorClasses[normalizedAgeGroup][color]
           )}
           initial={animated ? { width: 0 } : { width: `${percentage}%` }}
           animate={{ width: `${displayPercentage}%` }}
           transition={{
-            duration: animated ? 1.5 : 0,
-            ease: 'easeOut',
+            duration: animated ? 1.2 : 0,
+            ease: [0.25, 0.46, 0.45, 0.94],
           }}
         >
           {ageGroup === '3-5' && (
@@ -248,6 +276,89 @@ const SteppedProgress: React.FC<{
   );
 };
 
+// Glass progress variant
+const GlassProgress: React.FC<{
+  percentage: number;
+  ageGroup: AgeAwareComponentProps['ageGroup'];
+  color: string;
+  size: string;
+  label?: string;
+  showPercentage?: boolean;
+  glassPreset: keyof typeof glassPresets;
+  animated?: boolean;
+  className?: string;
+}> = ({ percentage, ageGroup, color, size, label, showPercentage, glassPreset, animated, className }) => {
+  const glassStyles = createGlassStyle(glassPresets[glassPreset]);
+
+  const sizeClasses = {
+    small: 'h-4 rounded-apple-md',
+    medium: 'h-6 rounded-apple-lg',
+    large: 'h-8 rounded-apple-xl',
+  };
+
+  const colorClasses = {
+    primary: 'from-system-blue to-system-indigo',
+    secondary: 'from-system-purple to-system-pink',
+    success: 'from-system-green to-system-teal',
+    warning: 'from-system-orange to-system-yellow',
+    danger: 'from-system-red to-system-pink',
+  };
+
+  return (
+    <div className={cn('w-full', className)}>
+      {label && (
+        <div className="flex justify-between items-center mb-3">
+          <span className="font-apple font-medium text-white">
+            {label}
+          </span>
+          {showPercentage && (
+            <span className="font-apple text-sm font-medium text-white/80">
+              {Math.round(percentage)}%
+            </span>
+          )}
+        </div>
+      )}
+
+      <div
+        className={cn(
+          'relative w-full overflow-hidden backdrop-blur-apple',
+          sizeClasses[size as keyof typeof sizeClasses]
+        )}
+        style={glassStyles}
+      >
+        <motion.div
+          className={cn(
+            'h-full bg-gradient-to-r relative overflow-hidden',
+            colorClasses[color as keyof typeof colorClasses]
+          )}
+          initial={animated ? { width: 0 } : { width: `${percentage}%` }}
+          animate={{ width: `${percentage}%` }}
+          transition={{
+            duration: animated ? 1.5 : 0,
+            ease: [0.25, 0.46, 0.45, 0.94],
+          }}
+        >
+          {/* Shimmer effect */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+            animate={{
+              x: ['-100%', '200%'],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              repeatDelay: 1,
+            }}
+          />
+        </motion.div>
+
+        {/* Glow overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 pointer-events-none" />
+      </div>
+    </div>
+  );
+};
+
 // Circular progress variant
 const CircularProgress: React.FC<{
   percentage: number;
@@ -256,7 +367,9 @@ const CircularProgress: React.FC<{
   size: string;
   label?: string;
   showPercentage?: boolean;
-}> = ({ percentage, ageGroup, color, size, label, showPercentage }) => {
+  glass?: boolean;
+  glassPreset?: keyof typeof glassPresets;
+}> = ({ percentage, ageGroup, color, size, label, showPercentage, glass, glassPreset = 'standard' }) => {
   const sizeMap = {
     small: { width: 60, strokeWidth: 4 },
     medium: { width: 80, strokeWidth: 6 },
@@ -268,16 +381,34 @@ const CircularProgress: React.FC<{
   const circumference = radius * 2 * Math.PI;
   const offset = circumference - (percentage / 100) * circumference;
 
+  // Apple-inspired color gradients
+  const gradients = {
+    primary: { start: '#007AFF', end: '#5856D6' },
+    secondary: { start: '#AF52DE', end: '#FF2D92' },
+    success: { start: '#34C759', end: '#5AC8FA' },
+    warning: { start: '#FF9500', end: '#FFCC00' },
+    danger: { start: '#FF3B30', end: '#FF2D92' },
+  };
+
+  const gradient = gradients[color as keyof typeof gradients] || gradients.primary;
+  const glassStyles = glass ? createGlassStyle(glassPresets[glassPreset!]) : {};
+
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="relative">
+    <div className="flex flex-col items-center gap-3">
+      <div
+        className={cn(
+          'relative rounded-full',
+          glass && 'backdrop-blur-apple border border-white/20'
+        )}
+        style={glass ? { ...glassStyles, padding: '8px' } : undefined}
+      >
         <svg width={width} height={width}>
           {/* Background circle */}
           <circle
             cx={width / 2}
             cy={width / 2}
             r={radius}
-            stroke="#e5e7eb"
+            stroke="rgba(255, 255, 255, 0.2)"
             strokeWidth={strokeWidth}
             fill="none"
           />
@@ -286,47 +417,59 @@ const CircularProgress: React.FC<{
             cx={width / 2}
             cy={width / 2}
             r={radius}
-            stroke="url(#gradient)"
+            stroke={`url(#gradient-${color})`}
             strokeWidth={strokeWidth}
             fill="none"
             strokeLinecap="round"
             transform={`rotate(-90 ${width / 2} ${width / 2})`}
             initial={{ strokeDashoffset: circumference }}
             animate={{ strokeDashoffset: offset }}
-            transition={{ duration: 1.5, ease: 'easeOut' }}
+            transition={{
+              duration: 1.5,
+              ease: [0.25, 0.46, 0.45, 0.94],
+            }}
             style={{
               strokeDasharray: circumference,
             }}
           />
-          {/* Gradient definition */}
+          {/* Gradient definitions */}
           <defs>
-            <linearGradient id="gradient">
-              <stop offset="0%" stopColor="#fbbf24" />
-              <stop offset="100%" stopColor="#f59e0b" />
+            <linearGradient id={`gradient-${color}`}>
+              <stop offset="0%" stopColor={gradient.start} />
+              <stop offset="100%" stopColor={gradient.end} />
             </linearGradient>
           </defs>
         </svg>
         
         {showPercentage && ageGroup !== '3-5' && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-lg font-bold">{Math.round(percentage)}%</span>
+            <span className="font-apple text-lg font-semibold text-white">
+              {Math.round(percentage)}%
+            </span>
           </div>
         )}
-        
+
         {ageGroup === '3-5' && (
           <div className="absolute inset-0 flex items-center justify-center">
             <motion.div
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              <StarIcon filled className="w-8 h-8 text-yellow-400" />
+              <StarIcon filled className="w-8 h-8 text-system-yellow" />
             </motion.div>
           </div>
         )}
+
+        {/* Glass overlay */}
+        {glass && (
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 pointer-events-none rounded-full" />
+        )}
       </div>
-      
+
       {label && (
-        <span className="text-center font-medium">{label}</span>
+        <span className="text-center font-apple font-medium text-white">
+          {label}
+        </span>
       )}
     </div>
   );

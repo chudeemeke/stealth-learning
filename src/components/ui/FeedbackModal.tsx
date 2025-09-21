@@ -61,7 +61,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
           playSound('levelUp');
           triggerHaptic('success');
           // Trigger confetti for level completion
-          if (ageGroup !== '9') {
+          if (ageGroup !== '9+') {
             triggerConfetti();
           }
           break;
@@ -155,13 +155,13 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
   const modalSizes = {
     '3-5': 'max-w-lg',
     '6-8': 'max-w-md',
-    '9': 'max-w-sm',
+    '9+': 'max-w-sm',
   };
 
   const iconSizes = {
     '3-5': 'w-24 h-24',
     '6-8': 'w-20 h-20',
-    '9': 'w-16 h-16',
+    '9+': 'w-16 h-16',
   };
 
   const getIcon = () => {
@@ -238,7 +238,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
             exit="exit"
           >
             {/* Decorative header background */}
-            {ageGroup !== '9' && (
+            {ageGroup !== '9+' && (
               <div className={cn(
                 'absolute top-0 left-0 right-0 h-32 opacity-20',
                 type === 'success' && 'bg-gradient-to-b from-green-400',
@@ -291,7 +291,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
                           'text-yellow-400',
                           ageGroup === '3-5' && 'w-12 h-12',
                           ageGroup === '6-8' && 'w-10 h-10',
-                          ageGroup === '9' && 'w-8 h-8'
+                          ageGroup === '9+' && 'w-8 h-8'
                         )}
                         filled={i < stars}
                       />
@@ -306,7 +306,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
                   'text-center font-bold mb-2',
                   ageGroup === '3-5' && 'text-3xl font-young',
                   ageGroup === '6-8' && 'text-2xl font-mid',
-                  ageGroup === '9' && 'text-xl font-old'
+                  ageGroup === '9+' && 'text-xl font-old'
                 )}>
                   {title}
                 </h2>
@@ -317,7 +317,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
                 'text-center text-gray-700 mb-4',
                 ageGroup === '3-5' && 'text-xl font-young',
                 ageGroup === '6-8' && 'text-lg font-mid',
-                ageGroup === '9' && 'text-base font-old'
+                ageGroup === '9+' && 'text-base font-old'
               )}>
                 {message}
               </p>
@@ -339,7 +339,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
                     'font-bold text-yellow-600',
                     ageGroup === '3-5' && 'text-2xl',
                     ageGroup === '6-8' && 'text-xl',
-                    ageGroup === '9' && 'text-lg'
+                    ageGroup === '9+' && 'text-lg'
                   )}>
                     +{points}
                   </span>

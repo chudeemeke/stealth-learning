@@ -1,13 +1,15 @@
-name: CI/CD Pipeline
+name: Continuous Integration with Claude Code Integration
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main, develop]
 
 jobs:
-  test:
+  # Quality checks and testing
+  quality:
+    name: Code Quality & Testing
     runs-on: ubuntu-latest
 
     strategy:
@@ -15,54 +17,286 @@ jobs:
         node-version: [20.x]
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
 
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: 8
-        run_install: false
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
 
-    - name: Get pnpm store directory
-      shell: bash
-      run: |
-        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-    - name: Setup pnpm cache
-      uses: actions/cache@v3
-      with:
-        path: ${{ env.STORE_PATH }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-store-
+      - name: TypeScript type checking
+        run: pnpm type-check
 
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
+      - name: ESLint checking
+        run: pnpm lint
 
-    - name: Run type check
-      run: pnpm type-check
+      - name: Prettier formatting check
+        run: pnpm format --check
 
-    - name: Run linter
-      run: pnpm lint
+      - name: Run unit tests with coverage
+        run: pnpm test:coverage
 
-    - name: Run tests
-      run: pnpm test:coverage
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage/lcov.info
+          fail_ci_if_error: true
 
-    - name: Upload coverage to Codecov
-      if: github.event_name == 'push'
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        fail_ci_if_error: false
+      - name: Build application
+        run: pnpm build
 
-    - name: Build application
-      run: pnpm build
+      - name: Build Storybook
+        run: pnpm build-storybook
 
-    - name: Build Storybook
-      run: pnpm build-storybook
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-files
+          path: dist/
+
+  # End-to-end testing
+  e2e:
+    name: End-to-End Tests
+    runs-on: ubuntu-latest
+    needs: quality
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: pnpm playwright test
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+  # Security scanning
+  security:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run security audit
+        run: pnpm audit --audit-level high
+
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+  # Claude Code Quality Assistant
+  claude-review:
+    name: Claude Code Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Claude Code Analysis
+        run: |
+          # Get changed files
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD | grep -E '\.(ts|tsx|js|jsx)$' | head -20)
+
+          if [ -n "$CHANGED_FILES" ]; then
+            echo "Changed files detected:"
+            echo "$CHANGED_FILES"
+
+            # Create analysis report
+            echo "## 🤖 Claude Code Review" > claude-review.md
+            echo "" >> claude-review.md
+            echo "### Files Analyzed" >> claude-review.md
+            echo "$CHANGED_FILES" | sed 's/^/- /' >> claude-review.md
+            echo "" >> claude-review.md
+            echo "### Quality Metrics" >> claude-review.md
+
+            # Run quality checks
+            TYPE_CHECK_RESULT=$(pnpm type-check 2>&1 | grep -q "Found 0 errors" && echo "✅ Passed" || echo "❌ Failed")
+            echo "- **TypeScript compilation:** $TYPE_CHECK_RESULT" >> claude-review.md
+
+            LINT_RESULT=$(pnpm lint 2>&1 | grep -q "0 problems" && echo "✅ Passed" || echo "❌ Issues found")
+            echo "- **ESLint checks:** $LINT_RESULT" >> claude-review.md
+
+            # Run tests for coverage
+            COVERAGE_RESULT=$(pnpm test:coverage --reporter=json 2>/dev/null | jq -r '.total.lines.pct' 2>/dev/null || echo "N/A")
+            echo "- **Test coverage:** ${COVERAGE_RESULT}%" >> claude-review.md
+
+            echo "" >> claude-review.md
+            echo "### Recommendations" >> claude-review.md
+            echo "- Ensure all new code has corresponding tests" >> claude-review.md
+            echo "- Follow the established coding patterns in the codebase" >> claude-review.md
+            echo "- Consider adding JSDoc comments for complex functions" >> claude-review.md
+          else
+            echo "No relevant files changed"
+          fi
+
+      - name: Comment PR with Claude Review
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            if (fs.existsSync('claude-review.md')) {
+              const review = fs.readFileSync('claude-review.md', 'utf8');
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: review
+              });
+            }
+
+  # Deployment readiness check
+  deployment-check:
+    name: Deployment Readiness
+    runs-on: ubuntu-latest
+    needs: [quality, e2e, security]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Production build test
+        run: pnpm build
+
+      - name: Bundle size analysis
+        run: |
+          echo "## 📦 Bundle Analysis" > bundle-report.md
+          echo "" >> bundle-report.md
+
+          # Get build stats
+          BUILD_SIZE=$(du -sh dist/ | cut -f1)
+          echo "- **Total build size:** $BUILD_SIZE" >> bundle-report.md
+
+          # Check for large files
+          echo "- **Large files (>500KB):**" >> bundle-report.md
+          find dist/ -size +500k -type f | sed 's/^/  - /' >> bundle-report.md || echo "  - None found" >> bundle-report.md
+
+          echo "" >> bundle-report.md
+          echo "### Size Recommendations" >> bundle-report.md
+          echo "- Keep individual chunks under 244KB for optimal loading" >> bundle-report.md
+          echo "- Consider code splitting for large features" >> bundle-report.md
+          echo "- Use dynamic imports for non-critical components" >> bundle-report.md
+
+      - name: Generate deployment summary
+        run: |
+          echo "## 🚀 Deployment Summary" > deployment-summary.md
+          echo "" >> deployment-summary.md
+          echo "✅ All quality checks passed" >> deployment-summary.md
+          echo "✅ All tests passed" >> deployment-summary.md
+          echo "✅ Security scans completed" >> deployment-summary.md
+          echo "✅ Production build successful" >> deployment-summary.md
+          echo "" >> deployment-summary.md
+          echo "**Ready for deployment to staging/production**" >> deployment-summary.md
+
+      - name: Upload deployment artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-ready
+          path: |
+            dist/
+            deployment-summary.md
+            bundle-report.md
+
+  # Notification on completion
+  notify:
+    name: Notify Completion
+    runs-on: ubuntu-latest
+    needs: [quality, e2e, security]
+    if: always()
+
+    steps:
+      - name: Notify status
+        run: |
+          if [[ "${{ needs.quality.result }}" == "success" &&
+                "${{ needs.e2e.result }}" == "success" &&
+                "${{ needs.security.result }}" == "success" ]]; then
+            echo "✅ All CI/CD checks passed successfully!"
+          else
+            echo "❌ Some CI/CD checks failed. Please review the logs."
+            exit 1
+          fi

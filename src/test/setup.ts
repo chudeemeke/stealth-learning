@@ -2,9 +2,13 @@ import '@testing-library/jest-dom';
 import { expect, afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
+import { enableMapSet } from 'immer';
 
 // Extend Vitest's expect with jest-dom matchers
 expect.extend(matchers);
+
+// Enable Immer plugins
+enableMapSet();
 
 // Cleanup after each test
 afterEach(() => {
@@ -67,3 +71,35 @@ global.Audio = vi.fn().mockImplementation(() => ({
   addEventListener: vi.fn(),
   removeEventListener: vi.fn(),
 }));
+
+// Mock Framer Motion
+vi.mock('framer-motion', async () => {
+  const actual = await vi.importActual('framer-motion');
+  return {
+    ...actual,
+    motion: {
+      div: 'div',
+      span: 'span',
+      p: 'p',
+      a: 'a',
+      button: 'button',
+      h1: 'h1',
+      h2: 'h2',
+      h3: 'h3',
+      img: 'img',
+      section: 'section',
+      article: 'article',
+      header: 'header',
+      footer: 'footer',
+      nav: 'nav',
+      main: 'main',
+    },
+    useInView: vi.fn().mockReturnValue([vi.fn(), false]),
+    AnimatePresence: ({ children }: any) => children,
+    useAnimation: vi.fn().mockReturnValue({
+      start: vi.fn(),
+      stop: vi.fn(),
+      set: vi.fn(),
+    }),
+  };
+});

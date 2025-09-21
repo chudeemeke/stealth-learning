@@ -1,23 +1,24 @@
 import React, { ButtonHTMLAttributes, forwardRef, useCallback } from 'react';
 import { motion, HTMLMotionProps } from 'framer-motion';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import { AgeAwareComponentProps } from '@/types';
-import { useSound } from '@/hooks/useSound';
-import { useHaptic } from '@/hooks/useHaptic';
+import { useCardHover, useGameAnimations } from '@/hooks/useAnimations';
+import { createGlassStyle, glassPresets } from '@/utils/glassmorphism';
 
 export interface ButtonProps extends
   Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'>,
   Partial<AgeAwareComponentProps> {
-  variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'ghost' | 'outline';
+  variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'ghost' | 'outline' | 'glass';
   size?: 'small' | 'medium' | 'large' | 'auto' | 'sm' | 'lg';
   icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
   loading?: boolean;
   fullWidth?: boolean;
   animated?: boolean;
-  soundEnabled?: boolean;
   hapticEnabled?: boolean;
   asChild?: boolean;
+  glass?: boolean;
+  glassPreset?: keyof typeof glassPresets;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
@@ -29,68 +30,72 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
   loading = false,
   fullWidth = false,
   animated = true,
-  soundEnabled = true,
   hapticEnabled = true,
   children,
   onClick,
   disabled = false,
   className,
   asChild = false,
+  glass = false,
+  glassPreset = 'standard',
   ...props
 }, ref) => {
-  const { playSound } = useSound();
-  const { triggerHaptic } = useHaptic();
+  const { controls, handleHoverStart, handleHoverEnd, handleTap } = useCardHover(ageGroup);
+  const { playSuccess } = useGameAnimations();
 
   // Normalize size aliases for consistency
   const normalizedSize = size === 'sm' ? 'small' : size === 'lg' ? 'large' : size;
 
-  // Age-specific size classes - comprehensive mapping
+  // Apple-inspired age-specific size classes
   const sizeClasses = {
     '3-5': {
-      auto: 'min-h-[64px] px-6 py-4 text-2xl',
-      small: 'min-h-[48px] px-4 py-3 text-xl',
-      medium: 'min-h-[64px] px-6 py-4 text-2xl',
-      large: 'min-h-[80px] px-8 py-5 text-3xl',
+      auto: 'min-h-[64px] px-6 py-4 text-2xl font-apple rounded-apple-2xl',
+      small: 'min-h-[48px] px-4 py-3 text-xl font-apple rounded-apple-xl',
+      medium: 'min-h-[64px] px-6 py-4 text-2xl font-apple rounded-apple-2xl',
+      large: 'min-h-[80px] px-8 py-5 text-3xl font-apple rounded-apple-3xl',
     },
     '6-8': {
-      auto: 'min-h-[48px] px-4 py-2 text-lg',
-      small: 'min-h-[40px] px-3 py-1.5 text-base',
-      medium: 'min-h-[48px] px-4 py-2 text-lg',
-      large: 'min-h-[56px] px-5 py-3 text-xl',
+      auto: 'min-h-[48px] px-4 py-2.5 text-lg font-apple rounded-apple-xl',
+      small: 'min-h-[40px] px-3 py-2 text-base font-apple rounded-apple-lg',
+      medium: 'min-h-[48px] px-4 py-2.5 text-lg font-apple rounded-apple-xl',
+      large: 'min-h-[56px] px-5 py-3 text-xl font-apple rounded-apple-xl',
     },
-    '9': {
-      auto: 'min-h-[40px] px-3 py-1.5 text-base',
-      small: 'min-h-[32px] px-2 py-1 text-sm',
-      medium: 'min-h-[40px] px-3 py-1.5 text-base',
-      large: 'min-h-[48px] px-4 py-2 text-lg',
+    '9+': {
+      auto: 'min-h-[44px] px-4 py-2 text-base font-apple rounded-apple-lg',
+      small: 'min-h-[36px] px-3 py-1.5 text-sm font-apple rounded-apple-md',
+      medium: 'min-h-[44px] px-4 py-2 text-base font-apple rounded-apple-lg',
+      large: 'min-h-[52px] px-5 py-2.5 text-lg font-apple rounded-apple-lg',
     },
   };
 
-  // Age-specific variant classes with comprehensive color system
+  // Apple-inspired variant classes with system colors
   const variantClasses = {
     '3-5': {
-      primary: 'bg-blue-500 text-white hover:bg-blue-600 shadow-lg',
-      secondary: 'bg-purple-500 text-white hover:bg-purple-600 shadow-lg',
-      success: 'bg-green-500 text-white hover:bg-green-600 shadow-lg',
-      danger: 'bg-red-500 text-white hover:bg-red-600 shadow-lg',
-      ghost: 'text-blue-500 hover:bg-blue-100',
-      outline: 'border-2 border-blue-500 text-blue-500 hover:bg-blue-50',
+      primary: 'bg-system-yellow text-white hover:bg-system-orange shadow-apple-lg transition-all duration-300',
+      secondary: 'bg-system-green text-white hover:bg-system-teal shadow-apple-lg transition-all duration-300',
+      success: 'bg-system-green text-white hover:bg-system-teal shadow-apple-md transition-all duration-300',
+      danger: 'bg-system-red text-white hover:bg-system-pink shadow-apple-md transition-all duration-300',
+      ghost: 'text-system-blue hover:bg-apple-gray-100 transition-all duration-200',
+      outline: 'border-2 border-system-blue text-system-blue hover:bg-apple-gray-50 transition-all duration-200',
+      glass: '',
     },
     '6-8': {
-      primary: 'bg-blue-500 text-white hover:bg-blue-600 shadow-md',
-      secondary: 'bg-purple-500 text-white hover:bg-purple-600 shadow-md',
-      success: 'bg-green-500 text-white hover:bg-green-600 shadow-md',
-      danger: 'bg-red-500 text-white hover:bg-red-600 shadow-md',
-      ghost: 'text-blue-400 hover:bg-blue-100',
-      outline: 'border-2 border-blue-400 text-blue-400 hover:bg-blue-50',
+      primary: 'bg-system-blue text-white hover:bg-system-indigo shadow-apple-md transition-all duration-250',
+      secondary: 'bg-system-purple text-white hover:bg-system-pink shadow-apple-md transition-all duration-250',
+      success: 'bg-system-green text-white hover:bg-system-teal shadow-apple-sm transition-all duration-250',
+      danger: 'bg-system-red text-white hover:bg-system-pink shadow-apple-sm transition-all duration-250',
+      ghost: 'text-system-blue hover:bg-apple-gray-100 transition-all duration-200',
+      outline: 'border-2 border-system-blue text-system-blue hover:bg-apple-gray-50 transition-all duration-200',
+      glass: '',
     },
-    '9': {
-      primary: 'bg-blue-500 text-white hover:bg-blue-600',
-      secondary: 'bg-gray-200 text-gray-700 hover:bg-gray-300',
-      success: 'bg-green-500 text-white hover:bg-green-600',
-      danger: 'bg-red-500 text-white hover:bg-red-600',
-      ghost: 'text-gray-600 hover:bg-gray-100',
-      outline: 'border-2 border-gray-400 text-gray-600 hover:bg-gray-50',
+    '9+': {
+      primary: 'bg-system-indigo text-white hover:bg-system-blue shadow-apple-sm transition-all duration-200',
+      secondary: 'bg-system-teal text-white hover:bg-system-blue shadow-apple-sm transition-all duration-200',
+      success: 'bg-system-green text-white hover:bg-system-teal transition-all duration-200',
+      danger: 'bg-system-red text-white hover:bg-system-pink transition-all duration-200',
+      ghost: 'text-apple-gray-700 hover:bg-apple-gray-100 transition-all duration-200',
+      outline: 'border border-apple-gray-400 text-apple-gray-700 hover:bg-apple-gray-50 transition-all duration-200',
+      glass: '',
     },
   };
 
@@ -106,7 +111,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
       hapticStrength: 'light' as const,
       soundVolume: 0.6,
     },
-    '9': {
+    '9+': {
       scale: 1.02,
       hapticStrength: 'light' as const,
       soundVolume: 0.4,
@@ -119,15 +124,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     if (!disabled && !loading) {
-      if (soundEnabled) {
-        playSound('click', feedback.soundVolume);
+      if (hapticEnabled && 'vibrate' in navigator) {
+        navigator.vibrate(feedback.hapticStrength === 'medium' ? 50 : 25);
       }
-      if (hapticEnabled) {
-        triggerHaptic(feedback.hapticStrength);
-      }
+      playSuccess();
       onClick?.(e);
     }
-  }, [disabled, loading, soundEnabled, hapticEnabled, onClick, playSound, triggerHaptic, feedback]);
+  }, [disabled, loading, hapticEnabled, onClick, playSuccess, feedback]);
 
   // Loading spinner icon
   const loadingIcon = loading ? <LoadingSpinner ageGroup={ageGroup} /> : null;
@@ -150,38 +153,78 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
   const touchTargetClasses = {
     '3-5': 'touch-target-large',
     '6-8': 'touch-target-medium',
-    '9': 'touch-target-normal',
+    '9+': 'touch-target-normal',
   };
+
+  // Glass effect styles
+  const glassStyles = glass || variant === 'glass'
+    ? createGlassStyle(glassPresets[glassPreset])
+    : {};
+
+  const normalizedAgeGroup = ageGroup;
+
+  const commonClassName = cn(
+    'inline-flex items-center justify-center font-medium relative overflow-hidden',
+    'focus:outline-none focus:ring-3 focus:ring-system-blue/30 focus:ring-offset-2',
+    'active:scale-95 disabled:active:scale-100',
+    currentSizeClass,
+    !glass && variant !== 'glass' && currentVariantClass,
+    fullWidth && 'w-full',
+    disabled && 'opacity-50 cursor-not-allowed',
+    loading && 'opacity-75 cursor-wait',
+    glass || variant === 'glass' && 'backdrop-blur-apple border border-white/20',
+    className
+  );
+
+  const commonStyle = (glass || variant === 'glass') ? { ...glassStyles, ...props.style } : props.style;
+
+  const {
+    // Remove any motion-specific props that might conflict with Framer Motion
+    onAnimationStart,
+    onAnimationEnd,
+    onAnimationIteration,
+    onTransitionEnd,
+    // Remove drag-related props that might conflict with Framer Motion
+    onDrag,
+    onDragEnd,
+    onDragStart,
+    onDragEnter,
+    onDragExit,
+    onDragLeave,
+    onDragOver,
+    onDrop,
+    ...restProps
+  } = props;
 
   const buttonProps = {
     ref,
-    className: cn(
-      'inline-flex items-center justify-center font-semibold transition-all rounded-lg',
-      'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500',
-      currentSizeClass,
-      currentVariantClass,
-      fullWidth && 'w-full',
-      disabled && 'opacity-50 cursor-not-allowed',
-      loading && 'opacity-75 cursor-wait',
-      animated && 'transform transition-transform',
-      touchTargetClasses[ageGroup],
-      className
-    ),
+    className: commonClassName,
+    style: commonStyle,
     onClick: handleClick,
     disabled: disabled || loading,
-    ...props
+    onMouseEnter: animated && !disabled ? handleHoverStart : undefined,
+    onMouseLeave: animated && !disabled ? handleHoverEnd : undefined,
+    onMouseDown: animated && !disabled ? handleTap : undefined,
+    ...restProps
   };
 
   if (animated && !disabled && !loading) {
     return (
       <motion.button
-        ref={ref}
-        className={buttonProps.className}
-        onClick={buttonProps.onClick}
-        disabled={buttonProps.disabled}
-        whileHover={{ scale: feedback.scale }}
-        whileTap={{ scale: 0.95 }}
+        {...buttonProps}
+        animate={controls}
+        whileHover={{ scale: 1.02, y: -1 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{
+          type: 'spring',
+          stiffness: 400,
+          damping: 25,
+          mass: 0.8,
+        }}
       >
+        {glass || variant === 'glass' && (
+          <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 pointer-events-none" />
+        )}
         {content}
       </motion.button>
     );
@@ -189,6 +232,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
 
   return (
     <button {...buttonProps}>
+      {glass || variant === 'glass' && (
+        <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 pointer-events-none" />
+      )}
       {content}
     </button>
   );
@@ -196,35 +242,55 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
 
 Button.displayName = 'Button';
 
-// Loading spinner component
+// Apple-inspired Loading spinner component
 const LoadingSpinner: React.FC<{ ageGroup: AgeAwareComponentProps['ageGroup'] }> = ({ ageGroup }) => {
+  const normalizedAgeGroup = ageGroup;
+
   const spinnerSizes = {
     '3-5': 'w-8 h-8',
     '6-8': 'w-6 h-6',
-    '9': 'w-5 h-5',
+    '9+': 'w-5 h-5',
   };
 
   return (
-    <svg
-      className={cn('animate-spin', spinnerSizes[ageGroup])}
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
+    <motion.div
+      className={cn('relative', spinnerSizes[normalizedAgeGroup])}
+      animate={{ rotate: 360 }}
+      transition={{
+        duration: 1,
+        repeat: Infinity,
+        ease: 'linear',
+      }}
     >
-      <circle
-        className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="4"
-      />
-      <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-      />
-    </svg>
+      <svg
+        className="w-full h-full"
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeDasharray="31.416"
+          strokeDashoffset="31.416"
+          strokeLinecap="round"
+          className="opacity-20"
+        />
+        <circle
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeDasharray="31.416"
+          strokeDashoffset="15.708"
+          strokeLinecap="round"
+          className="opacity-75"
+        />
+      </svg>
+    </motion.div>
   );
 };
 

@@ -12,6 +12,26 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json', 'lcov'],
+      thresholds: {
+        global: {
+          branches: 80,
+          functions: 80,
+          lines: 80,
+          statements: 80,
+        },
+        'src/services/': {
+          branches: 90,
+          functions: 90,
+          lines: 90,
+          statements: 90,
+        },
+        'src/store/': {
+          branches: 85,
+          functions: 85,
+          lines: 85,
+          statements: 85,
+        },
+      },
       exclude: [
         'node_modules/**',
         'dist/**',
@@ -21,6 +41,14 @@ export default defineConfig({
         '**/*.config.{ts,js}',
         'src/main.tsx',
         'src/vite-env.d.ts',
+        'src/assets/**',
+        'src/types/**',
+        '**/*.d.ts',
+        'e2e/**',
+        'playwright/**',
+        'coverage/**',
+        'storybook-static/**',
+        '.storybook/**',
       ],
     },
   },

@@ -22,23 +22,9 @@ import {
   adjustDifficulty
 } from '@/store/slices/adaptiveSlice';
 import { trackEvent } from '@/store/slices/analyticsSlice';
-
-interface Question {
-  id: string;
-  type: 'multiple-choice' | 'drag-drop' | 'typing' | 'drawing';
-  question: string;
-  options?: string[];
-  correctAnswer: string | string[];
-  hint?: string;
-  explanation?: string;
-  media?: {
-    type: 'image' | 'audio' | 'video';
-    url: string;
-  };
-  difficulty: number;
-  points: number;
-  timeLimit?: number;
-}
+import { contentFactory } from '@/services/content/ContentFactory';
+import { GameContent, Question } from '@/services/database/schema';
+import { DifficultyLevel } from '@/types';
 
 interface GameState {
   currentQuestionIndex: number;
@@ -54,6 +40,7 @@ interface GameState {
   hintsUsed: number;
   isPaused: boolean;
   isComplete: boolean;
+  totalQuestions: number;
 }
 
 const GamePlayPage: React.FC = () => {
@@ -76,7 +63,8 @@ const GamePlayPage: React.FC = () => {
     answers: [],
     hintsUsed: 0,
     isPaused: false,
-    isComplete: false
+    isComplete: false,
+    totalQuestions: 0
   });
 
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
@@ -86,85 +74,79 @@ const GamePlayPage: React.FC = () => {
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
   const [showHint, setShowHint] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [gameContent, setGameContent] = useState<GameContent | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const timerRef = useRef<NodeJS.Timeout>();
   const questionTimerRef = useRef<NodeJS.Timeout>();
   const startTimeRef = useRef<number>(Date.now());
 
-  const questions: Question[] = [
-    {
-      id: '1',
-      type: 'multiple-choice',
-      question: 'What is 2 + 2?',
-      options: ['3', '4', '5', '6'],
-      correctAnswer: '4',
-      hint: 'Count on your fingers!',
-      explanation: '2 + 2 equals 4. You can count: 1, 2, then add 2 more: 3, 4!',
-      difficulty: 1,
-      points: 10,
-      timeLimit: 30
-    },
-    {
-      id: '2',
-      type: 'multiple-choice',
-      question: 'What is 5 + 3?',
-      options: ['7', '8', '9', '10'],
-      correctAnswer: '8',
-      hint: 'Start with 5 and count up 3 more',
-      explanation: '5 + 3 equals 8. Count: 5... 6, 7, 8!',
-      difficulty: 1,
-      points: 10,
-      timeLimit: 30
-    },
-    {
-      id: '3',
-      type: 'multiple-choice',
-      question: 'What is 10 - 4?',
-      options: ['4', '5', '6', '7'],
-      correctAnswer: '6',
-      hint: 'Start with 10 and take away 4',
-      explanation: '10 - 4 equals 6. If you have 10 items and remove 4, you have 6 left!',
-      difficulty: 2,
-      points: 15,
-      timeLimit: 30
-    },
-    {
-      id: '4',
-      type: 'typing',
-      question: 'Type the answer: 7 + 5 = ?',
-      correctAnswer: '12',
-      hint: '7 + 5 is the same as 10 + 2',
-      explanation: '7 + 5 equals 12. You can think of it as 7 + 3 = 10, then 10 + 2 = 12!',
-      difficulty: 2,
-      points: 20,
-      timeLimit: 45
-    },
-    {
-      id: '5',
-      type: 'multiple-choice',
-      question: 'What is 3 × 4?',
-      options: ['10', '11', '12', '13'],
-      correctAnswer: '12',
-      hint: '3 × 4 means 3 groups of 4',
-      explanation: '3 × 4 equals 12. It means 4 + 4 + 4 = 12!',
-      difficulty: 3,
-      points: 25,
-      timeLimit: 45
-    }
-  ];
-
+  // Dynamic questions loaded from ContentFactory - FIXES THE CRITICAL BUG!
+  const questions: Question[] = gameContent?.questions || [];
   const currentQuestion = questions[gameState.currentQuestionIndex];
 
+  // Load game content when component mounts - CRITICAL FIX
   useEffect(() => {
-    loadGame();
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-      if (questionTimerRef.current) clearInterval(questionTimerRef.current);
-    };
-  }, []);
+    const loadGameContent = async () => {
+      if (!gameId || !profile?.ageGroup) {
+        setLoadError('Missing game ID or user profile');
+        setIsLoading(false);
+        return;
+      }
 
+      try {
+        console.log(`🎮 Loading game content for: ${gameId}`);
+        console.log(`👤 Profile ageGroup: ${profile.ageGroup}`);
+
+        // Get difficulty from adaptive system or default
+        // Convert Elo rating to difficulty level
+        const convertEloToDifficulty = (elo: number): DifficultyLevel => {
+          if (elo < 1000) return 'easy';
+          if (elo < 1400) return 'medium';
+          if (elo < 1800) return 'hard';
+          return 'adaptive';
+        };
+        const difficulty: DifficultyLevel = convertEloToDifficulty(adaptiveData.currentDifficulty);
+        console.log(`⚙️ Using difficulty: ${difficulty}`);
+
+        // Load content using ContentFactory - this fixes the critical bug!
+        const content = await contentFactory.loadGameContent(gameId, profile.ageGroup, difficulty);
+
+        if (!content) {
+          throw new Error(`No content found for game: ${gameId}`);
+        }
+
+        console.log(`✅ Successfully loaded ${content.subject} content:`, content.title);
+        console.log(`📝 Questions count: ${content.questions.length}`);
+
+        setGameContent(content);
+        setGameState(prev => ({
+          ...prev,
+          totalQuestions: content.questions.length
+        }));
+
+        // Track game start event
+        dispatch(trackEvent({
+          category: 'game',
+          action: 'start',
+          label: `${content.subject}-${gameId}`,
+          value: content.questions.length
+        }));
+
+      } catch (error) {
+        console.error('❌ Failed to load game content:', error);
+        setLoadError(error instanceof Error ? error.message : 'Failed to load game content');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadGameContent();
+  }, [gameId, profile?.ageGroup, adaptiveData.currentDifficulty, dispatch]);
+
+  // Timer management
   useEffect(() => {
-    if (!gameState.isPaused && !gameState.isComplete) {
+    if (!gameState.isPaused && !gameState.isComplete && !isLoading) {
       timerRef.current = setInterval(() => {
         setGameState(prev => ({
           ...prev,
@@ -178,10 +160,11 @@ const GamePlayPage: React.FC = () => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [gameState.isPaused, gameState.isComplete]);
+  }, [gameState.isPaused, gameState.isComplete, isLoading]);
 
+  // Question timer
   useEffect(() => {
-    if (currentQuestion?.timeLimit && !gameState.isPaused) {
+    if (currentQuestion?.timeLimit && !gameState.isPaused && !isLoading) {
       setTimeRemaining(currentQuestion.timeLimit);
 
       questionTimerRef.current = setInterval(() => {
@@ -193,177 +176,177 @@ const GamePlayPage: React.FC = () => {
           return prev - 1;
         });
       }, 1000);
+    } else {
+      if (questionTimerRef.current) clearInterval(questionTimerRef.current);
     }
 
     return () => {
       if (questionTimerRef.current) clearInterval(questionTimerRef.current);
     };
-  }, [gameState.currentQuestionIndex, gameState.isPaused]);
+  }, [currentQuestion, gameState.isPaused, gameState.currentQuestionIndex, isLoading]);
 
-  const loadGame = async () => {
-    setIsLoading(true);
-    try {
-      dispatch(trackEvent({
-        category: 'game',
-        action: 'start',
-        label: gameId,
-        value: 1
-      }));
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      if (questionTimerRef.current) clearInterval(questionTimerRef.current);
+    };
+  }, []);
 
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
-    } catch (error) {
-      console.error('Error loading game:', error);
-      navigate('/games');
-    }
-  };
+  const handleTimeUp = useCallback(() => {
+    if (soundEnabled) playSound('warning');
+    triggerHaptic('warning');
+
+    setFeedbackType('warning');
+    setFeedbackMessage('Time\'s up! Let\'s try the next question.');
+    setShowFeedback(true);
+
+    // Move to next question after a delay
+    setTimeout(() => {
+      nextQuestion();
+    }, 2000);
+  }, [soundEnabled, playSound, triggerHaptic]);
 
   const handleAnswerSubmit = useCallback(() => {
-    if (!selectedAnswer) return;
+    if (!selectedAnswer || !currentQuestion) return;
 
+    const questionStartTime = startTimeRef.current;
+    const timeSpent = (Date.now() - questionStartTime) / 1000;
     const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
-    const timeSpent = Math.floor((Date.now() - startTimeRef.current) / 1000);
 
-    if (soundEnabled) {
-      playSound(isCorrect ? 'success' : 'error');
-    }
-
-    triggerHaptic(isCorrect ? 'success' : 'error');
-
-    setGameState(prev => ({
-      ...prev,
-      score: isCorrect ? prev.score + currentQuestion.points : prev.score,
-      streak: isCorrect ? prev.streak + 1 : 0,
-      answers: [...prev.answers, {
-        questionId: currentQuestion.id,
-        answer: selectedAnswer,
-        isCorrect,
-        timeSpent
-      }]
-    }));
-
-    dispatch(submitAnswer({
-      gameId: gameId!,
+    // Record answer
+    const answerRecord = {
       questionId: currentQuestion.id,
       answer: selectedAnswer,
       isCorrect,
-      timeSpent,
-      hintsUsed: showHint ? 1 : 0
+      timeSpent: Math.round(timeSpent)
+    };
+
+    setGameState(prev => ({
+      ...prev,
+      answers: [...prev.answers, answerRecord],
+      score: prev.score + (isCorrect ? currentQuestion.points : 0),
+      streak: isCorrect ? prev.streak + 1 : 0
     }));
 
+    // Provide feedback
+    if (isCorrect) {
+      if (soundEnabled) playSound('success');
+      triggerHaptic('success');
+      setFeedbackType('success');
+      setFeedbackMessage(currentQuestion.explanation || 'Excellent! You got it right!');
+
+      // Trigger confetti for correct answers
+      if (visualEffects) {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      }
+    } else {
+      if (soundEnabled) playSound('error');
+      triggerHaptic('error');
+      setFeedbackType('error');
+      setFeedbackMessage(currentQuestion.explanation || `The correct answer is ${currentQuestion.correctAnswer}`);
+    }
+
+    setShowFeedback(true);
+
+    // Track performance
+    const subject = gameContent?.subject || 'mathematics';
+    const trackingSubject = subject === 'mathematics' ? 'math' : subject;
     dispatch(trackPerformance({
-      subject: 'math',
+      subject: trackingSubject as 'math' | 'english' | 'science',
       difficulty: currentQuestion.difficulty,
       correct: isCorrect,
       responseTime: timeSpent,
-      hintsUsed: showHint ? 1 : 0
+      hintsUsed: gameState.hintsUsed
     }));
 
-    setFeedbackType(isCorrect ? 'success' : 'error');
-    setFeedbackMessage(
-      isCorrect
-        ? getSuccessMessage()
-        : `Not quite! ${currentQuestion.explanation || 'Try again next time!'}`
-    );
-    setShowFeedback(true);
-
-    if (isCorrect && visualEffects) {
-      triggerConfetti();
-    }
-
+    // Move to next question after feedback
     setTimeout(() => {
-      moveToNextQuestion();
+      nextQuestion();
     }, 3000);
-  }, [selectedAnswer, currentQuestion, showHint, gameId, soundEnabled, visualEffects]);
+  }, [
+    selectedAnswer,
+    currentQuestion,
+    gameState.hintsUsed,
+    soundEnabled,
+    visualEffects,
+    playSound,
+    triggerHaptic,
+    dispatch
+  ]);
 
-  const moveToNextQuestion = () => {
+  const nextQuestion = useCallback(() => {
     setShowFeedback(false);
     setSelectedAnswer('');
     setShowHint(false);
-    startTimeRef.current = Date.now();
 
-    if (gameState.currentQuestionIndex < questions.length - 1) {
+    if (questionTimerRef.current) {
+      clearInterval(questionTimerRef.current);
+    }
+
+    if (gameState.currentQuestionIndex >= questions.length - 1) {
+      // Game complete
+      completeGame();
+    } else {
       setGameState(prev => ({
         ...prev,
         currentQuestionIndex: prev.currentQuestionIndex + 1
       }));
-    } else {
-      completeGameSession();
+      startTimeRef.current = Date.now();
     }
-  };
+  }, [gameState.currentQuestionIndex, questions.length]);
 
-  const completeGameSession = () => {
-    const totalScore = gameState.score;
-    const accuracy = (gameState.answers.filter(a => a.isCorrect).length / questions.length) * 100;
-    const avgResponseTime = gameState.answers.reduce((sum, a) => sum + a.timeSpent, 0) / gameState.answers.length;
+  const completeGame = useCallback(() => {
+    const correctAnswers = gameState.answers.filter(a => a.isCorrect).length;
+    const accuracy = questions.length > 0 ? (correctAnswers / questions.length) * 100 : 0;
 
-    dispatch(completeGame({
-      gameId: gameId!,
-      score: totalScore,
-      accuracy,
-      timeElapsed: gameState.timeElapsed,
-      questionsAnswered: questions.length,
-      correctAnswers: gameState.answers.filter(a => a.isCorrect).length,
-      hintsUsed: gameState.hintsUsed,
-      avgResponseTime
+    setGameState(prev => ({ ...prev, isComplete: true }));
+
+    if (soundEnabled) playSound('levelUp');
+    triggerHaptic('success');
+
+    // Celebrate completion
+    if (visualEffects) {
+      confetti({
+        particleCount: 200,
+        spread: 100,
+        origin: { y: 0.4 }
+      });
+    }
+
+    // Track completion
+    dispatch(trackEvent({
+      category: 'game',
+      action: 'complete',
+      label: `${gameContent?.subject}-${gameId}`,
+      value: gameState.score
     }));
 
-    dispatch(updateSkillProgress({
-      subject: 'math',
-      points: totalScore,
-      accuracy
-    }));
-
+    // Update adaptive difficulty
     dispatch(adjustDifficulty({
       direction: accuracy > 80 ? 'increase' : accuracy < 60 ? 'decrease' : 'maintain',
       reason: `Game completed with ${accuracy}% accuracy`
     }));
+  }, [
+    gameState.answers,
+    gameState.score,
+    gameState.timeElapsed,
+    gameState.hintsUsed,
+    questions.length,
+    gameId,
+    gameContent?.subject,
+    soundEnabled,
+    visualEffects,
+    playSound,
+    triggerHaptic,
+    dispatch
+  ]);
 
-    setGameState(prev => ({ ...prev, isComplete: true }));
-
-    if (soundEnabled) {
-      playSound('complete');
-    }
-
-    if (visualEffects) {
-      celebrateCompletion();
-    }
-  };
-
-  const handleTimeUp = () => {
-    if (soundEnabled) {
-      playSound('warning');
-    }
-
-    setFeedbackType('warning');
-    setFeedbackMessage("Time's up! Moving to the next question.");
-    setShowFeedback(true);
-
-    setTimeout(() => {
-      moveToNextQuestion();
-    }, 2000);
-  };
-
-  const handleHintRequest = () => {
-    if (currentQuestion.hint) {
-      setShowHint(true);
-      setGameState(prev => ({ ...prev, hintsUsed: prev.hintsUsed + 1 }));
-
-      if (soundEnabled) {
-        playSound('hint');
-      }
-
-      dispatch(trackEvent({
-        category: 'game',
-        action: 'hint_used',
-        label: currentQuestion.id,
-        value: 1
-      }));
-    }
-  };
-
-  const handlePauseResume = () => {
+  const handlePauseToggle = () => {
     if (gameState.isPaused) {
       dispatch(resumeGame());
     } else {
@@ -380,177 +363,133 @@ const GamePlayPage: React.FC = () => {
     }
   };
 
-  const getSuccessMessage = () => {
-    const messages = [
-      'Excellent work! 🌟',
-      'You\'re amazing! 🎉',
-      'Great job! 🏆',
-      'Fantastic! 🚀',
-      'You did it! 🎊',
-      'Brilliant! ⭐',
-      'Awesome! 🌈',
-      'Perfect! 💯'
-    ];
-    return messages[Math.floor(Math.random() * messages.length)];
-  };
+  const handleHint = () => {
+    if (currentQuestion?.hint) {
+      setShowHint(true);
+      setGameState(prev => ({ ...prev, hintsUsed: prev.hintsUsed + 1 }));
 
-  const triggerConfetti = () => {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
-  };
-
-  const celebrateCompletion = () => {
-    const duration = 3000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-    const interval = setInterval(() => {
-      const timeLeft = animationEnd - Date.now();
-
-      if (timeLeft <= 0) {
-        return clearInterval(interval);
-      }
-
-      const particleCount = 50 * (timeLeft / duration);
-
-      confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: Math.random(), y: Math.random() - 0.2 }
-      });
-    }, 250);
-  };
-
-  const renderQuestion = () => {
-    switch (currentQuestion.type) {
-      case 'multiple-choice':
-        return (
-          <div className="grid grid-cols-2 gap-4">
-            {currentQuestion.options?.map((option) => (
-              <motion.button
-                key={option}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedAnswer(option)}
-                className={`p-6 rounded-xl text-2xl font-bold transition-all ${
-                  selectedAnswer === option
-                    ? 'bg-blue-500 text-white shadow-lg transform scale-105'
-                    : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-md hover:shadow-lg'
-                }`}
-              >
-                {option}
-              </motion.button>
-            ))}
-          </div>
-        );
-
-      case 'typing':
-        return (
-          <div className="max-w-md mx-auto">
-            <input
-              type="text"
-              value={selectedAnswer}
-              onChange={(e) => setSelectedAnswer(e.target.value)}
-              placeholder="Type your answer here..."
-              className="w-full px-6 py-4 text-2xl text-center border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-              autoFocus
-            />
-          </div>
-        );
-
-      default:
-        return null;
+      if (soundEnabled) playSound('hint');
+      triggerHaptic('light');
     }
   };
 
+  const handleRestart = () => {
+    if (window.confirm('Are you sure you want to restart? All progress will be lost.')) {
+      setGameState({
+        currentQuestionIndex: 0,
+        score: 0,
+        streak: 0,
+        timeElapsed: 0,
+        answers: [],
+        hintsUsed: 0,
+        isPaused: false,
+        isComplete: false,
+        totalQuestions: questions.length
+      });
+      setSelectedAnswer('');
+      setShowFeedback(false);
+      setShowHint(false);
+      startTimeRef.current = Date.now();
+    }
+  };
+
+  // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-xl text-gray-700 dark:text-gray-300">Loading game...</p>
+      <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-600 flex items-center justify-center">
+        <motion.div
+          className="text-white text-center"
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ repeat: Infinity, duration: 1.5 }}
+        >
+          <div className="text-3xl font-bold mb-4">Loading {gameId}...</div>
+          <div className="text-lg opacity-80">Preparing your adventure!</div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (loadError || !gameContent || questions.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-red-500 to-orange-500 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl p-8 text-center max-w-md">
+          <div className="text-6xl mb-4">😞</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Oops! Something went wrong</h2>
+          <p className="text-gray-600 mb-6">
+            {loadError || 'Could not load game content. Please try again.'}
+          </p>
+          <div className="space-y-3">
+            <Button
+              onClick={() => window.location.reload()}
+              className="w-full"
+              variant="primary"
+            >
+              🔄 Try Again
+            </Button>
+            <Button
+              onClick={() => navigate('/games')}
+              className="w-full"
+              variant="secondary"
+            >
+              🏠 Back to Games
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
 
+  // Game complete state
   if (gameState.isComplete) {
-    const accuracy = (gameState.answers.filter(a => a.isCorrect).length / questions.length) * 100;
-    const stars = accuracy >= 90 ? 3 : accuracy >= 70 ? 2 : accuracy >= 50 ? 1 : 0;
+    const correctAnswers = gameState.answers.filter(a => a.isCorrect).length;
+    const accuracy = (correctAnswers / questions.length) * 100;
 
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4">
+      <div className="min-h-screen bg-gradient-to-b from-green-500 to-blue-500 flex items-center justify-center p-4">
         <motion.div
+          className="bg-white rounded-2xl p-8 text-center max-w-md w-full"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-md w-full text-center"
+          transition={{ duration: 0.5 }}
         >
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Game Complete! 🎉
-          </h1>
+          <div className="text-6xl mb-4">🎉</div>
+          <h2 className="text-3xl font-bold text-gray-800 mb-4">Congratulations!</h2>
+          <p className="text-gray-600 mb-6">You completed {gameContent.title}!</p>
 
-          <div className="flex justify-center mb-6">
-            {[...Array(3)].map((_, i) => (
-              <motion.span
-                key={i}
-                initial={{ scale: 0 }}
-                animate={{ scale: i < stars ? 1.2 : 0.8 }}
-                transition={{ delay: i * 0.2 }}
-                className={`text-5xl ${i < stars ? 'text-yellow-400' : 'text-gray-300'}`}
-              >
-                ⭐
-              </motion.span>
-            ))}
-          </div>
-
-          <div className="space-y-4 mb-6">
-            <div className="bg-blue-100 dark:bg-blue-900 rounded-lg p-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400">Final Score</p>
-              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{gameState.score}</p>
+          <div className="bg-gray-50 rounded-lg p-4 mb-6 space-y-2">
+            <div className="flex justify-between">
+              <span>Score:</span>
+              <span className="font-bold">{gameState.score} points</span>
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-green-100 dark:bg-green-900 rounded-lg p-3">
-                <p className="text-xs text-gray-600 dark:text-gray-400">Accuracy</p>
-                <p className="text-xl font-bold text-green-600 dark:text-green-400">{accuracy.toFixed(0)}%</p>
-              </div>
-
-              <div className="bg-purple-100 dark:bg-purple-900 rounded-lg p-3">
-                <p className="text-xs text-gray-600 dark:text-gray-400">Time</p>
-                <p className="text-xl font-bold text-purple-600 dark:text-purple-400">
-                  {Math.floor(gameState.timeElapsed / 60)}:{(gameState.timeElapsed % 60).toString().padStart(2, '0')}
-                </p>
-              </div>
+            <div className="flex justify-between">
+              <span>Accuracy:</span>
+              <span className="font-bold">{Math.round(accuracy)}%</span>
             </div>
-
-            <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-3">
-              <p className="text-xs text-gray-600 dark:text-gray-400">Best Streak</p>
-              <p className="text-xl font-bold text-gray-700 dark:text-gray-300">
-                {gameState.streak} in a row!
-              </p>
+            <div className="flex justify-between">
+              <span>Time:</span>
+              <span className="font-bold">{Math.floor(gameState.timeElapsed / 60)}:{(gameState.timeElapsed % 60).toString().padStart(2, '0')}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Best Streak:</span>
+              <span className="font-bold">{gameState.streak} in a row</span>
             </div>
           </div>
 
           <div className="space-y-3">
             <Button
-              onClick={() => window.location.reload()}
-              variant="primary"
-              size="lg"
+              onClick={handleRestart}
               className="w-full"
+              variant="primary"
             >
-              Play Again
+              🔄 Play Again
             </Button>
-
             <Button
               onClick={() => navigate('/games')}
-              variant="outline"
-              size="lg"
               className="w-full"
+              variant="secondary"
             >
-              Back to Games
+              🏠 Back to Games
             </Button>
           </div>
         </motion.div>
@@ -558,146 +497,201 @@ const GamePlayPage: React.FC = () => {
     );
   }
 
+  // Ensure we have a current question
+  if (!currentQuestion) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-green-500 to-blue-500 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl p-8 text-center max-w-md">
+          <div className="text-6xl mb-4">🎉</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Game Complete!</h2>
+          <p className="text-gray-600 mb-6">Congratulations! You've finished all the questions.</p>
+          <Button
+            onClick={() => navigate('/games')}
+            className="w-full"
+            variant="primary"
+          >
+            🏠 Back to Games
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4">
+    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-purple-600 p-4">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center gap-4">
-              <Button
-                onClick={handleExit}
-                variant="outline"
-                size="sm"
-              >
-                ← Exit
-              </Button>
-
-              <Button
-                onClick={handlePauseResume}
-                variant="outline"
-                size="sm"
-              >
-                {gameState.isPaused ? '▶ Resume' : '⏸ Pause'}
-              </Button>
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-white">
+            {gameContent?.title || 'Learning Game'}
+          </h1>
+          <div className="flex items-center space-x-4">
+            <div className="text-white">
+              <span className="text-sm opacity-75">Score: </span>
+              <span className="font-bold">{gameState.score}</span>
             </div>
-
-            <div className="flex items-center gap-4">
-              <div className="text-center">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Score</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{gameState.score}</p>
-              </div>
-
-              {gameState.streak > 0 && (
-                <div className="text-center">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Streak</p>
-                  <p className="text-2xl font-bold text-orange-500">🔥 {gameState.streak}</p>
-                </div>
-              )}
-
-              {timeRemaining !== null && (
-                <div className="text-center">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Time</p>
-                  <p className={`text-2xl font-bold ${timeRemaining < 10 ? 'text-red-500 animate-pulse' : 'text-gray-900 dark:text-white'}`}>
-                    {timeRemaining}s
-                  </p>
-                </div>
-              )}
+            <div className="text-white">
+              <span className="text-sm opacity-75">Time: </span>
+              <span className="font-bold">
+                {Math.floor(gameState.timeElapsed / 60)}:{(gameState.timeElapsed % 60).toString().padStart(2, '0')}
+              </span>
             </div>
           </div>
+        </div>
 
+        {/* Progress Bar */}
+        <div className="mb-6">
           <ProgressBar
-            progress={(gameState.currentQuestionIndex / questions.length) * 100}
+            current={gameState.currentQuestionIndex + 1}
+            total={questions.length}
             className="h-3"
           />
-
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+          <p className="text-white text-center mt-2">
             Question {gameState.currentQuestionIndex + 1} of {questions.length}
           </p>
         </div>
 
-        {gameState.isPaused ? (
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-12 text-center">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Game Paused</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
-              Take a break! Your progress is saved.
-            </p>
-            <Button onClick={handlePauseResume} size="lg" variant="primary">
-              Resume Game
+        {/* Game Controls */}
+        <div className="flex justify-between items-center mb-6">
+          <Button onClick={handleExit} variant="outline">
+            ← Exit
+          </Button>
+          <Button onClick={handlePauseToggle} variant="outline">
+            {gameState.isPaused ? '▶ Resume' : '⏸ Pause'}
+          </Button>
+        </div>
+
+        {/* Question Timer */}
+        {timeRemaining !== null && (
+          <div className="mb-4">
+            <div className="flex justify-center">
+              <div className={`text-2xl font-bold ${timeRemaining <= 10 ? 'text-red-300' : 'text-white'}`}>
+                ⏰ {timeRemaining}s
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Question Card */}
+        <motion.div
+          key={currentQuestion.id}
+          className="bg-white rounded-2xl p-8 mb-6 shadow-xl"
+          initial={{ x: 300, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          {/* Question Media */}
+          {currentQuestion.media && (
+            <div className="mb-6 text-center">
+              {currentQuestion.media.type === 'image' && (
+                <div className="inline-block bg-gray-100 rounded-lg p-4">
+                  <div className="text-4xl">📷</div>
+                  <p className="text-sm text-gray-500 mt-2">{currentQuestion.media.alt}</p>
+                </div>
+              )}
+              {currentQuestion.media.type === 'audio' && (
+                <div className="inline-block bg-blue-100 rounded-lg p-4">
+                  <div className="text-4xl">🔊</div>
+                  <p className="text-sm text-gray-500 mt-2">Audio content</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Question Text */}
+          <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">
+            {currentQuestion.question}
+          </h2>
+
+          {/* Answer Options */}
+          {currentQuestion.type === 'multiple-choice' && currentQuestion.options && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              {currentQuestion.options.map((option, index) => (
+                <Button
+                  key={index}
+                  onClick={() => setSelectedAnswer(option)}
+                  variant={selectedAnswer === option ? 'primary' : 'outline'}
+                  className="p-4 text-lg h-auto"
+                  size="large"
+                >
+                  {option}
+                </Button>
+              ))}
+            </div>
+          )}
+
+          {/* Typing Input */}
+          {currentQuestion.type === 'typing' && (
+            <div className="mb-6">
+              <input
+                type="text"
+                value={selectedAnswer}
+                onChange={(e) => setSelectedAnswer(e.target.value)}
+                className="w-full p-4 text-xl border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-center"
+                placeholder="Type your answer here..."
+              />
+            </div>
+          )}
+
+          {/* Hint */}
+          {showHint && currentQuestion.hint && (
+            <motion.div
+              className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <div className="flex items-start space-x-2">
+                <span className="text-yellow-500 text-xl">💡</span>
+                <p className="text-yellow-800">{currentQuestion.hint}</p>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex justify-between items-center">
+            <Button
+              onClick={handleHint}
+              variant="outline"
+              disabled={showHint}
+            >
+              💡 Get Hint
+            </Button>
+
+            <Button
+              onClick={handleAnswerSubmit}
+              variant="primary"
+              disabled={!selectedAnswer || gameState.isPaused}
+              className="px-8 py-3 text-lg"
+            >
+              Submit Answer
             </Button>
           </div>
-        ) : (
-          <motion.div
-            key={gameState.currentQuestionIndex}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8"
-          >
-            <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-8">
-              {currentQuestion.question}
-            </h2>
+        </motion.div>
 
-            {currentQuestion.media && (
-              <div className="mb-6 flex justify-center">
-                {currentQuestion.media.type === 'image' && (
-                  <img
-                    src={currentQuestion.media.url}
-                    alt="Question"
-                    className="max-w-full h-auto rounded-lg"
-                  />
-                )}
-              </div>
-            )}
-
-            {showHint && currentQuestion.hint && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-yellow-100 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 rounded-lg p-4 mb-6"
-              >
-                <p className="text-yellow-800 dark:text-yellow-200">
-                  💡 Hint: {currentQuestion.hint}
-                </p>
-              </motion.div>
-            )}
-
-            <div className="mb-8">
-              {renderQuestion()}
-            </div>
-
-            <div className="flex justify-center gap-4">
-              {!showHint && currentQuestion.hint && (
-                <Button
-                  onClick={handleHintRequest}
-                  variant="outline"
-                >
-                  💡 Get Hint
-                </Button>
-              )}
-
-              <Button
-                onClick={handleAnswerSubmit}
-                disabled={!selectedAnswer}
-                variant="primary"
-                size="lg"
-              >
-                Submit Answer
-              </Button>
-            </div>
-          </motion.div>
-        )}
+        {/* Game Stats */}
+        <div className="grid grid-cols-3 gap-4 text-center">
+          <div className="bg-white bg-opacity-20 rounded-lg p-4">
+            <div className="text-2xl font-bold text-white">{gameState.streak}</div>
+            <div className="text-white opacity-75">Streak</div>
+          </div>
+          <div className="bg-white bg-opacity-20 rounded-lg p-4">
+            <div className="text-2xl font-bold text-white">{gameState.hintsUsed}</div>
+            <div className="text-white opacity-75">Hints Used</div>
+          </div>
+          <div className="bg-white bg-opacity-20 rounded-lg p-4">
+            <div className="text-2xl font-bold text-white">{gameState.answers.filter(a => a.isCorrect).length}</div>
+            <div className="text-white opacity-75">Correct</div>
+          </div>
+        </div>
       </div>
 
-      <AnimatePresence>
-        {showFeedback && (
-          <FeedbackModal
-            isOpen={showFeedback}
-            onClose={() => setShowFeedback(false)}
-            type={feedbackType}
-            message={feedbackMessage}
-          />
-        )}
-      </AnimatePresence>
+      {/* Feedback Modal */}
+      <FeedbackModal
+        isOpen={showFeedback}
+        onClose={() => setShowFeedback(false)}
+        type={feedbackType}
+        message={feedbackMessage}
+      />
     </div>
   );
 };

@@ -130,7 +130,7 @@ describe('Button Component', () => {
     button = screen.getByRole('button');
     expect(button).toHaveClass('touch-target-medium');
 
-    rerender(<Button ageGroup="9">Older Child Button</Button>);
+    rerender(<Button ageGroup="9+">Older Child Button</Button>);
     button = screen.getByRole('button');
     expect(button).toHaveClass('touch-target-normal');
   });

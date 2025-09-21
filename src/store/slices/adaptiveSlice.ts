@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Content, AdaptiveResponse, LearningContext, SkillLevel } from '@/types';
+import { Content, AdaptiveResponse, LearningContext, SkillLevel, SpacedRepetitionCard, ReviewSession } from '@/types';
 
 export interface AdaptiveState {
   currentDifficulty: number;
@@ -37,6 +37,12 @@ export interface AdaptiveState {
   mathRating?: number;
   englishRating?: number;
   scienceRating?: number;
+  // Spaced Repetition state
+  spacedRepetitionCards: SpacedRepetitionCard[];
+  currentReviewSession: ReviewSession | null;
+  reviewsDueToday: number;
+  reviewsCompleted: number;
+  averageRetention: number;
 }
 
 const initialState: AdaptiveState = {
@@ -72,6 +78,12 @@ const initialState: AdaptiveState = {
     english: 2,
     science: 2,
   },
+  // Spaced Repetition initial state
+  spacedRepetitionCards: [],
+  currentReviewSession: null,
+  reviewsDueToday: 0,
+  reviewsCompleted: 0,
+  averageRetention: 0.75,
 };
 
 const adaptiveSlice = createSlice({
@@ -280,6 +292,53 @@ const adaptiveSlice = createSlice({
         state.recommendedDifficulty[subject] = Math.max(1, state.recommendedDifficulty[subject] - 0.3);
       }
     },
+
+    // Spaced Repetition actions
+    addSpacedRepetitionCard: (state, action: PayloadAction<SpacedRepetitionCard>) => {
+      state.spacedRepetitionCards.push(action.payload);
+    },
+
+    updateSpacedRepetitionCard: (state, action: PayloadAction<SpacedRepetitionCard>) => {
+      const index = state.spacedRepetitionCards.findIndex(card => card.id === action.payload.id);
+      if (index !== -1) {
+        state.spacedRepetitionCards[index] = action.payload;
+      }
+    },
+
+    removeSpacedRepetitionCard: (state, action: PayloadAction<string>) => {
+      state.spacedRepetitionCards = state.spacedRepetitionCards.filter(
+        card => card.id !== action.payload
+      );
+    },
+
+    setCurrentReviewSession: (state, action: PayloadAction<ReviewSession | null>) => {
+      state.currentReviewSession = action.payload;
+    },
+
+    updateReviewProgress: (state, action: PayloadAction<{ completed: boolean }>) => {
+      if (action.payload.completed) {
+        state.reviewsCompleted += 1;
+      }
+    },
+
+    calculateDueReviews: (state) => {
+      const now = new Date();
+      state.reviewsDueToday = state.spacedRepetitionCards.filter(
+        card => card.nextReview <= now
+      ).length;
+    },
+
+    updateRetentionRate: (state, action: PayloadAction<number>) => {
+      state.averageRetention = action.payload;
+    },
+
+    resetSpacedRepetition: (state) => {
+      state.spacedRepetitionCards = [];
+      state.currentReviewSession = null;
+      state.reviewsDueToday = 0;
+      state.reviewsCompleted = 0;
+      state.averageRetention = 0.75;
+    },
   },
 });
 
@@ -299,6 +358,15 @@ export const {
   resetAdaptive,
   trackPerformance,
   updateSkillProgress,
+  // Spaced Repetition actions
+  addSpacedRepetitionCard,
+  updateSpacedRepetitionCard,
+  removeSpacedRepetitionCard,
+  setCurrentReviewSession,
+  updateReviewProgress,
+  calculateDueReviews,
+  updateRetentionRate,
+  resetSpacedRepetition,
 } = adaptiveSlice.actions;
 
 export default adaptiveSlice.reducer;

@@ -1,7 +1,7 @@
 // Core type definitions for the Stealth Learning Games SPA
 
 // Age groups as defined in research
-export type AgeGroup = '3-5' | '6-8' | '9';
+export type AgeGroup = '3-5' | '6-8' | '9+';
 
 // Learning subjects
 export type Subject = 'mathematics' | 'english' | 'science';
@@ -312,4 +312,136 @@ export interface LearningContext {
   recentPerformance: PerformanceRecord[];
   mood?: 'excited' | 'neutral' | 'frustrated';
   environment?: 'quiet' | 'noisy';
+}
+
+// Spaced Repetition types
+export interface SpacedRepetitionCard {
+  id: string;
+  contentId: string;
+  contentType: ContentType;
+  subject: Subject;
+  difficulty: number;
+  interval: number; // days until next review
+  easeFactor: number; // SM-2 ease factor
+  reviewCount: number;
+  nextReview: Date;
+  createdAt: Date;
+  lastReviewed: Date;
+  successStreak: number;
+  totalAttempts: number;
+  totalCorrect: number;
+  retentionStrength: number; // 0-1 confidence score
+}
+
+export interface ReviewResult {
+  correct: boolean;
+  responseTime: number;
+  hintsUsed: number;
+  difficulty: number;
+  confidence?: number; // 0-1 self-reported confidence
+}
+
+export interface ReviewSession {
+  id: string;
+  cards: SpacedRepetitionCard[];
+  estimatedDuration: number; // minutes
+  createdAt: Date;
+  ageGroup: AgeGroup;
+  targetRetention: number; // 0-1 target retention rate
+}
+
+// Web API Types - Export all types from web-api.d.ts
+export * from './web-api';
+
+// Component Configuration by Age Group
+export const TOUCH_TARGET_SIZES = {
+  '3-5': 64,   // Large touch targets for young children
+  '6-8': 48,   // Medium touch targets
+  '9+': 44,    // Standard touch targets
+} as const;
+
+// Animation Speed Configurations by Age Group
+export const ANIMATION_SPEEDS = {
+  '3-5': {
+    duration: 0.8,
+    easing: 'ease-out',
+    playful: true,
+  },
+  '6-8': {
+    duration: 0.5,
+    easing: 'ease-in-out',
+    playful: false,
+  },
+  '9+': {
+    duration: 0.3,
+    easing: 'ease-in-out',
+    playful: false,
+  },
+} as const;
+
+// Color Schemes by Age Group
+export const AGE_COLOR_SCHEMES = {
+  '3-5': {
+    primary: 'bg-yellow-400 text-yellow-900',
+    secondary: 'bg-pink-400 text-pink-900',
+    accent: 'bg-green-400 text-green-900',
+    background: 'bg-gradient-to-br from-yellow-100 to-pink-100',
+  },
+  '6-8': {
+    primary: 'bg-blue-500 text-white',
+    secondary: 'bg-purple-500 text-white',
+    accent: 'bg-green-500 text-white',
+    background: 'bg-gradient-to-br from-blue-50 to-purple-50',
+  },
+  '9+': {
+    primary: 'bg-indigo-600 text-white',
+    secondary: 'bg-gray-600 text-white',
+    accent: 'bg-emerald-600 text-white',
+    background: 'bg-gradient-to-br from-gray-50 to-indigo-50',
+  },
+} as const;
+
+// Animation Configuration Interface
+export interface AnimationConfig {
+  type?: 'slide' | 'fade' | 'scale' | 'flip' | 'bounce' | 'pulse';
+  delay?: number;
+  duration?: number;
+  repeat?: boolean;
+}
+
+// Effects Configuration Interface
+export interface EffectsConfig {
+  hover?: boolean;
+  parallax?: boolean;
+  glow?: boolean;
+  shadow?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+}
+
+// Accessibility Configuration Interface
+export interface AccessibilityConfig {
+  ariaLabel?: string;
+  focusRing?: boolean;
+  highContrast?: boolean;
+}
+
+// Common utility types
+export interface ApiResponse<T = any> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  message?: string;
+}
+
+export interface PaginatedResponse<T = any> {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  hasMore: boolean;
+}
+
+export interface ValidationError {
+  field: string;
+  message: string;
+  code?: string;
 }

@@ -12,7 +12,7 @@ const LoginPage: React.FC = () => {
   const { playSound } = useSound();
   
   const [mode, setMode] = useState<'select' | 'parent' | 'child'>('select');
-  const [selectedAge, setSelectedAge] = useState<'3-5' | '6-8' | '9' | null>(null);
+  const [selectedAge, setSelectedAge] = useState<'3-5' | '6-8' | '9+' | null>(null);
   const [username, setUsername] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState(0);
 
@@ -174,7 +174,7 @@ const LoginPage: React.FC = () => {
               {[
                 { age: '3-5', emoji: '🧸', label: '3-5 years', color: 'from-yellow-400 to-orange-500' },
                 { age: '6-8', emoji: '🎨', label: '6-8 years', color: 'from-green-400 to-teal-500' },
-                { age: '9', emoji: '🚀', label: '9+ years', color: 'from-blue-400 to-purple-500' },
+                { age: '9+', emoji: '🚀', label: '9+ years', color: 'from-blue-400 to-purple-500' },
               ].map((item) => (
                 <motion.button
                   key={item.age}
