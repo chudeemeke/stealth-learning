@@ -54,9 +54,9 @@ const LoginPage: React.FC = () => {
         },
         learningStyle: 'visual' as const,
         skillLevels: new Map([
-          ['math', { level: 1, mastery: 0, lastUpdated: new Date() }],
-          ['english', { level: 1, mastery: 0, lastUpdated: new Date() }],
-          ['science', { level: 1, mastery: 0, lastUpdated: new Date() }]
+          ['math', { skill: 'basic-math', subject: 'mathematics', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }],
+          ['english', { skill: 'basic-english', subject: 'english', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }],
+          ['science', { skill: 'basic-science', subject: 'science', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }]
         ]),
         performanceHistory: [],
         currentZPD: {
@@ -103,7 +103,7 @@ const LoginPage: React.FC = () => {
       // };
 
       // const result = await AuthService.signIn(credentials);
-      const result = { success: true, user: { id: 'temp', name: 'Temp Parent', email: parentEmail } };
+      const result = { success: true, user: { id: 'temp', name: 'Temp Parent', email: parentEmail }, message: '' };
 
       if (result.success && result.user) {
         playSound('success');
@@ -123,9 +123,9 @@ const LoginPage: React.FC = () => {
           },
           learningStyle: 'visual' as const,
           skillLevels: new Map([
-          ['math', { level: 1, mastery: 0, lastUpdated: new Date() }],
-          ['english', { level: 1, mastery: 0, lastUpdated: new Date() }],
-          ['science', { level: 1, mastery: 0, lastUpdated: new Date() }]
+          ['math', { skill: 'basic-math', subject: 'mathematics', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }],
+          ['english', { skill: 'basic-english', subject: 'english', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }],
+          ['science', { skill: 'basic-science', subject: 'science', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }]
         ]),
           performanceHistory: [],
           currentZPD: {
@@ -143,8 +143,8 @@ const LoginPage: React.FC = () => {
             fontSize: 'medium' as const,
             animationSpeed: 'normal' as const,
           },
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
         };
 
         dispatch(setStudent(parentProfile));
@@ -176,7 +176,7 @@ const LoginPage: React.FC = () => {
       // };
 
       // const result = await AuthService.signUp(signupData);
-      const result = { success: true, user: { id: 'temp', name: parentName, email: parentEmail } };
+      const result = { success: true, user: { id: 'temp', name: parentName, email: parentEmail }, message: '' };
 
       if (result.success && result.user) {
         playSound('success');
@@ -196,9 +196,9 @@ const LoginPage: React.FC = () => {
           },
           learningStyle: 'visual' as const,
           skillLevels: new Map([
-          ['math', { level: 1, mastery: 0, lastUpdated: new Date() }],
-          ['english', { level: 1, mastery: 0, lastUpdated: new Date() }],
-          ['science', { level: 1, mastery: 0, lastUpdated: new Date() }]
+          ['math', { skill: 'basic-math', subject: 'mathematics', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }],
+          ['english', { skill: 'basic-english', subject: 'english', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }],
+          ['science', { skill: 'basic-science', subject: 'science', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }]
         ]),
           performanceHistory: [],
           currentZPD: {
@@ -216,8 +216,8 @@ const LoginPage: React.FC = () => {
             fontSize: 'medium' as const,
             animationSpeed: 'normal' as const,
           },
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
         };
 
         dispatch(setStudent(parentProfile));

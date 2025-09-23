@@ -102,8 +102,8 @@ function App() {
 
         // Attempt to restore session from persisted state and JWT tokens
         try {
-          // Use startTransition to prevent Suspense errors
-          React.startTransition(async () => {
+          // Handle session restoration without startTransition since it's async
+          const restoreSessionAsync = async () => {
             try {
               const { restoreSession } = await import('@/store/slices/studentSlice');
               await dispatch(restoreSession());
@@ -112,7 +112,9 @@ function App() {
               console.log('ℹ️ No valid session to restore:', sessionError);
               // This is expected for new users, don't treat as error
             }
-          });
+          };
+
+          restoreSessionAsync();
         } catch (sessionError) {
           console.log('ℹ️ Session restoration initialization failed:', sessionError);
         }

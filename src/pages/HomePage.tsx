@@ -5,7 +5,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/Button';
 
 const HomePage: React.FC = () => {
-  const { profile } = useAppSelector(state => state.student);
+  const { profile, achievements } = useAppSelector(state => state.student);
   const { theme } = useTheme();
   const ageGroup = profile?.ageGroup || '6-8';
 
@@ -121,7 +121,7 @@ const HomePage: React.FC = () => {
         <div className="bg-white rounded-xl p-4 shadow-md text-center">
           <div className="text-3xl mb-2">🎮</div>
           <div className="text-2xl font-bold" style={{ color: theme.colorScheme.accent }}>
-            {profile?.gamesPlayed || 0}
+            {profile?.performanceHistory?.length || 0}
           </div>
           <div className="text-sm text-gray-600">Games</div>
         </div>
@@ -129,7 +129,7 @@ const HomePage: React.FC = () => {
         <div className="bg-white rounded-xl p-4 shadow-md text-center">
           <div className="text-3xl mb-2">🏆</div>
           <div className="text-2xl font-bold" style={{ color: theme.colorScheme.success }}>
-            {profile?.achievements?.length || 0}
+            {achievements?.length || 0}
           </div>
           <div className="text-sm text-gray-600">Achievements</div>
         </div>
