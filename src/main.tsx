@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import App from './App';
 import { store, persistor } from './store';
 import './index.css';
+import './styles/accessibility.css';
 
 // Check if we're in development mode
 const isDevelopment = (import.meta as any).env?.DEV || false;
@@ -82,16 +83,20 @@ window.addEventListener('offline', () => {
 // Log app version in development
 if (isDevelopment) {
   console.log(
-    '%c🎮 Stealth Learning Games',
+    '%c🎮 Stealth Learning Games - ENHANCED VERSION',
     'font-size: 20px; font-weight: bold; color: #4A90E2;'
   );
   console.log(
-    '%cVersion: 0.1.0-dev',
+    '%cVersion: 0.1.0-dev-enhanced',
     'font-size: 14px; color: #666;'
   );
   console.log(
     '%cEnvironment: Development',
     'font-size: 14px; color: #666;'
+  );
+  console.log(
+    '%c✨ Enhanced Features Active: Immersive Backgrounds, Particle Systems, Interactive Characters, Audio Systems',
+    'font-size: 12px; color: #10B981; font-weight: bold;'
   );
 }
 

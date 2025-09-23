@@ -12,9 +12,9 @@ import HomePage from '@/pages/HomePage';
 // Import LoginPage directly (critical path - no lazy loading)
 import LoginPage from '@/pages/LoginPage';
 
-// Lazy load other pages
-const GameSelectPage = React.lazy(() => import('@/pages/GameSelectPage'));
-const GamePlayPage = React.lazy(() => import('@/pages/GamePlayPage'));
+// Lazy load other pages - ENHANCED VERSIONS
+const GameSelectPage = React.lazy(() => import('@/pages/EnhancedGameSelectPage'));
+const GamePlayPage = React.lazy(() => import('@/pages/EnhancedGamePlayPage'));
 const ProfilePage = React.lazy(() => import('@/pages/ProfilePage'));
 const ProgressPage = React.lazy(() => import('@/pages/ProgressPage'));
 const SettingsPage = React.lazy(() => import('@/pages/SettingsPage'));
