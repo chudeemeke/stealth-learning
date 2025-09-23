@@ -11,7 +11,7 @@ interface SessionState {
   pausedTime: Date | null;
   currentSubject: Subject | null;
   gamesCompleted: number;
-  skillsPracticed: Set<string>;
+  skillsPracticed: string[];
   sessionDuration: number; // in seconds
   lastSessionDate?: Date;
   lastGamePlayed?: string;
@@ -34,7 +34,7 @@ const initialState: SessionState = {
   pausedTime: null,
   currentSubject: null,
   gamesCompleted: 0,
-  skillsPracticed: new Set(),
+  skillsPracticed: [],
   sessionDuration: 0,
   performanceMetrics: {
     accuracy: 0,
@@ -68,7 +68,7 @@ const sessionSlice = createSlice({
       state.startTime = now;
       state.currentSubject = action.payload.subject;
       state.gamesCompleted = 0;
-      state.skillsPracticed.clear();
+      state.skillsPracticed = [];
       state.sessionDuration = 0;
       state.performanceMetrics = {
         accuracy: 0,
@@ -108,7 +108,7 @@ const sessionSlice = createSlice({
           totalScore: state.currentSession.gamesPlayed.reduce((sum, game) => sum + game.score, 0),
           accuracy: state.performanceMetrics.accuracy,
           averageResponseTime: state.performanceMetrics.averageResponseTime,
-          skillsImproved: Array.from(state.skillsPracticed),
+          skillsImproved: [...state.skillsPracticed],
           skillsToReview: [], // TODO: Calculate based on performance
           engagementLevel: state.sessionDuration > 900 ? 'high' : state.sessionDuration > 300 ? 'medium' : 'low',
           recommendations: [], // TODO: Generate based on performance
@@ -116,7 +116,7 @@ const sessionSlice = createSlice({
         
         state.currentSession.endedAt = endTime;
         state.currentSession.performanceSummary = performanceSummary;
-        state.currentSession.skillsPracticed = Array.from(state.skillsPracticed);
+        state.currentSession.skillsPracticed = [...state.skillsPracticed];
         
         // Add to history
         state.sessionHistory.unshift(state.currentSession);
@@ -157,7 +157,9 @@ const sessionSlice = createSlice({
     },
     
     addSkillPracticed: (state, action: PayloadAction<string>) => {
-      state.skillsPracticed.add(action.payload);
+      if (!state.skillsPracticed.includes(action.payload)) {
+        state.skillsPracticed.push(action.payload);
+      }
     },
     
     updatePerformanceMetrics: (state, action: PayloadAction<{

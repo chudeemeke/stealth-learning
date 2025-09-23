@@ -122,7 +122,7 @@ export const restoreSession = createAsyncThunk(
           effectsVolume: childProfile.preferences.effectsVolume,
           subtitlesEnabled: childProfile.preferences.subtitlesEnabled
         },
-        skillLevels: new Map(), // Initialize empty Map - will be populated from user progress
+        skillLevels: {}, // Initialize empty object - will be populated from user progress
         learningStyle: 'visual', // Default value
         performanceHistory: [],
         currentZPD: {
@@ -160,7 +160,7 @@ export const restoreSession = createAsyncThunk(
         username: parentUser.email || parentProfile.firstName,
         name: `${parentProfile.firstName} ${parentProfile.lastName}`,
         ageGroup: '9+' as AgeGroup,
-        skillLevels: new Map(),
+        skillLevels: {},
         learningStyle: 'visual',
         performanceHistory: [],
         currentZPD: {
@@ -347,12 +347,12 @@ const studentSlice = createSlice({
       .addCase(updateSkillLevel.fulfilled, (state, action) => {
         if (state.profile) {
           const { skill, update } = action.meta.arg;
-          const skillLevel = state.profile.skillLevels.get(skill);
+          const skillLevel = (state.profile.skillLevels as any)[skill];
           if (skillLevel) {
-            state.profile.skillLevels.set(skill, {
+            (state.profile.skillLevels as any)[skill] = {
               ...skillLevel,
               ...update,
-            });
+            };
           }
         }
       });

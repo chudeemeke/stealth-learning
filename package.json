@@ -15,7 +15,12 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\"",
     "type-check": "tsc --noEmit",
     "storybook": "storybook dev -p 6006 -c config/.storybook",
-    "build-storybook": "storybook build -c config/.storybook"
+    "build-storybook": "storybook build -c config/.storybook",
+    "test:visual": "playwright test --project=chromium --reporter=list",
+    "test:mobile": "playwright test --project='Mobile Chrome' --reporter=list",
+    "test:debug": "playwright test --debug --project=chromium",
+    "test:e2e": "playwright test --project=chromium --reporter=html",
+    "test:ui-flow": "playwright test e2e/*-flow*.spec.ts --project=chromium --reporter=list"
   },
   "dependencies": {
     "@apollo/client": "^3.8.8",

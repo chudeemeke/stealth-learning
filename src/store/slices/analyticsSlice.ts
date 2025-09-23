@@ -36,12 +36,12 @@ interface AnalyticsState {
       accuracy: number;
     };
   };
-  skillProgress: Map<string, {
+  skillProgress: Record<string, {
     skill: string;
     startLevel: number;
     currentLevel: number;
     attempts: number;
-    lastPracticed: Date;
+    lastPracticed: string;
   }>;
   achievements: {
     total: number;
@@ -82,7 +82,7 @@ const initialState: AnalyticsState = {
     fastestGameTime: undefined,
   },
   weeklyProgress: {},
-  skillProgress: new Map(),
+  skillProgress: {},
   achievements: {
     total: 0,
     unlocked: 0,

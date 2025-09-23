@@ -56,8 +56,18 @@ export const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-        ignoredActionPaths: ['meta.arg', 'payload.timestamp'],
-        ignoredPaths: ['items.dates'],
+        ignoredActionPaths: ['meta.arg', 'payload.timestamp', 'payload.skillLevels', 'payload.createdAt', 'payload.updatedAt'],
+        ignoredPaths: [
+          'items.dates',
+          'session.startTime',
+          'session.pausedTime',
+          'session.lastSessionDate',
+          'session.skillsPracticed',
+          'student.profile.skillLevels',
+          'student.profile.createdAt',
+          'student.profile.updatedAt',
+          'analytics.skillProgress',
+        ],
       },
     }),
   devTools: process.env.NODE_ENV !== 'production',

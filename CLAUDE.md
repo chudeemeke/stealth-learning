@@ -23,10 +23,17 @@ pnpm build
 # Preview production build
 pnpm preview
 
-# Run tests
+# Unit Tests
 pnpm test              # Run unit tests with Vitest
 pnpm test:ui          # Run tests with UI interface
 pnpm test:coverage    # Generate coverage report
+
+# Visual UI/UX Testing (MANDATORY FOR ALL UI/UX WORK)
+pnpm test:visual      # Visual testing with browser visible (PRIMARY)
+pnpm test:mobile      # Mobile visual testing (responsive)
+pnpm test:debug       # Step-by-step visual debugging
+pnpm test:ui-flow     # Test user flows (kid flows, parent flows)
+pnpm test:e2e         # Full E2E suite with HTML reports
 
 # Code quality
 pnpm lint             # ESLint with TypeScript
@@ -83,6 +90,30 @@ pnpm build-storybook  # Build Storybook static files
 
 ## Testing Strategy
 
+### 🎯 **Visual Testing (PRIMARY for UI/UX)**
+**MANDATORY: Always use visual mode for UI/UX testing - Claude must see what users see!**
+
+```bash
+# Standard visual testing (ALWAYS use for UI/UX work)
+pnpm test:visual
+
+# Debug specific flows with step-by-step visual feedback
+pnpm test:debug
+
+# Test on mobile devices
+pnpm test:mobile
+
+# Test specific user flows (especially kid flows!)
+pnpm test:ui-flow
+```
+
+**Key Benefits:**
+- 🔍 **See exactly what users see** - Real-time visual feedback
+- 🎨 **Spot UI issues immediately** - Layout, colors, text readability
+- 📱 **Validate responsive design** - Mobile and desktop compatibility
+- 👨‍👩‍👧‍👦 **Critical for family apps** - Visual elements are everything for kids
+
+### Unit Testing
 ```bash
 # Run specific test file
 pnpm test src/components/ui/Button.test.tsx

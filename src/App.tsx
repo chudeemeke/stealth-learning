@@ -7,15 +7,18 @@ import { useAppSelector, useAppDispatch } from '@/store';
 import { securityHeaders } from '@/utils/security-headers';
 import { coppaService } from '@/services/compliance/COPPAService';
 
-// Lazy load pages
-const HomePage = React.lazy(() => import('@/pages/HomePage'));
+// Import HomePage directly (critical path - no lazy loading)
+import HomePage from '@/pages/HomePage';
+// Import LoginPage directly (critical path - no lazy loading)
+import LoginPage from '@/pages/LoginPage';
+
+// Lazy load other pages
 const GameSelectPage = React.lazy(() => import('@/pages/GameSelectPage'));
 const GamePlayPage = React.lazy(() => import('@/pages/GamePlayPage'));
 const ProfilePage = React.lazy(() => import('@/pages/ProfilePage'));
 const ProgressPage = React.lazy(() => import('@/pages/ProgressPage'));
 const SettingsPage = React.lazy(() => import('@/pages/SettingsPage'));
 const ParentDashboard = React.lazy(() => import('@/pages/ParentDashboard'));
-const LoginPage = React.lazy(() => import('@/pages/LoginPage'));
 
 // Components
 import { LoadingScreen } from '@/components/LoadingScreen';
@@ -99,12 +102,19 @@ function App() {
 
         // Attempt to restore session from persisted state and JWT tokens
         try {
-          const { restoreSession } = await import('@/store/slices/studentSlice');
-          await dispatch(restoreSession());
-          console.log('✅ Session restored successfully');
+          // Use startTransition to prevent Suspense errors
+          React.startTransition(async () => {
+            try {
+              const { restoreSession } = await import('@/store/slices/studentSlice');
+              await dispatch(restoreSession());
+              console.log('✅ Session restored successfully');
+            } catch (sessionError) {
+              console.log('ℹ️ No valid session to restore:', sessionError);
+              // This is expected for new users, don't treat as error
+            }
+          });
         } catch (sessionError) {
-          console.log('ℹ️ No valid session to restore:', sessionError);
-          // This is expected for new users, don't treat as error
+          console.log('ℹ️ Session restoration initialization failed:', sessionError);
         }
 
         // Preload critical assets
