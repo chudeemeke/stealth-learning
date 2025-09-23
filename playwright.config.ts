@@ -27,16 +27,16 @@ export default defineConfig({
   ],
   /* Shared settings for all the projects below. */
   use: {
-    /* VISUAL/OPTICAL MODE - Human-like browser emulation */
-    headless: false, // Always show browser (visual mode)
+    /* VISUAL/OPTICAL MODE - Human-like browser emulation (local dev) */
+    headless: process.env.CI ? true : false, // Headless in CI, visual mode locally
 
     /* Slower, more human-like actions */
-    actionTimeout: 10000,
-    navigationTimeout: 30000,
+    actionTimeout: process.env.CI ? 5000 : 10000,
+    navigationTimeout: process.env.CI ? 15000 : 30000,
 
-    /* Human-like delays */
+    /* Human-like delays - faster in CI */
     launchOptions: {
-      slowMo: 500, // 500ms delay between actions (more human-like)
+      slowMo: process.env.CI ? 100 : 500, // Faster in CI for efficiency
     },
 
     /* Base URL */

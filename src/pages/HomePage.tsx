@@ -23,7 +23,7 @@ const HomePage: React.FC = () => {
           animate={{ scale: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-4xl md:text-6xl font-bold mb-4"
-          style={{ color: theme.colors.primary }}
+          style={{ color: theme.colorScheme.primary }}
         >
           🎉 SUCCESS! 🎉
         </motion.h1>
@@ -33,7 +33,7 @@ const HomePage: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
           className="text-2xl md:text-3xl font-semibold mb-2"
-          style={{ color: theme.colors.text }}
+          style={{ color: theme.colorScheme.text.primary }}
         >
           Welcome back, {profile?.name || profile?.username}!
         </motion.h2>
@@ -55,14 +55,14 @@ const HomePage: React.FC = () => {
         transition={{ delay: 0.8 }}
         className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-8 mb-8"
         style={{
-          backgroundColor: theme.colors.background,
-          border: `2px solid ${theme.colors.primary}20`
+          backgroundColor: theme.colorScheme.background,
+          border: `2px solid ${theme.colorScheme.primary}20`
         }}
       >
-        <h3 className="text-2xl font-bold mb-4 text-center" style={{ color: theme.colors.primary }}>
+        <h3 className="text-2xl font-bold mb-4 text-center" style={{ color: theme.colorScheme.primary }}>
           Welcome to Stealth Learning! 🎮
         </h3>
-        <p className="text-center text-lg mb-6" style={{ color: theme.colors.text }}>
+        <p className="text-center text-lg mb-6" style={{ color: theme.colorScheme.text.primary }}>
           Ready to play and learn? Your adventure awaits!
         </p>
 
@@ -104,7 +104,7 @@ const HomePage: React.FC = () => {
       >
         <div className="bg-white rounded-xl p-4 shadow-md text-center">
           <div className="text-3xl mb-2">💎</div>
-          <div className="text-2xl font-bold" style={{ color: theme.colors.primary }}>
+          <div className="text-2xl font-bold" style={{ color: theme.colorScheme.primary }}>
             {profile?.xp || 0}
           </div>
           <div className="text-sm text-gray-600">XP Points</div>
@@ -112,7 +112,7 @@ const HomePage: React.FC = () => {
 
         <div className="bg-white rounded-xl p-4 shadow-md text-center">
           <div className="text-3xl mb-2">⭐</div>
-          <div className="text-2xl font-bold" style={{ color: theme.colors.secondary }}>
+          <div className="text-2xl font-bold" style={{ color: theme.colorScheme.secondary }}>
             {profile?.totalStars || 0}
           </div>
           <div className="text-sm text-gray-600">Stars</div>
@@ -120,7 +120,7 @@ const HomePage: React.FC = () => {
 
         <div className="bg-white rounded-xl p-4 shadow-md text-center">
           <div className="text-3xl mb-2">🎮</div>
-          <div className="text-2xl font-bold" style={{ color: theme.colors.accent }}>
+          <div className="text-2xl font-bold" style={{ color: theme.colorScheme.accent }}>
             {profile?.gamesPlayed || 0}
           </div>
           <div className="text-sm text-gray-600">Games</div>
@@ -128,7 +128,7 @@ const HomePage: React.FC = () => {
 
         <div className="bg-white rounded-xl p-4 shadow-md text-center">
           <div className="text-3xl mb-2">🏆</div>
-          <div className="text-2xl font-bold" style={{ color: theme.colors.success }}>
+          <div className="text-2xl font-bold" style={{ color: theme.colorScheme.success }}>
             {profile?.achievements?.length || 0}
           </div>
           <div className="text-sm text-gray-600">Achievements</div>

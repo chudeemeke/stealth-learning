@@ -53,7 +53,11 @@ const LoginPage: React.FC = () => {
           unlocked: true,
         },
         learningStyle: 'visual' as const,
-        skillLevels: {},
+        skillLevels: new Map([
+          ['math', { level: 1, mastery: 0, lastUpdated: new Date() }],
+          ['english', { level: 1, mastery: 0, lastUpdated: new Date() }],
+          ['science', { level: 1, mastery: 0, lastUpdated: new Date() }]
+        ]),
         performanceHistory: [],
         currentZPD: {
           lowerBound: selectedAge === '3-5' ? 1 : selectedAge === '6-8' ? 2 : 3,
@@ -118,7 +122,11 @@ const LoginPage: React.FC = () => {
             unlocked: true,
           },
           learningStyle: 'visual' as const,
-          skillLevels: {},
+          skillLevels: new Map([
+          ['math', { level: 1, mastery: 0, lastUpdated: new Date() }],
+          ['english', { level: 1, mastery: 0, lastUpdated: new Date() }],
+          ['science', { level: 1, mastery: 0, lastUpdated: new Date() }]
+        ]),
           performanceHistory: [],
           currentZPD: {
             lowerBound: 1,
@@ -187,7 +195,11 @@ const LoginPage: React.FC = () => {
             unlocked: true,
           },
           learningStyle: 'visual' as const,
-          skillLevels: {},
+          skillLevels: new Map([
+          ['math', { level: 1, mastery: 0, lastUpdated: new Date() }],
+          ['english', { level: 1, mastery: 0, lastUpdated: new Date() }],
+          ['science', { level: 1, mastery: 0, lastUpdated: new Date() }]
+        ]),
           performanceHistory: [],
           currentZPD: {
             lowerBound: 1,
