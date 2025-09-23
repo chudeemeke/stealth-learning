@@ -47,7 +47,7 @@ jobs:
         run: pnpm build
         env:
           # Set base path for GitHub Pages
-          VITE_BASE_URL: '/stealth-learning/'
+          BASE_URL: '/stealth-learning/'
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

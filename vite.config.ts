@@ -19,8 +19,8 @@ export default defineConfig({
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'any',
-        scope: '/',
-        start_url: '/',
+        scope: process.env.BASE_URL || '/',
+        start_url: process.env.BASE_URL || '/',
         icons: [
           {
             src: 'pwa-64x64.png',
