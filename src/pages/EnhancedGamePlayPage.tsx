@@ -6,6 +6,8 @@ import { useAppSelector, useAppDispatch } from '@/store';
 import { FeedbackModal } from '@/components/ui/FeedbackModal';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { useHaptic } from '@/hooks/useHaptic';
+import { useToast, ToastContainer } from '@/components/ui/ToastNotification';
+import { Z_INDEX_CLASSES } from '@/styles/z-index';
 
 // Enhanced components
 import { ImmersiveBackground } from '@/components/enhanced/ImmersiveBackground';
@@ -56,6 +58,7 @@ const EnhancedGamePlayPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { triggerHaptic } = useHaptic();
+  const { toasts, showToast, showConfirmToast, dismissToast } = useToast();
 
   const { profile } = useAppSelector(state => state.student);
   const { currentGame, gameProgress } = useAppSelector(state => state.game);
@@ -291,7 +294,7 @@ const EnhancedGamePlayPage: React.FC = () => {
           particleCount: 50 + (gameState.combo * 10),
           spread: 60 + (gameState.combo * 5),
           origin: { y: 0.6 },
-          colors: gameContent?.subject === 'math' ? ['#3B82F6', '#1D4ED8'] :
+          colors: gameContent?.subject === 'mathematics' ? ['#3B82F6', '#1D4ED8'] :
                   gameContent?.subject === 'english' ? ['#EF4444', '#DC2626'] :
                   ['#10B981', '#059669']
         };
@@ -464,11 +467,18 @@ const EnhancedGamePlayPage: React.FC = () => {
   };
 
   const handleExit = () => {
-    if (window.confirm('Are you sure you want to exit? Your progress will be saved.')) {
-      dispatch(pauseGame());
-      audioService.stopMusic(500);
-      navigate('/games');
-    }
+    showConfirmToast(
+      'Are you sure you want to exit? Your progress will be saved.',
+      () => {
+        dispatch(pauseGame());
+        audioService.stopMusic(500);
+        showToast('Progress saved! See you soon!', 'success', { duration: 2000 });
+        setTimeout(() => navigate('/games'), 500);
+      },
+      () => {
+        showToast('Keep playing! You\'re doing great!', 'info', { duration: 2000 });
+      }
+    );
   };
 
   const handleHint = () => {
@@ -1086,6 +1096,14 @@ const EnhancedGamePlayPage: React.FC = () => {
           </motion.div>
         </motion.div>
       )}
+
+      {/* Toast Notification System - AAA+ Standard */}
+      <ToastContainer
+        toasts={toasts}
+        onDismiss={dismissToast}
+        ageGroup={profile?.ageGroup || '6-8'}
+        position="top-center"
+      />
     </ImmersiveBackground>
   );
 };

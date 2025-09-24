@@ -56,10 +56,10 @@ const VARIANT_STYLES = {
 };
 
 const SIZE_CONFIGS = {
-  sm: { padding: 'px-3 py-1.5', text: 'text-sm', height: 'h-8', touchTarget: 'min-h-[44px]' },
-  md: { padding: 'px-4 py-2', text: 'text-base', height: 'h-10', touchTarget: 'min-h-[48px]' },
-  lg: { padding: 'px-6 py-3', text: 'text-lg', height: 'h-12', touchTarget: 'min-h-[52px]' },
-  xl: { padding: 'px-8 py-4', text: 'text-xl', height: 'h-14', touchTarget: 'min-h-[56px]' }
+  sm: { padding: 'px-3 py-1.5', text: 'text-sm', height: 'h-8', touchTarget: 'min-h-[44px]', rounded: 'rounded-lg' },
+  md: { padding: 'px-4 py-2', text: 'text-base', height: 'h-10', touchTarget: 'min-h-[48px]', rounded: 'rounded-lg' },
+  lg: { padding: 'px-6 py-3', text: 'text-lg', height: 'h-12', touchTarget: 'min-h-[52px]', rounded: 'rounded-lg' },
+  xl: { padding: 'px-8 py-4', text: 'text-xl', height: 'h-14', touchTarget: 'min-h-[56px]', rounded: 'rounded-lg' }
 };
 
 const AGE_ADJUSTMENTS = {
@@ -191,7 +191,7 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
     <motion.button
       className={`
         relative overflow-hidden font-semibold transition-all duration-200
-        ${sizeConfig.padding} ${sizeConfig.text} ${ageGroup ? sizeConfig.rounded : 'rounded-lg'}
+        ${sizeConfig.padding} ${sizeConfig.text} ${sizeConfig.rounded}
         ${sizeConfig.touchTarget}
         ${variantStyle.base}
         ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}

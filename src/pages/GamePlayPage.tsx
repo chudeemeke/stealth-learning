@@ -8,6 +8,8 @@ import { FeedbackModal } from '@/components/ui/FeedbackModal';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { useSound } from '@/hooks/useSound';
 import { useHaptic } from '@/hooks/useHaptic';
+import { useToast, ToastContainer } from '@/components/ui/ToastNotification';
+import { Z_INDEX_CLASSES } from '@/styles/z-index';
 import {
   updateGameProgress,
   completeGame,
@@ -49,6 +51,7 @@ const GamePlayPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { playSound } = useSound();
   const { triggerHaptic } = useHaptic();
+  const { toasts, showToast, showConfirmToast, dismissToast } = useToast();
 
   const { profile } = useAppSelector(state => state.student);
   const { currentGame, gameProgress } = useAppSelector(state => state.game);
@@ -357,10 +360,17 @@ const GamePlayPage: React.FC = () => {
   };
 
   const handleExit = () => {
-    if (window.confirm('Are you sure you want to exit? Your progress will be saved.')) {
-      dispatch(pauseGame());
-      navigate('/games');
-    }
+    showConfirmToast(
+      'Are you sure you want to exit? Your progress will be saved.',
+      () => {
+        dispatch(pauseGame());
+        showToast('Progress saved! See you next time!', 'success', { duration: 2000 });
+        setTimeout(() => navigate('/games'), 500);
+      },
+      () => {
+        showToast('Great choice! Keep learning!', 'info', { duration: 2000 });
+      }
+    );
   };
 
   const handleHint = () => {
@@ -374,23 +384,30 @@ const GamePlayPage: React.FC = () => {
   };
 
   const handleRestart = () => {
-    if (window.confirm('Are you sure you want to restart? All progress will be lost.')) {
-      setGameState({
-        currentQuestionIndex: 0,
-        score: 0,
-        streak: 0,
-        timeElapsed: 0,
-        answers: [],
-        hintsUsed: 0,
-        isPaused: false,
-        isComplete: false,
-        totalQuestions: questions.length
-      });
-      setSelectedAnswer('');
-      setShowFeedback(false);
-      setShowHint(false);
-      startTimeRef.current = Date.now();
-    }
+    showConfirmToast(
+      'Are you sure you want to restart? All progress will be lost.',
+      () => {
+        setGameState({
+          currentQuestionIndex: 0,
+          score: 0,
+          streak: 0,
+          timeElapsed: 0,
+          answers: [],
+          hintsUsed: 0,
+          isPaused: false,
+          isComplete: false,
+          totalQuestions: questions.length
+        });
+        setSelectedAnswer('');
+        setShowFeedback(false);
+        setShowHint(false);
+        startTimeRef.current = Date.now();
+        showToast('Game restarted! Let\'s try again!', 'info', { duration: 2000 });
+      },
+      () => {
+        showToast('Good decision! Keep going!', 'success', { duration: 2000 });
+      }
+    );
   };
 
   // Loading state
@@ -691,6 +708,14 @@ const GamePlayPage: React.FC = () => {
         onClose={() => setShowFeedback(false)}
         type={feedbackType}
         message={feedbackMessage}
+      />
+
+      {/* AAA+ Toast Notification System - Child Friendly */}
+      <ToastContainer
+        toasts={toasts}
+        onDismiss={dismissToast}
+        ageGroup={profile?.ageGroup || '6-8'}
+        position="top-center"
       />
     </div>
   );

@@ -11,6 +11,8 @@ import { coppaService } from '@/services/compliance/COPPAService';
 import HomePage from '@/pages/HomePage';
 // Import LoginPage directly (critical path - no lazy loading)
 import LoginPage from '@/pages/LoginPage';
+// Import Ultra Kids Landing Page for enhanced visuals
+import UltraKidsLandingSimple from '@/pages/UltraKidsLandingSimple';
 
 // Lazy load other pages - ENHANCED VERSIONS
 const GameSelectPage = React.lazy(() => import('@/pages/EnhancedGameSelectPage'));
@@ -165,7 +167,10 @@ function App() {
         <AnimatePresence mode="wait">
           <Routes>
             {/* Public Routes */}
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/login" element={<UltraKidsLandingSimple />} />
+            <Route path="/ultra-landing" element={<UltraKidsLandingSimple />} />
+            <Route path="/kid-login" element={<LoginPage />} />
+            <Route path="/parent-login" element={<LoginPage />} />
             
             {/* Landing/Home Route */}
             <Route
@@ -176,7 +181,7 @@ function App() {
                     <HomePage />
                   </Layout>
                 ) : (
-                  <LoginPage />
+                  <UltraKidsLandingSimple />
                 )
               }
             />

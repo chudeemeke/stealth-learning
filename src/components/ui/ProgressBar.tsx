@@ -141,7 +141,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   return (
     <div className={cn('w-full', className)}>
       {label && (
-        <div className="flex justify-between items-center mb-2">
+        <div className="flex justify-between items-center mb-6 md:mb-8">
           <span className={cn(
             'font-medium',
             ageGroup === '3-5' && 'text-xl font-young',
@@ -205,7 +205,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
 
       {/* Stars visualization for youngest age group */}
       {showStars && ageGroup === '3-5' && (
-        <div className="flex gap-2 mt-3">
+        <div className="flex gap-2 mt-8 mb-6">
           {Array.from({ length: finalTotal }, (_, i) => (
             <motion.div
               key={i}
@@ -307,7 +307,7 @@ const GlassProgress: React.FC<{
   return (
     <div className={cn('w-full', className)}>
       {label && (
-        <div className="flex justify-between items-center mb-3">
+        <div className="flex justify-between items-center mb-8 md:mb-10">
           <span className="font-apple font-medium text-white">
             {label}
           </span>

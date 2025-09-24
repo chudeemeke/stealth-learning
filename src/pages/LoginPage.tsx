@@ -3,10 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '@/store';
 import { setStudent } from '@/store/slices/studentSlice';
+import type { Subject, MasteryLevel } from '@/types';
 import { Button } from '@/components/ui/Button';
 import { useSound } from '@/hooks/useSound';
-// TEMPORARILY DISABLED FOR TESTING
-// import { AuthService, type ParentCredentials, type ParentSignupData } from '@/services/auth/AuthService';
+// Authentication service for parent login/signup
+import { AuthService, type ParentCredentials, type ParentSignupData } from '@/services/auth/AuthService';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -54,9 +55,9 @@ const LoginPage: React.FC = () => {
         },
         learningStyle: 'visual' as const,
         skillLevels: new Map([
-          ['math', { skill: 'basic-math', subject: 'mathematics', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }],
-          ['english', { skill: 'basic-english', subject: 'english', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }],
-          ['science', { skill: 'basic-science', subject: 'science', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }]
+          ['math', { skill: 'basic-math', subject: 'mathematics' as Subject, currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice' as MasteryLevel, totalAttempts: 0, successfulAttempts: 0 }],
+          ['english', { skill: 'basic-english', subject: 'english' as Subject, currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice' as MasteryLevel, totalAttempts: 0, successfulAttempts: 0 }],
+          ['science', { skill: 'basic-science', subject: 'science' as Subject, currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice' as MasteryLevel, totalAttempts: 0, successfulAttempts: 0 }]
         ]),
         performanceHistory: [],
         currentZPD: {
@@ -74,8 +75,8 @@ const LoginPage: React.FC = () => {
           fontSize: 'medium' as const,
           animationSpeed: 'normal' as const,
         },
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
       // Dispatch Redux action and wait for state update
@@ -96,14 +97,15 @@ const LoginPage: React.FC = () => {
     setAuthError('');
 
     try {
-      // TEMPORARILY DISABLED FOR TESTING
-      // const credentials: ParentCredentials = {
-      //   email: parentEmail,
-      //   password: parentPassword,
-      // };
+      // Create credentials object
+      const credentials: ParentCredentials = {
+        email: parentEmail,
+        password: parentPassword,
+      };
 
-      // const result = await AuthService.signIn(credentials);
-      const result = { success: true, user: { id: 'temp', name: 'Temp Parent', email: parentEmail }, message: '' };
+      // Use proper authentication service
+      const result = await AuthService.signIn(credentials);
+      // const result = { success: true, user: { id: 'temp', name: 'Temp Parent', email: parentEmail }, message: '' }; // NEVER DO THIS!
 
       if (result.success && result.user) {
         playSound('success');
@@ -123,9 +125,9 @@ const LoginPage: React.FC = () => {
           },
           learningStyle: 'visual' as const,
           skillLevels: new Map([
-          ['math', { skill: 'basic-math', subject: 'mathematics', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }],
-          ['english', { skill: 'basic-english', subject: 'english', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }],
-          ['science', { skill: 'basic-science', subject: 'science', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }]
+          ['math', { skill: 'basic-math', subject: 'mathematics' as Subject, currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice' as MasteryLevel, totalAttempts: 0, successfulAttempts: 0 }],
+          ['english', { skill: 'basic-english', subject: 'english' as Subject, currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice' as MasteryLevel, totalAttempts: 0, successfulAttempts: 0 }],
+          ['science', { skill: 'basic-science', subject: 'science' as Subject, currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice' as MasteryLevel, totalAttempts: 0, successfulAttempts: 0 }]
         ]),
           performanceHistory: [],
           currentZPD: {
@@ -167,16 +169,17 @@ const LoginPage: React.FC = () => {
     setAuthError('');
 
     try {
-      // TEMPORARILY DISABLED FOR TESTING
-      // const signupData: ParentSignupData = {
-      //   name: parentName,
-      //   email: parentEmail,
-      //   password: parentPassword,
-      //   confirmPassword: confirmPassword,
-      // };
+      // Create signup data object
+      const signupData: ParentSignupData = {
+        name: parentName,
+        email: parentEmail,
+        password: parentPassword,
+        confirmPassword: confirmPassword,
+      };
 
-      // const result = await AuthService.signUp(signupData);
-      const result = { success: true, user: { id: 'temp', name: parentName, email: parentEmail }, message: '' };
+      // Use proper authentication service for signup
+      const result = await AuthService.signUp(signupData);
+      // const result = { success: true, user: { id: 'temp', name: parentName, email: parentEmail }, message: '' }; // NEVER DO THIS!
 
       if (result.success && result.user) {
         playSound('success');
@@ -196,9 +199,9 @@ const LoginPage: React.FC = () => {
           },
           learningStyle: 'visual' as const,
           skillLevels: new Map([
-          ['math', { skill: 'basic-math', subject: 'mathematics', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }],
-          ['english', { skill: 'basic-english', subject: 'english', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }],
-          ['science', { skill: 'basic-science', subject: 'science', currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice', totalAttempts: 0, successfulAttempts: 0 }]
+          ['math', { skill: 'basic-math', subject: 'mathematics' as Subject, currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice' as MasteryLevel, totalAttempts: 0, successfulAttempts: 0 }],
+          ['english', { skill: 'basic-english', subject: 'english' as Subject, currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice' as MasteryLevel, totalAttempts: 0, successfulAttempts: 0 }],
+          ['science', { skill: 'basic-science', subject: 'science' as Subject, currentRating: 1000, confidence: 0.5, lastAssessed: new Date(), masteryLevel: 'novice' as MasteryLevel, totalAttempts: 0, successfulAttempts: 0 }]
         ]),
           performanceHistory: [],
           currentZPD: {

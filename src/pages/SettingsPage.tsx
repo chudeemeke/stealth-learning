@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useSound } from '@/hooks/useSound';
 import { useHaptic } from '@/hooks/useHaptic';
+import { useToast, ToastContainer } from '@/components/ui/ToastNotification';
 import {
   updatePreferences,
   updateStudentProfile,
@@ -31,6 +32,7 @@ const SettingsPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { playSound } = useSound();
   const { triggerHaptic } = useHaptic();
+  const { toasts, showToast, showConfirmToast, dismissToast } = useToast();
 
   const { profile, preferences } = useAppSelector(state => state.student);
   const settings = useAppSelector(state => state.settings);
@@ -170,33 +172,37 @@ const SettingsPage: React.FC = () => {
   };
 
   const handleResetSettings = () => {
-    if (window.confirm('Are you sure you want to reset all settings to defaults?')) {
-      dispatch(resetSettings());
+    showConfirmToast(
+      'Are you sure you want to reset all settings to defaults?',
+      () => {
+        dispatch(resetSettings());
 
-      // Reset local state
-      setSoundEnabled(true);
-      setMusicEnabled(true);
-      setVisualEffects(true);
-      setHapticEnabled(true);
-      setTheme('auto');
-      setFontSize('medium');
-      setHighContrast(false);
-      setScreenReader(false);
-      setReducedMotion(false);
-      setAdaptiveModeLocal('automatic');
-      setDifficultyMin(800);
-      setDifficultyMax(2000);
-      setSessionDuration(30);
-      setContentFilter('moderate');
-      setAgeRestriction(true);
-      setRequirePinForSettings(false);
+        // Reset local state
+        setSoundEnabled(true);
+        setMusicEnabled(true);
+        setVisualEffects(true);
+        setHapticEnabled(true);
+        setTheme('auto');
+        setFontSize('medium');
+        setHighContrast(false);
+        setScreenReader(false);
+        setReducedMotion(false);
+        setAdaptiveModeLocal('automatic');
+        setDifficultyMin(800);
+        setDifficultyMax(2000);
+        setSessionDuration(30);
+        setContentFilter('moderate');
+        setAgeRestriction(true);
+        setRequirePinForSettings(false);
 
-      if (soundEnabled) {
-        playSound('success');
+        if (soundEnabled) {
+          playSound('success');
+        }
+
+        setUnsavedChanges(false);
+        showToast('Settings reset to defaults!', 'success');
       }
-
-      setUnsavedChanges(false);
-    }
+    );
   };
 
   const containerVariants = {
@@ -886,6 +892,12 @@ const SettingsPage: React.FC = () => {
           </motion.div>
         )}
       </div>
+      <ToastContainer
+        toasts={toasts}
+        onDismiss={dismissToast}
+        ageGroup={profile?.ageGroup || '6-8'}
+        position="top-right"
+      />
     </div>
   );
 };

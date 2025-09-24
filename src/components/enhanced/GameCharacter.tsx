@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
+import { Z_INDEX_CLASSES } from '@/styles/z-index';
+import { getAccessibleTextColor, ACCESSIBLE_COLORS } from '@/utils/contrast';
 
 interface GameCharacterProps {
   subject: 'math' | 'english' | 'science';
@@ -181,22 +183,30 @@ export const GameCharacter: React.FC<GameCharacterProps> = ({
   };
 
   return (
-    <div className={`fixed ${positionClass} z-10 ${className}`}>
+    <div className={`fixed ${positionClass} ${Z_INDEX_CLASSES.HELPER_CHARACTER} ${className}`}>
       {/* Speech Bubble */}
       {(message || showMessage) && (
         <motion.div
           className={`absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2
-                     bg-white rounded-2xl shadow-lg border-2 max-w-48
-                     ${sizeConfig.bubble}`}
+                     rounded-2xl shadow-lg border-2 max-w-48
+                     ${sizeConfig.bubble} ${Z_INDEX_CLASSES.HELPER_BUBBLE}`}
           style={{
             borderColor: config.colors.primary,
-            backgroundColor: `${config.colors.primary}10`
+            backgroundColor: config.colors.primary
           }}
           initial={{ opacity: 0, y: 10, scale: 0.8 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 10, scale: 0.8 }}
         >
-          <div className="text-gray-800 font-medium">{message}</div>
+          <div
+            className="font-semibold"
+            style={{
+              color: ACCESSIBLE_COLORS[subject as keyof typeof ACCESSIBLE_COLORS]?.text.color || '#FFFFFF',
+              textShadow: ACCESSIBLE_COLORS[subject as keyof typeof ACCESSIBLE_COLORS]?.text.shadow || '1px 1px 2px rgba(0,0,0,0.5)'
+            }}
+          >
+            {message}
+          </div>
           <div
             className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0"
             style={{

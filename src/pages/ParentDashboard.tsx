@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/Button';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { updateParentalControls } from '@/store/slices/settingsSlice';
 import { trackEvent } from '@/store/slices/analyticsSlice';
+import { ToastContainer, useToast } from '@/components/ui/ToastNotification';
 
 interface InsightCard {
   id: string;
@@ -48,6 +49,7 @@ interface ActivityLog {
 const ParentDashboard: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { toasts, showToast, dismissToast } = useToast();
 
   const { profile, skillLevels, achievements } = useAppSelector(state => state.student);
   const { totalStats, recentSessions, currentMetrics } = useAppSelector(state => state.analytics);
@@ -182,8 +184,24 @@ const ParentDashboard: React.FC = () => {
       setShowPinModal(false);
       setPin('');
       // Allow access to controls
+      showToast(
+        '✅ PIN Verified Successfully!',
+        'success',
+        {
+          duration: 3000,
+          className: 'font-bold'
+        }
+      );
     } else {
-      alert('Incorrect PIN');
+      showToast(
+        '❌ Oops! That PIN is incorrect',
+        'error',
+        {
+          duration: 4000,
+          description: 'Please check your PIN and try again',
+          className: 'font-bold'
+        }
+      );
     }
   };
 
@@ -894,6 +912,13 @@ const ParentDashboard: React.FC = () => {
           </div>
         )}
       </div>
+
+      <ToastContainer
+        toasts={toasts}
+        onDismiss={dismissToast}
+        ageGroup="9+"
+        position="top-right"
+      />
     </div>
   );
 };
