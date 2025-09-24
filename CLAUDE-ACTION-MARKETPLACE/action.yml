@@ -1,0 +1,93 @@
+name: 'Claude Universal CI/CD Fixer'
+description: 'Automatically fixes ANY CI/CD failure using Claude AI - works with all languages and frameworks'
+author: 'Claude & You'
+
+branding:
+  icon: 'zap'
+  color: 'purple'
+
+inputs:
+  anthropic_api_key:
+    description: 'Anthropic API key for Claude'
+    required: true
+
+  github_token:
+    description: 'GitHub token for making changes'
+    required: false
+    default: ${{ github.token }}
+
+  fix_mode:
+    description: 'Fix strategy: auto-detect, aggressive, safe, minimal'
+    required: false
+    default: 'auto-detect'
+
+  auto_commit:
+    description: 'Automatically commit fixes'
+    required: false
+    default: 'true'
+
+  create_pr:
+    description: 'Create pull request instead of direct commit'
+    required: false
+    default: 'false'
+
+  claude_model:
+    description: 'Claude model to use'
+    required: false
+    default: 'claude-3-opus-20240229'
+
+  custom_instructions:
+    description: 'Additional instructions for Claude'
+    required: false
+    default: ''
+
+outputs:
+  fixed:
+    description: 'Whether issues were fixed'
+    value: ${{ steps.fix.outputs.fixed }}
+
+  changes_made:
+    description: 'Description of changes made'
+    value: ${{ steps.fix.outputs.changes }}
+
+  pr_url:
+    description: 'Pull request URL if created'
+    value: ${{ steps.fix.outputs.pr_url }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Universal Environment
+      shell: bash
+      run: |
+        echo "🚀 Claude Universal Fixer starting..."
+
+        # Make action scripts executable
+        chmod +x ${{ github.action_path }}/scripts/*.sh
+
+        # Export action path for scripts
+        echo "CLAUDE_ACTION_PATH=${{ github.action_path }}" >> $GITHUB_ENV
+
+    - name: Detect and Analyze
+      id: detect
+      shell: bash
+      run: |
+        ${{ github.action_path }}/scripts/detect.sh
+
+    - name: Fix Issues with Claude
+      id: fix
+      shell: bash
+      env:
+        ANTHROPIC_API_KEY: ${{ inputs.anthropic_api_key }}
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        FIX_MODE: ${{ inputs.fix_mode }}
+        CLAUDE_MODEL: ${{ inputs.claude_model }}
+        CUSTOM_INSTRUCTIONS: ${{ inputs.custom_instructions }}
+      run: |
+        ${{ github.action_path }}/scripts/fix.sh
+
+    - name: Commit Changes
+      if: inputs.auto_commit == 'true' && steps.fix.outputs.fixed == 'true'
+      shell: bash
+      run: |
+        ${{ github.action_path }}/scripts/commit.sh "${{ inputs.create_pr }}"
