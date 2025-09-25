@@ -228,3 +228,8 @@ This project is proprietary software. All rights reserved.
 **Building the future of education, one game at a time.** 🚀
 
 *Version 0.1.0-dev | Status: Active Development*
+## 🤖 CI/CD Auto-Fix
+
+This repository uses Claude AI to automatically fix CI/CD failures.
+If builds fail, Claude will automatically create a fix PR.
+
