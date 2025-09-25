@@ -44,10 +44,11 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build application
-        run: pnpm build
+        run: |
+          echo "Building for GitHub Pages with base path: /stealth-learning/"
+          pnpm build -- --base=/stealth-learning/
         env:
-          # Set base path for GitHub Pages
-          BASE_URL: '/stealth-learning/'
+          NODE_ENV: production
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

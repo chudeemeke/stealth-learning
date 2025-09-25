@@ -4,8 +4,8 @@ import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  base: process.env.BASE_URL || '/',
+export default defineConfig(({ mode }) => ({
+  base: mode === 'production' ? '/stealth-learning/' : '/',
   plugins: [
     react(),
     VitePWA({
@@ -19,8 +19,8 @@ export default defineConfig({
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'any',
-        scope: process.env.BASE_URL || '/',
-        start_url: process.env.BASE_URL || '/',
+        scope: mode === 'production' ? '/stealth-learning/' : '/',
+        start_url: mode === 'production' ? '/stealth-learning/' : '/',
         icons: [
           {
             src: 'pwa-64x64.png',
@@ -111,4 +111,4 @@ export default defineConfig({
       }
     }
   }
-});
+}));
