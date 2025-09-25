@@ -630,7 +630,7 @@ export class DatabaseService {
     try {
       // 🔒 ULTRA-SECURE: Input validation and sanitization
       const emailValidation = inputValidator.validateEmail(email);
-      if (!emailValidation.isValid) {
+      if (!emailValidation.isValid || !emailValidation.sanitized) {
         return { success: false, error: 'Invalid email format' };
       }
 

@@ -167,7 +167,6 @@ class InputValidationService {
       KEEP_CONTENT: false,
       RETURN_DOM: false,
       RETURN_DOM_FRAGMENT: false,
-      RETURN_DOM_IMPORT: false,
       SANITIZE_DOM: true,
       WHOLE_DOCUMENT: false
     });

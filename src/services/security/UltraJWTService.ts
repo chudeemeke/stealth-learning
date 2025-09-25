@@ -299,10 +299,14 @@ class UltraJWTService {
 
       // Decrypt and validate refresh token
       const encryptedData = JSON.parse(refreshTokenData);
-      const refreshPayload = ultraEncryption.decryptObject(encryptedData);
+      const refreshPayload = ultraEncryption.decryptObject(encryptedData) as {
+        deviceId: string;
+        createdAt: number;
+        userId: string;
+      };
 
       // Verify device fingerprint
-      if (refreshPayload.deviceId !== this.deviceId) {
+      if (!refreshPayload || refreshPayload.deviceId !== this.deviceId) {
         console.warn('🔒 Refresh token device mismatch');
         this.clearSession();
         return false;

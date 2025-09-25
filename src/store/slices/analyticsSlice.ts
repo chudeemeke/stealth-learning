@@ -155,23 +155,23 @@ const analyticsSlice = createSlice({
       level: number;
       attempts: number;
     }>) => {
-      const existing = state.skillProgress.get(action.payload.skill);
-      
+      const existing = state.skillProgress[action.payload.skill];
+
       if (existing) {
-        state.skillProgress.set(action.payload.skill, {
+        state.skillProgress[action.payload.skill] = {
           ...existing,
           currentLevel: action.payload.level,
           attempts: existing.attempts + action.payload.attempts,
-          lastPracticed: new Date(),
-        });
+          lastPracticed: new Date().toISOString(),
+        };
       } else {
-        state.skillProgress.set(action.payload.skill, {
+        state.skillProgress[action.payload.skill] = {
           skill: action.payload.skill,
           startLevel: action.payload.level,
           currentLevel: action.payload.level,
           attempts: action.payload.attempts,
-          lastPracticed: new Date(),
-        });
+          lastPracticed: new Date().toISOString(),
+        };
       }
     },
     
@@ -217,8 +217,8 @@ const analyticsSlice = createSlice({
       // Calculate progress rate based on skill improvements
       let totalProgress = 0;
       let skillCount = 0;
-      
-      state.skillProgress.forEach(skill => {
+
+      Object.values(state.skillProgress).forEach(skill => {
         const improvement = skill.currentLevel - skill.startLevel;
         totalProgress += improvement;
         skillCount += 1;

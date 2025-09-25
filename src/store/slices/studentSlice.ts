@@ -122,7 +122,7 @@ export const restoreSession = createAsyncThunk(
           effectsVolume: childProfile.preferences.effectsVolume,
           subtitlesEnabled: childProfile.preferences.subtitlesEnabled
         },
-        skillLevels: {}, // Initialize empty object - will be populated from user progress
+        skillLevels: new Map<string, SkillLevel>(), // Initialize empty Map - will be populated from user progress
         learningStyle: 'visual', // Default value
         performanceHistory: [],
         currentZPD: {
@@ -160,7 +160,7 @@ export const restoreSession = createAsyncThunk(
         username: parentUser.email || parentProfile.firstName,
         name: `${parentProfile.firstName} ${parentProfile.lastName}`,
         ageGroup: '9+' as AgeGroup,
-        skillLevels: {},
+        skillLevels: new Map<string, SkillLevel>(),
         learningStyle: 'visual',
         performanceHistory: [],
         currentZPD: {

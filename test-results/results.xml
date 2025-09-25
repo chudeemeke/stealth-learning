@@ -1,0 +1,100 @@
+<testsuites id="" name="" tests="3" failures="2" skipped="0" errors="0" time="34.697992">
+<testsuite name="parent-auth-security.spec.ts" timestamp="2025-09-24T20:11:42.255Z" hostname="chromium" tests="3" failures="2" skipped="0" time="34.395" errors="0">
+<testcase name="🔐 CRITICAL SECURITY TEST: Parent Authentication Validation › 🚨 MUST REJECT: Unregistered parent login attempts" classname="parent-auth-security.spec.ts" time="12.536">
+<failure message="parent-auth-security.spec.ts:9:3 🚨 MUST REJECT: Unregistered parent login attempts" type="FAILURE">
+<![CDATA[  [chromium] › parent-auth-security.spec.ts:9:3 › 🔐 CRITICAL SECURITY TEST: Parent Authentication Validation › 🚨 MUST REJECT: Unregistered parent login attempts 
+
+    Error: expect(page).toHaveURL(expected) failed
+
+    Expected pattern: /\/login/
+    Received string:  "http://localhost:3000/parent-login"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toHaveURL" with timeout 5000ms
+        9 × unexpected value "http://localhost:3000/parent-login"
+
+
+      17 |     // Step 2: Verify we're on parent login page
+      18 |     console.log('📍 Step 2: Verifying parent login page...');
+    > 19 |     await expect(page).toHaveURL(/\/login/);
+         |                        ^
+      20 |
+      21 |     // Take screenshot of login form
+      22 |     await page.screenshot({
+        at /mnt/c/Users/Destiny/iCloudDrive/Documents/AI Tools/Anthropic Solution/Projects/stealth-learning/e2e/parent-auth-security.spec.ts:19:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/parent-auth-security-🔐-CR-16a1b-tered-parent-login-attempts-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/parent-auth-security-🔐-CR-16a1b-tered-parent-login-attempts-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/parent-auth-security-🔐-CR-16a1b-tered-parent-login-attempts-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[🔒 Starting critical security test: Unauthorized parent login rejection
+📍 Step 1: Navigating to parent login...
+📍 Step 2: Verifying parent login page...
+
+[[ATTACHMENT|parent-auth-security-🔐-CR-16a1b-tered-parent-login-attempts-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|parent-auth-security-🔐-CR-16a1b-tered-parent-login-attempts-chromium/video.webm]]
+
+[[ATTACHMENT|parent-auth-security-🔐-CR-16a1b-tered-parent-login-attempts-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔐 CRITICAL SECURITY TEST: Parent Authentication Validation › ✅ MUST ALLOW: Registered parent login after signup" classname="parent-auth-security.spec.ts" time="5.874">
+<system-out>
+<![CDATA[🔓 Testing proper authentication flow for registered parents
+📍 Step 1: Creating new parent account...
+]]>
+</system-out>
+</testcase>
+<testcase name="🔐 CRITICAL SECURITY TEST: Parent Authentication Validation › 🛡️ COMPREHENSIVE: Test all authentication edge cases" classname="parent-auth-security.spec.ts" time="15.985">
+<failure message="parent-auth-security.spec.ts:189:3 🛡️ COMPREHENSIVE: Test all authentication edge cases" type="FAILURE">
+<![CDATA[  [chromium] › parent-auth-security.spec.ts:189:3 › 🔐 CRITICAL SECURITY TEST: Parent Authentication Validation › 🛡️ COMPREHENSIVE: Test all authentication edge cases 
+
+    TimeoutError: page.click: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for locator('button:has-text("Sign In")')
+
+
+      193 |     console.log('📍 Test 1: Empty credentials...');
+      194 |     await page.goto('/login');
+    > 195 |     await page.click('button:has-text("Sign In")');
+          |                ^
+      196 |     await page.waitForTimeout(1000);
+      197 |
+      198 |     // Should show validation error
+        at /mnt/c/Users/Destiny/iCloudDrive/Documents/AI Tools/Anthropic Solution/Projects/stealth-learning/e2e/parent-auth-security.spec.ts:195:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/parent-auth-security-🔐-CR-777b0-l-authentication-edge-cases-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/parent-auth-security-🔐-CR-777b0-l-authentication-edge-cases-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/parent-auth-security-🔐-CR-777b0-l-authentication-edge-cases-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[🔍 Testing comprehensive authentication security...
+📍 Test 1: Empty credentials...
+
+[[ATTACHMENT|parent-auth-security-🔐-CR-777b0-l-authentication-edge-cases-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|parent-auth-security-🔐-CR-777b0-l-authentication-edge-cases-chromium/video.webm]]
+
+[[ATTACHMENT|parent-auth-security-🔐-CR-777b0-l-authentication-edge-cases-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>
