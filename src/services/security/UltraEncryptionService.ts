@@ -46,6 +46,7 @@ class UltraEncryptionService {
    * Validates encryption configuration on startup
    */
   private validateConfiguration(): void {
+    // Ultra-secure validation - no compromises!
     if (!securityConfig.ENCRYPTION_KEY || securityConfig.ENCRYPTION_KEY.length < 32) {
       throw new Error('🔒 CRITICAL: Encryption key must be at least 32 characters');
     }
@@ -55,6 +56,7 @@ class UltraEncryptionService {
     }
 
     console.log('✅ Ultra-encryption service initialized with AES-256-GCM');
+    console.log('🔐 Security level: ULTRA-SAFE');
   }
 
   /**
