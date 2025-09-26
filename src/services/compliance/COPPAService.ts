@@ -5,7 +5,7 @@
 
 import { ultraEncryption } from '@/services/security/UltraEncryptionService';
 import { inputValidator } from '@/services/security/InputValidationService';
-import { securityConfig } from '@/config/security';
+import { securityConfig } from '@/config/security-wrapper';
 
 interface DataCollectionConsent {
   parentId: string;

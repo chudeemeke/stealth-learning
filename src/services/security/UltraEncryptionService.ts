@@ -5,7 +5,7 @@
 
 import CryptoJS from 'crypto-js';
 import bcrypt from 'bcryptjs';
-import { securityConfig } from '@/config/security';
+import { securityConfig } from '@/config/security-wrapper';
 
 interface EncryptionResult {
   encrypted: string;

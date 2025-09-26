@@ -5,7 +5,7 @@
 
 import Cookies from 'js-cookie';
 import CryptoJS from 'crypto-js';
-import { securityConfig, isSecureEnvironment } from '@/config/security';
+import { securityConfig, isSecureEnvironment } from '@/config/security-wrapper';
 import { ultraEncryption } from './UltraEncryptionService';
 
 interface JWTPayload {

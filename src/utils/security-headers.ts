@@ -3,7 +3,7 @@
  * Ultra-secure headers for child data protection
  */
 
-import { securityConfig, getCSPDirectives } from '@/config/security';
+import { securityConfig, getCSPDirectives } from '@/config/security-wrapper';
 
 interface SecurityHeaders {
   'Content-Security-Policy': string;

@@ -26,6 +26,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Layout } from '@/components/Layout';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { SessionTimer } from '@/components/SessionTimer';
+import SecurityWarningBanner from '@/components/SecurityWarningBanner';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -159,6 +160,7 @@ function App() {
 
   return (
     <ErrorBoundary>
+      <SecurityWarningBanner />
       <div className={`app ${profile?.ageGroup ? `age-${profile.ageGroup}` : ''}`}>
         {!isOnline && <OfflineIndicator />}
         
