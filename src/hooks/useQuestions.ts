@@ -63,7 +63,7 @@ export function useQuestions(options: UseQuestionsOptions = {}): UseQuestionsRes
   const { difficulty, subjectMastery } = useAppSelector(state => state.game);
 
   const userId = profile?.id || 'anonymous';
-  const ageGroup = profile ? (
+  const ageGroup = profile?.age ? (
     profile.age <= 5 ? '3-5' :
     profile.age <= 8 ? '6-8' : '9+'
   ) : '6-8';

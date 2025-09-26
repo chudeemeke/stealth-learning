@@ -194,7 +194,14 @@ const gameSlice = createSlice({
     },
     
     setDifficulty: (state, action: PayloadAction<'easy' | 'medium' | 'hard' | 'adaptive'>) => {
-      state.difficulty = action.payload;
+      // Map old difficulty levels to numeric scale
+      const difficultyMap = {
+        'easy': 2,
+        'medium': 5,
+        'hard': 8,
+        'adaptive': state.difficulty // Keep current if adaptive
+      };
+      state.difficulty = difficultyMap[action.payload];
     },
     
     toggleSound: (state) => {

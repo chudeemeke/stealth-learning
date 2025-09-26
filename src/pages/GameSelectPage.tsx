@@ -41,7 +41,7 @@ const GameSelectPage: React.FC = () => {
   const adaptiveData = useAppSelector(state => state.adaptive);
 
   const [selectedSubject, setSelectedSubject] = useState<'all' | 'math' | 'english' | 'science' | 'geography' | 'arts' | 'logic'>('all');
-  const [selectedDifficulty, setSelectedDifficulty] = useState<'all' | number>('all'); // Now supports 1-10 scale
+  const [selectedDifficulty, setSelectedDifficulty] = useState<'all' | 'easy' | 'medium' | 'hard'>('all'); // Traditional difficulty levels
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -213,8 +213,12 @@ const GameSelectPage: React.FC = () => {
       if (selectedSubject !== 'all' && game.subject !== selectedSubject) return false;
 
       if (selectedDifficulty !== 'all') {
-        const difficultyMap = { easy: [1, 2], medium: [3], hard: [4, 5] };
-        if (!difficultyMap[selectedDifficulty].includes(game.difficulty)) return false;
+        const difficultyMap: Record<'easy' | 'medium' | 'hard', number[]> = {
+          easy: [1, 2, 3],
+          medium: [4, 5, 6],
+          hard: [7, 8, 9, 10]
+        };
+        if (!difficultyMap[selectedDifficulty as 'easy' | 'medium' | 'hard'].includes(game.difficulty)) return false;
       }
 
       if (searchQuery) {
@@ -240,8 +244,8 @@ const GameSelectPage: React.FC = () => {
         return age >= minAge && age <= maxAge && game.unlocked;
       })
       .sort((a, b) => {
-        const aScore = adaptiveData.recommendedDifficulty[a.subject] || 0;
-        const bScore = adaptiveData.recommendedDifficulty[b.subject] || 0;
+        const aScore = (adaptiveData.recommendedDifficulty as any)[a.subject] || 0;
+        const bScore = (adaptiveData.recommendedDifficulty as any)[b.subject] || 0;
         return Math.abs(a.difficulty - aScore) - Math.abs(b.difficulty - bScore);
       })
       .slice(0, 3);

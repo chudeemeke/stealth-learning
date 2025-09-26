@@ -239,9 +239,8 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
               }}
               initial={{ scale: 0, opacity: 0, rotate: 0 }}
               animate={{
-                scale: [0, 1, 0],
+                scale: [0, 1.2, 0],
                 opacity: [0, 1, 0],
-                scale: [1, 1.2, 1],
                 x: (Math.random() - 0.5) * 50,
                 y: (Math.random() - 0.5) * 50
               }}

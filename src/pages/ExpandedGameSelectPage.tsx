@@ -40,7 +40,7 @@ const ExpandedGameSelectPage: React.FC = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<number>(1);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
-  const ageGroup = profile?.age <= 5 ? '3-5' : profile?.age <= 8 ? '6-8' : '9+';
+  const ageGroup = profile?.age ? (profile.age <= 5 ? '3-5' : profile.age <= 8 ? '6-8' : '9+') : '6-8';
 
   // Create subject cards from expanded content
   const subjects: SubjectCard[] = Object.entries(subjectConfig).map(([key, config]) => ({
@@ -143,8 +143,7 @@ const ExpandedGameSelectPage: React.FC = () => {
                 whileTap={{ scale: 0.98 }}
               >
                 <Card
-                  glass
-                  glassPreset="light"
+                  variant="glassmorphism"
                   className={`relative h-full cursor-pointer overflow-hidden transition-all duration-300 ${
                     !subject.unlocked ? 'opacity-60' : ''
                   }`}
@@ -198,7 +197,7 @@ const ExpandedGameSelectPage: React.FC = () => {
                         value={subject.userProgress}
                         max={100}
                         className="h-2"
-                        color={subject.color}
+                        color="primary"
                       />
                     </div>
 
@@ -241,7 +240,7 @@ const ExpandedGameSelectPage: React.FC = () => {
                             variant="primary"
                             size="medium"
                             fullWidth
-                            className={`bg-gradient-to-r ${subject.color}`}
+                            className={`bg-gradient-to-r ${subject.color} text-white shadow-lg hover:shadow-xl transition-shadow`}
                           >
                             Start Playing!
                           </Button>
@@ -262,7 +261,7 @@ const ExpandedGameSelectPage: React.FC = () => {
           transition={{ delay: 0.5 }}
           className="mt-8"
         >
-          <Card glass glassPreset="vibrant" className="p-6 bg-gradient-to-r from-purple-500/10 to-pink-500/10">
+          <Card variant="glassmorphism" className="p-6 bg-gradient-to-r from-purple-500/10 to-pink-500/10">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-bold text-gray-800 mb-2">

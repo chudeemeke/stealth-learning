@@ -124,7 +124,9 @@ class QuestionService {
       if (this.cache.size >= this.CACHE_SIZE) {
         // Remove oldest entry (simple FIFO for now)
         const firstKey = this.cache.keys().next().value;
-        this.cache.delete(firstKey);
+        if (firstKey !== undefined) {
+          this.cache.delete(firstKey);
+        }
       }
       this.cache.set(id, question);
     }
