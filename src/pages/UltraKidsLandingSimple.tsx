@@ -7,8 +7,9 @@ import { setStudent } from '@/store/slices/studentSlice';
 import type { Subject, MasteryLevel } from '@/types';
 import { Button } from '@/components/ui/Button';
 import { useSound } from '@/hooks/useSound';
-// Authentication service for parent login/signup
 import { AuthService, type ParentCredentials, type ParentSignupData } from '@/services/auth/AuthService';
+import DesignSystem from '@/styles/design-system';
+import { Shield, Lock, Eye, EyeOff, CheckCircle, AlertCircle, Sparkles, Star, Heart, Trophy, Zap, Users, User } from 'lucide-react';
 
 // Type for view modes - now handles everything inline!
 type ViewMode = 'select' | 'child-age' | 'child-profile' | 'parent' | 'parent-signup';
@@ -284,9 +285,9 @@ const UltraKidsLandingSimple: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-8"
+      className="min-h-screen flex items-center justify-center p-8 relative overflow-hidden"
       style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #ffc94c 75%, #ffdd00 100%)',
+        background: `linear-gradient(135deg, ${DesignSystem.colors.primary[50]} 0%, ${DesignSystem.colors.accent[100]} 25%, ${DesignSystem.colors.secondary[50]} 50%, ${DesignSystem.colors.primary[100]} 75%, ${DesignSystem.colors.accent[50]} 100%)`,
         backgroundSize: '400% 400%',
         animation: 'gradient 15s ease infinite'
       }}
@@ -309,19 +310,36 @@ const UltraKidsLandingSimple: React.FC = () => {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-10px); }
         }
+        @keyframes particle-float {
+          0%, 100% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { transform: translateY(-100vh) translateX(50px) rotate(360deg); opacity: 0; }
+        }
         .floating { animation: float 3s ease-in-out infinite; }
         .sparkle { animation: sparkle 2s ease-in-out infinite; }
         .bounce { animation: bounce 2s ease-in-out infinite; }
+        .particle { animation: particle-float 10s ease-in-out infinite; }
       `}</style>
 
-      {/* Floating decorations */}
+      {/* Duolingo-style floating particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-10 left-10 text-6xl floating">🌟</div>
-        <div className="absolute top-20 right-20 text-5xl floating" style={{ animationDelay: '0.5s' }}>⭐</div>
-        <div className="absolute bottom-20 left-20 text-6xl floating" style={{ animationDelay: '1s' }}>✨</div>
-        <div className="absolute bottom-10 right-10 text-5xl floating" style={{ animationDelay: '1.5s' }}>🌈</div>
-        <div className="absolute top-1/2 left-10 text-5xl floating" style={{ animationDelay: '2s' }}>🎈</div>
-        <div className="absolute top-1/2 right-10 text-5xl floating" style={{ animationDelay: '2.5s' }}>🎮</div>
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute particle"
+            style={{
+              left: `${Math.random() * 100}%`,
+              bottom: '-50px',
+              animationDelay: `${Math.random() * 10}s`,
+              fontSize: `${20 + Math.random() * 30}px`,
+              color: Object.values(DesignSystem.colors.primary)[Math.floor(Math.random() * 5) + 3],
+              opacity: 0.6
+            }}
+          >
+            {['⭐', '✨', '🌟', '💫', '🎯', '🎨', '🎪', '🎭'][Math.floor(Math.random() * 8)]}
+          </div>
+        ))}
       </div>
 
       <AnimatePresence mode="wait">
@@ -340,18 +358,35 @@ const UltraKidsLandingSimple: React.FC = () => {
             }}
             className="relative z-10"
           >
-            {/* Main Content Card */}
+            {/* Main Content Card - Airbnb clean + Duolingo playful */}
             <div
-              className="bg-white/95 backdrop-blur-xl rounded-[3rem] shadow-2xl p-12 max-w-2xl mx-auto relative overflow-hidden"
+              className="card-duolingo bg-white/98 backdrop-blur-xl rounded-[2rem] p-12 max-w-2xl mx-auto relative overflow-hidden"
               style={{
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 100px rgba(168, 85, 247, 0.3)'
+                background: `linear-gradient(135deg, ${DesignSystem.colors.neutral[0]} 0%, ${DesignSystem.colors.primary[50]} 100%)`,
+                boxShadow: DesignSystem.effects.shadows.playful.green,
+                border: `3px solid ${DesignSystem.colors.primary[300]}`,
+                transition: DesignSystem.animation.transitions.spring
               }}
             >
-              {/* Corner decorations */}
-              <div className="absolute top-0 left-0 text-4xl sparkle">🌟</div>
-              <div className="absolute top-0 right-0 text-4xl sparkle" style={{ animationDelay: '0.5s' }}>⭐</div>
-              <div className="absolute bottom-0 left-0 text-4xl sparkle" style={{ animationDelay: '1s' }}>✨</div>
-              <div className="absolute bottom-0 right-0 text-4xl sparkle" style={{ animationDelay: '1.5s' }}>🌈</div>
+              {/* Security badge - top right */}
+              <div className="absolute top-4 right-4 security-badge security-badge--secure">
+                <Shield size={16} />
+                <span>Secure</span>
+              </div>
+
+              {/* Achievement stars - Duolingo style */}
+              <div className="absolute top-4 left-4 flex gap-2">
+                {[...Array(3)].map((_, i) => (
+                  <Star
+                    key={i}
+                    size={24}
+                    fill={i < 2 ? DesignSystem.colors.accent[400] : 'transparent'}
+                    color={DesignSystem.colors.accent[400]}
+                    className="sparkle"
+                    style={{ animationDelay: `${i * 0.3}s` }}
+                  />
+                ))}
+              </div>
 
               {/* Welcome Header */}
               <motion.div
@@ -363,27 +398,34 @@ const UltraKidsLandingSimple: React.FC = () => {
                 <h1
                   className="text-6xl font-extrabold mb-4"
                   style={{
-                    background: 'linear-gradient(90deg, #FF3B3B, #FF8C42, #FFD23F, #4ADE80, #3B82F6, #A855F7, #EC4899)',
+                    fontFamily: DesignSystem.typography.fonts.heading,
+                    background: `linear-gradient(90deg, ${DesignSystem.colors.primary[500]}, ${DesignSystem.colors.accent[500]}, ${DesignSystem.colors.secondary[500]})`,
                     backgroundClip: 'text',
                     WebkitBackgroundClip: 'text',
                     color: 'transparent',
                     backgroundSize: '200% 100%',
-                    animation: 'gradient 3s ease infinite'
+                    animation: 'gradient 3s ease infinite',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
                   }}
                 >
                   Welcome to
                 </h1>
                 <div className="text-5xl font-black flex items-center justify-center gap-4 bounce">
                   <span style={{
-                    background: 'linear-gradient(45deg, #A855F7, #EC4899)',
+                    fontFamily: DesignSystem.typography.fonts.display,
+                    background: `linear-gradient(45deg, ${DesignSystem.colors.primary[600]}, ${DesignSystem.colors.secondary[500]})`,
                     backgroundClip: 'text',
                     WebkitBackgroundClip: 'text',
-                    color: 'transparent'
+                    color: 'transparent',
+                    letterSpacing: '-0.02em'
                   }}>
-                    LearnPlay!
+                    Stealth Learning
                   </span>
-                  <span className="text-5xl">🎮</span>
+                  <Trophy size={48} color={DesignSystem.colors.accent[500]} className="bounce" />
                 </div>
+                <p className="mt-4 text-lg" style={{ color: DesignSystem.colors.neutral[600], fontFamily: DesignSystem.typography.fonts.body }}>
+                  Where education meets adventure! 🚀
+                </p>
               </motion.div>
 
               {/* Mascot */}
@@ -497,12 +539,16 @@ const UltraKidsLandingSimple: React.FC = () => {
                 </div>
               </motion.div>
 
-              {/* Achievement Preview */}
+              {/* Achievement Preview - Duolingo badges style */}
               <div className="mt-6 flex justify-center gap-4">
-                {['🏆', '🥇', '🎯', '⭐', '💎'].map((emoji, index) => (
+                {[Trophy, Star, Heart, Zap, Shield].map((Icon, index) => (
                   <motion.div
-                    key={emoji}
-                    className="text-3xl cursor-pointer"
+                    key={index}
+                    className="cursor-pointer p-3 rounded-full"
+                    style={{
+                      background: index < 2 ? DesignSystem.colors.accent[100] : DesignSystem.colors.neutral[100],
+                      border: `2px solid ${index < 2 ? DesignSystem.colors.accent[400] : DesignSystem.colors.neutral[300]}`
+                    }}
                     initial={{ scale: 0, rotate: -180 }}
                     animate={{ scale: 1, rotate: 0 }}
                     transition={{
@@ -516,7 +562,11 @@ const UltraKidsLandingSimple: React.FC = () => {
                       transition: { duration: 0.3 }
                     }}
                   >
-                    {emoji}
+                    <Icon
+                      size={24}
+                      color={index < 2 ? DesignSystem.colors.accent[600] : DesignSystem.colors.neutral[400]}
+                      fill={index < 2 ? DesignSystem.colors.accent[600] : 'none'}
+                    />
                   </motion.div>
                 ))}
               </div>
@@ -524,14 +574,19 @@ const UltraKidsLandingSimple: React.FC = () => {
           </motion.div>
         )}
 
-        {/* CHILD AGE SELECTION VIEW */}
+        {/* CHILD AGE SELECTION VIEW - Duolingo style */}
         {viewMode === 'child-age' && (
           <motion.div
             key="child-age"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            className="bg-white/95 backdrop-blur-xl rounded-[3rem] shadow-2xl p-8 max-w-lg w-full relative z-10"
+            className="card-duolingo backdrop-blur-xl rounded-[2rem] p-8 max-w-lg w-full relative z-10"
+            style={{
+              background: `linear-gradient(135deg, ${DesignSystem.colors.neutral[0]} 0%, ${DesignSystem.colors.primary[50]} 100%)`,
+              boxShadow: DesignSystem.effects.shadows.playful.green,
+              border: `3px solid ${DesignSystem.colors.primary[300]}`
+            }}
           >
             <motion.button
               onClick={() => {
@@ -544,44 +599,61 @@ const UltraKidsLandingSimple: React.FC = () => {
             </motion.button>
 
             <motion.h2
-              className="text-3xl font-bold text-center mb-8 text-gray-800"
+              className="text-3xl font-bold text-center mb-8"
+              style={{
+                color: DesignSystem.colors.neutral[800],
+                fontFamily: DesignSystem.typography.fonts.heading
+              }}
             >
               How old are you? 🎂
             </motion.h2>
 
             <div className="grid grid-cols-1 gap-4">
               {[
-                { age: '3-5', emoji: '🧸', label: '3-5 years', color: 'from-yellow-400 to-orange-500' },
-                { age: '6-8', emoji: '🎨', label: '6-8 years', color: 'from-green-400 to-teal-500' },
-                { age: '9+', emoji: '🚀', label: '9+ years', color: 'from-blue-400 to-purple-500' },
+                { age: '3-5', icon: Star, label: '3-5 years', color: DesignSystem.colors.accent },
+                { age: '6-8', icon: Zap, label: '6-8 years', color: DesignSystem.colors.primary },
+                { age: '9+', icon: Trophy, label: '9+ years', color: DesignSystem.colors.secondary },
               ].map((item) => (
                 <motion.button
                   key={item.age}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => {
                     playSound('click');
                     setSelectedAge(item.age as any);
                     setViewMode('child-profile');
                   }}
-                  className={`p-6 bg-gradient-to-r ${item.color} text-white rounded-2xl text-xl font-bold shadow-lg hover:shadow-xl transition-all`}
+                  className="p-6 text-white rounded-xl text-xl font-bold transition-all relative overflow-hidden"
+                  style={{
+                    background: `linear-gradient(135deg, ${item.color[400]} 0%, ${item.color[500]} 100%)`,
+                    boxShadow: DesignSystem.effects.shadows.playful.green,
+                    fontFamily: DesignSystem.typography.fonts.heading
+                  }}
                 >
-                  <span className="text-3xl mr-3">{item.emoji}</span>
-                  {item.label}
+                  <span className="flex items-center justify-center gap-3">
+                    <item.icon size={28} className="text-white" />
+                    <span>{item.label}</span>
+                    <Sparkles size={24} className="text-yellow-300" />
+                  </span>
                 </motion.button>
               ))}
             </div>
           </motion.div>
         )}
 
-        {/* CHILD PROFILE CREATION VIEW */}
+        {/* CHILD PROFILE CREATION VIEW - Duolingo style */}
         {viewMode === 'child-profile' && selectedAge && (
           <motion.div
             key="child-profile"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            className="bg-white/95 backdrop-blur-xl rounded-[3rem] shadow-2xl p-8 max-w-2xl w-full relative z-10"
+            className="card-duolingo backdrop-blur-xl rounded-[2rem] p-8 max-w-2xl w-full relative z-10"
+            style={{
+              background: `linear-gradient(135deg, ${DesignSystem.colors.neutral[0]} 0%, ${DesignSystem.colors.accent[50]} 100%)`,
+              boxShadow: DesignSystem.effects.shadows.playful.gold,
+              border: `3px solid ${DesignSystem.colors.accent[300]}`
+            }}
           >
             <motion.button
               onClick={() => {
@@ -594,27 +666,35 @@ const UltraKidsLandingSimple: React.FC = () => {
             </motion.button>
 
             <motion.h2
-              className="text-3xl font-bold text-center mb-8 text-gray-800"
+              className="text-3xl font-bold text-center mb-8"
+              style={{
+                color: DesignSystem.colors.neutral[800],
+                fontFamily: DesignSystem.typography.fonts.heading
+              }}
             >
               Create Your Profile! ✨
             </motion.h2>
 
             <div className="mb-6">
-              <label className="block text-lg font-semibold text-gray-700 mb-2">
+              <label className="block text-lg font-semibold mb-2" style={{ color: DesignSystem.colors.neutral[700], fontFamily: DesignSystem.typography.fonts.body }}>
                 What's your name?
               </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full p-4 text-xl text-gray-800 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none transition-colors bg-white"
+                className="input-secure w-full p-4 text-xl rounded-xl transition-all"
+                style={{
+                  borderColor: username ? DesignSystem.colors.primary[400] : DesignSystem.colors.neutral[200],
+                  fontFamily: DesignSystem.typography.fonts.body
+                }}
                 placeholder="Enter your name..."
                 maxLength={20}
               />
             </div>
 
             <div className="mb-8">
-              <label className="block text-lg font-semibold text-gray-700 mb-4">
+              <label className="block text-lg font-semibold mb-4" style={{ color: DesignSystem.colors.neutral[700], fontFamily: DesignSystem.typography.fonts.body }}>
                 Choose your avatar!
               </label>
               <div className="grid grid-cols-4 gap-4">
@@ -652,14 +732,19 @@ const UltraKidsLandingSimple: React.FC = () => {
           </motion.div>
         )}
 
-        {/* PARENT LOGIN VIEW */}
+        {/* PARENT LOGIN VIEW - Airbnb clean style */}
         {viewMode === 'parent' && (
           <motion.div
             key="parent"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            className="bg-white/95 backdrop-blur-xl rounded-[3rem] shadow-2xl p-8 max-w-md w-full relative z-10"
+            className="card-airbnb backdrop-blur-xl rounded-xl p-8 max-w-md w-full relative z-10"
+            style={{
+              background: DesignSystem.colors.neutral[0],
+              boxShadow: DesignSystem.effects.shadows.xl,
+              border: `1px solid ${DesignSystem.colors.neutral[200]}`
+            }}
           >
             <motion.button
               onClick={() => {

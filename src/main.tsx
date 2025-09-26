@@ -8,6 +8,7 @@ import App from './App';
 import { store, persistor } from './store';
 import './index.css';
 import './styles/accessibility.css';
+import './styles/global-design.css';
 
 // Check if we're in development mode
 const isDevelopment = (import.meta as any).env?.DEV || false;

@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { AgeAwareComponentProps } from '@/types';
 import { useCardHover, useGameAnimations } from '@/hooks/useAnimations';
 import { createGlassStyle, glassPresets } from '@/utils/glassmorphism';
+import DesignSystem from '@/styles/design-system';
 
 export interface ButtonProps extends
   Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'>,
@@ -46,55 +47,76 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
   // Normalize size aliases for consistency
   const normalizedSize = size === 'sm' ? 'small' : size === 'lg' ? 'large' : size;
 
-  // Apple-inspired age-specific size classes
+  // Airbnb + Duolingo age-specific size classes
   const sizeClasses = {
     '3-5': {
-      auto: 'min-h-[64px] px-6 py-4 text-2xl font-apple rounded-apple-2xl',
-      small: 'min-h-[48px] px-4 py-3 text-xl font-apple rounded-apple-xl',
-      medium: 'min-h-[64px] px-6 py-4 text-2xl font-apple rounded-apple-2xl',
-      large: 'min-h-[80px] px-8 py-5 text-3xl font-apple rounded-apple-3xl',
+      auto: 'min-h-[64px] px-6 py-4 text-2xl font-bold rounded-2xl',
+      small: 'min-h-[48px] px-4 py-3 text-xl font-semibold rounded-xl',
+      medium: 'min-h-[64px] px-6 py-4 text-2xl font-bold rounded-2xl',
+      large: 'min-h-[80px] px-8 py-5 text-3xl font-black rounded-3xl',
     },
     '6-8': {
-      auto: 'min-h-[48px] px-4 py-2.5 text-lg font-apple rounded-apple-xl',
-      small: 'min-h-[40px] px-3 py-2 text-base font-apple rounded-apple-lg',
-      medium: 'min-h-[48px] px-4 py-2.5 text-lg font-apple rounded-apple-xl',
-      large: 'min-h-[56px] px-5 py-3 text-xl font-apple rounded-apple-xl',
+      auto: 'min-h-[48px] px-4 py-2.5 text-lg font-semibold rounded-xl',
+      small: 'min-h-[40px] px-3 py-2 text-base font-medium rounded-lg',
+      medium: 'min-h-[48px] px-4 py-2.5 text-lg font-semibold rounded-xl',
+      large: 'min-h-[56px] px-5 py-3 text-xl font-bold rounded-xl',
     },
     '9+': {
-      auto: 'min-h-[44px] px-4 py-2 text-base font-apple rounded-apple-lg',
-      small: 'min-h-[36px] px-3 py-1.5 text-sm font-apple rounded-apple-md',
-      medium: 'min-h-[44px] px-4 py-2 text-base font-apple rounded-apple-lg',
-      large: 'min-h-[52px] px-5 py-2.5 text-lg font-apple rounded-apple-lg',
+      auto: 'min-h-[44px] px-4 py-2 text-base font-medium rounded-lg',
+      small: 'min-h-[36px] px-3 py-1.5 text-sm font-medium rounded-md',
+      medium: 'min-h-[44px] px-4 py-2 text-base font-medium rounded-lg',
+      large: 'min-h-[52px] px-5 py-2.5 text-lg font-semibold rounded-lg',
     },
   };
 
-  // Apple-inspired variant classes with system colors
+  // Airbnb + Duolingo variant classes with design system colors
+  const getVariantStyle = (variant: string, age: string) => {
+    const baseTransition = `transition-all duration-${age === '3-5' ? '300' : age === '6-8' ? '250' : '200'}`;
+
+    switch (variant) {
+      case 'primary':
+        return `bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 shadow-lg ${baseTransition}`;
+      case 'secondary':
+        return `bg-gradient-to-r from-pink-500 to-red-500 text-white hover:from-pink-600 hover:to-red-600 shadow-lg ${baseTransition}`;
+      case 'success':
+        return `bg-gradient-to-r from-emerald-500 to-green-500 text-white hover:from-emerald-600 hover:to-green-600 shadow-md ${baseTransition}`;
+      case 'danger':
+        return `bg-gradient-to-r from-red-500 to-rose-500 text-white hover:from-red-600 hover:to-rose-600 shadow-md ${baseTransition}`;
+      case 'ghost':
+        return `text-gray-700 hover:bg-gray-100 ${baseTransition}`;
+      case 'outline':
+        return `border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50 ${baseTransition}`;
+      default:
+        return '';
+    }
+  };
+
   const variantClasses = {
     '3-5': {
-      primary: 'bg-system-yellow text-white hover:bg-system-orange shadow-apple-lg transition-all duration-300',
-      secondary: 'bg-system-green text-white hover:bg-system-teal shadow-apple-lg transition-all duration-300',
-      success: 'bg-system-green text-white hover:bg-system-teal shadow-apple-md transition-all duration-300',
-      danger: 'bg-system-red text-white hover:bg-system-pink shadow-apple-md transition-all duration-300',
-      ghost: 'text-system-blue hover:bg-apple-gray-100 transition-all duration-200',
-      outline: 'border-2 border-system-blue text-system-blue hover:bg-apple-gray-50 transition-all duration-200',
+      primary: getVariantStyle('primary', '3-5'),
+      secondary: getVariantStyle('secondary', '3-5'),
+      success: getVariantStyle('success', '3-5'),
+      danger: getVariantStyle('danger', '3-5'),
+      ghost: getVariantStyle('ghost', '3-5'),
+      outline: getVariantStyle('outline', '3-5'),
       glass: '',
     },
     '6-8': {
-      primary: 'bg-system-blue text-white hover:bg-system-indigo shadow-apple-md transition-all duration-250',
-      secondary: 'bg-system-purple text-white hover:bg-system-pink shadow-apple-md transition-all duration-250',
-      success: 'bg-system-green text-white hover:bg-system-teal shadow-apple-sm transition-all duration-250',
-      danger: 'bg-system-red text-white hover:bg-system-pink shadow-apple-sm transition-all duration-250',
-      ghost: 'text-system-blue hover:bg-apple-gray-100 transition-all duration-200',
-      outline: 'border-2 border-system-blue text-system-blue hover:bg-apple-gray-50 transition-all duration-200',
+      primary: getVariantStyle('primary', '6-8'),
+      secondary: getVariantStyle('secondary', '6-8'),
+      success: getVariantStyle('success', '6-8'),
+      danger: getVariantStyle('danger', '6-8'),
+      ghost: getVariantStyle('ghost', '6-8'),
+      outline: getVariantStyle('outline', '6-8'),
       glass: '',
     },
     '9+': {
-      primary: 'bg-system-indigo text-white hover:bg-system-blue shadow-apple-sm transition-all duration-200',
-      secondary: 'bg-system-teal text-white hover:bg-system-blue shadow-apple-sm transition-all duration-200',
-      success: 'bg-system-green text-white hover:bg-system-teal transition-all duration-200',
-      danger: 'bg-system-red text-white hover:bg-system-pink transition-all duration-200',
-      ghost: 'text-apple-gray-700 hover:bg-apple-gray-100 transition-all duration-200',
-      outline: 'border border-apple-gray-400 text-apple-gray-700 hover:bg-apple-gray-50 transition-all duration-200',
+      primary: getVariantStyle('primary', '9+'),
+      secondary: getVariantStyle('secondary', '9+'),
+      success: getVariantStyle('success', '9+'),
+      danger: getVariantStyle('danger', '9+'),
+      ghost: getVariantStyle('ghost', '9+'),
+      outline: getVariantStyle('outline', '9+'),
       glass: '',
     },
   };
@@ -164,15 +186,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
   const normalizedAgeGroup = ageGroup;
 
   const commonClassName = cn(
-    'inline-flex items-center justify-center font-medium relative overflow-hidden',
-    'focus:outline-none focus:ring-3 focus:ring-system-blue/30 focus:ring-offset-2',
+    'inline-flex items-center justify-center relative overflow-hidden',
+    `font-[${DesignSystem.typography.fonts.heading}]`,
+    'focus:outline-none focus:ring-3 focus:ring-green-400/30 focus:ring-offset-2',
     'active:scale-95 disabled:active:scale-100',
     currentSizeClass,
     !glass && variant !== 'glass' && currentVariantClass,
     fullWidth && 'w-full',
     disabled && 'opacity-50 cursor-not-allowed',
     loading && 'opacity-75 cursor-wait',
-    glass || variant === 'glass' && 'backdrop-blur-apple border border-white/20',
+    glass || variant === 'glass' && 'backdrop-blur-md border border-white/20',
+    'transform-gpu', // Enable GPU acceleration for smooth animations
     className
   );
 
@@ -213,13 +237,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
       <motion.button
         {...buttonProps}
         animate={controls}
-        whileHover={{ scale: 1.02, y: -1 }}
+        whileHover={{ scale: feedback.scale, y: -2 }}
         whileTap={{ scale: 0.98 }}
         transition={{
           type: 'spring',
-          stiffness: 400,
-          damping: 25,
-          mass: 0.8,
+          stiffness: 260,
+          damping: 20,
+          mass: 1,
         }}
       >
         {glass || variant === 'glass' && (
