@@ -277,6 +277,8 @@ export const BaseCard = forwardRef<CardHandle, BaseCardProps>((
     style: {
       perspective: variant === '3d-transform' ? '1000px' : undefined,
       transformStyle: variant === '3d-transform' ? ('preserve-3d' as const) : undefined,
+      borderColor: getBorderColor(),
+      transition: DesignSystem.animation?.transitions?.base || '250ms ease-in-out',
       ...glowEffect,
     },
   };

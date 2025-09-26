@@ -1,0 +1,69 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - banner [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e9]: 🤖
+        - generic [ref=e11]:
+          - paragraph [ref=e12]: Hi FixedTestKid!
+          - paragraph [ref=e13]: Let's learn today!
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - generic [ref=e16]: 💎
+          - generic [ref=e17]: "0"
+        - generic [ref=e18]:
+          - generic [ref=e19]: ⭐
+          - generic [ref=e20]: "0"
+  - navigation [ref=e21]:
+    - generic [ref=e22]:
+      - button "🏠 Home" [ref=e23] [cursor=pointer]:
+        - generic [ref=e24] [cursor=pointer]: 🏠
+        - generic [ref=e25] [cursor=pointer]: Home
+      - button "🎮 Games" [ref=e26] [cursor=pointer]:
+        - generic [ref=e27] [cursor=pointer]: 🎮
+        - generic [ref=e28] [cursor=pointer]: Games
+      - button "⭐ Progress" [ref=e29] [cursor=pointer]:
+        - generic [ref=e30] [cursor=pointer]: ⭐
+        - generic [ref=e31] [cursor=pointer]: Progress
+      - button "👤 Profile" [ref=e32] [cursor=pointer]:
+        - generic [ref=e33] [cursor=pointer]: 👤
+        - generic [ref=e34] [cursor=pointer]: Profile
+      - button "📋 More" [ref=e35] [cursor=pointer]:
+        - generic [ref=e36] [cursor=pointer]: 📋
+        - generic [ref=e37] [cursor=pointer]: More
+  - main [ref=e38]:
+    - generic [ref=e40]:
+      - generic [ref=e41]:
+        - heading "🎉 SUCCESS! 🎉" [level=1] [ref=e42]
+        - heading "Welcome back, FixedTestKid!" [level=2] [ref=e43]
+        - paragraph [ref=e44]: Kid flow authentication successful! 🚀
+      - generic [ref=e45]:
+        - heading "Welcome to Stealth Learning! 🎮" [level=3] [ref=e46]
+        - paragraph [ref=e47]: Ready to play and learn? Your adventure awaits!
+        - generic [ref=e48]:
+          - paragraph [ref=e49]: 🚀 Time for exciting learning adventures!
+          - button "🎯 Begin Your Quest!" [ref=e50] [cursor=pointer]
+      - generic [ref=e51]:
+        - generic [ref=e52]:
+          - generic [ref=e53]: 💎
+          - generic [ref=e54]: "0"
+          - generic [ref=e55]: XP Points
+        - generic [ref=e56]:
+          - generic [ref=e57]: ⭐
+          - generic [ref=e58]: "0"
+          - generic [ref=e59]: Stars
+        - generic [ref=e60]:
+          - generic [ref=e61]: 🎮
+          - generic [ref=e62]: "0"
+          - generic [ref=e63]: Games
+        - generic [ref=e64]:
+          - generic [ref=e65]: 🏆
+          - generic [ref=e66]: "0"
+          - generic [ref=e67]: Achievements
+  - generic:
+    - generic: ☁️
+    - generic: ⭐
+    - generic: 🌈
+```

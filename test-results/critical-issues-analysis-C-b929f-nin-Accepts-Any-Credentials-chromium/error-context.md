@@ -1,0 +1,45 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: 🔧
+    - generic [ref=e6]: Development Mode - Security features disabled for testing
+  - generic [ref=e8]:
+    - generic:
+      - generic: 🌟
+      - generic: 🌟
+      - generic: 🌟
+      - generic: ⭐
+      - generic: 🎨
+      - generic: 🎯
+      - generic: 🎨
+      - generic: 🌟
+      - generic: 💫
+      - generic: 🎨
+      - generic: ⭐
+      - generic: 🎨
+      - generic: 🎨
+      - generic: ✨
+      - generic: 🎯
+      - generic: ✨
+      - generic: 🎪
+      - generic: 🎨
+      - generic: 🎯
+      - generic: 🌟
+    - generic [ref=e9]:
+      - button "← Back" [ref=e10] [cursor=pointer]
+      - heading "Parent Dashboard" [level=2] [ref=e11]
+      - generic [ref=e12]:
+        - textbox "Email" [ref=e13]: totally-fake-email@fake.com
+        - textbox "Password" [ref=e14]: wrongpassword123
+        - button "Sign In" [ref=e15] [cursor=pointer]
+        - generic [ref=e16]: Invalid email or password
+        - generic [ref=e17]:
+          - strong [ref=e18]: "Demo Credentials:"
+          - text: "Email: parent@demo.com"
+          - text: "Password: demo123"
+        - paragraph [ref=e19]:
+          - text: Don't have an account?
+          - button "Sign up" [ref=e20] [cursor=pointer]
+```

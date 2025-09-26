@@ -1,0 +1,73 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: 🔧
+    - generic [ref=e6]: Development Mode - Security features disabled for testing
+  - generic [ref=e8]:
+    - banner [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - generic [ref=e13]: 🤖
+          - generic [ref=e15]:
+            - paragraph [ref=e16]: Hi MathTestKid!
+            - paragraph [ref=e17]: Let's learn today!
+        - generic [ref=e18]:
+          - generic [ref=e19]:
+            - generic [ref=e20]: 💎
+            - generic [ref=e21]: "0"
+          - generic [ref=e22]:
+            - generic [ref=e23]: ⭐
+            - generic [ref=e24]: "0"
+    - navigation [ref=e25]:
+      - generic [ref=e26]:
+        - button "🏠 Home" [ref=e27] [cursor=pointer]:
+          - generic [ref=e28] [cursor=pointer]: 🏠
+          - generic [ref=e29] [cursor=pointer]: Home
+        - button "🎮 Games" [ref=e30] [cursor=pointer]:
+          - generic [ref=e31] [cursor=pointer]: 🎮
+          - generic [ref=e32] [cursor=pointer]: Games
+        - button "⭐ Progress" [ref=e33] [cursor=pointer]:
+          - generic [ref=e34] [cursor=pointer]: ⭐
+          - generic [ref=e35] [cursor=pointer]: Progress
+        - button "👤 Profile" [ref=e36] [cursor=pointer]:
+          - generic [ref=e37] [cursor=pointer]: 👤
+          - generic [ref=e38] [cursor=pointer]: Profile
+        - button "📋 More" [ref=e39] [cursor=pointer]:
+          - generic [ref=e40] [cursor=pointer]: 📋
+          - generic [ref=e41] [cursor=pointer]: More
+    - main [ref=e42]:
+      - generic [ref=e44]:
+        - generic [ref=e45]:
+          - heading "🎉 SUCCESS! 🎉" [level=1] [ref=e46]
+          - heading "Welcome back, MathTestKid!" [level=2] [ref=e47]
+          - paragraph [ref=e48]: Kid flow authentication successful! 🚀
+        - generic [ref=e49]:
+          - heading "Welcome to Stealth Learning! 🎮" [level=3] [ref=e50]
+          - paragraph [ref=e51]: Ready to play and learn? Your adventure awaits!
+          - generic [ref=e52]:
+            - paragraph [ref=e53]: 🚀 Time for exciting learning adventures!
+            - button "🎯 Begin Your Quest!" [ref=e54] [cursor=pointer]
+        - generic [ref=e55]:
+          - generic [ref=e56]:
+            - generic [ref=e57]: 💎
+            - generic [ref=e58]: "0"
+            - generic [ref=e59]: XP Points
+          - generic [ref=e60]:
+            - generic [ref=e61]: ⭐
+            - generic [ref=e62]: "0"
+            - generic [ref=e63]: Stars
+          - generic [ref=e64]:
+            - generic [ref=e65]: 🎮
+            - generic [ref=e66]: "0"
+            - generic [ref=e67]: Games
+          - generic [ref=e68]:
+            - generic [ref=e69]: 🏆
+            - generic [ref=e70]: "0"
+            - generic [ref=e71]: Achievements
+    - generic:
+      - generic: ☁️
+      - generic: ⭐
+      - generic: 🌈
+```

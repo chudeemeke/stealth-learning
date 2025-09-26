@@ -1,0 +1,46 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: 🔧
+    - generic [ref=e6]: Development Mode - Security features disabled for testing
+  - generic [ref=e8]:
+    - generic:
+      - generic: 💫
+      - generic: 🎪
+      - generic: 🎭
+      - generic: ✨
+      - generic: ✨
+      - generic: 🎭
+      - generic: 🎪
+      - generic: 🎭
+      - generic: 🎯
+      - generic: 🎪
+      - generic: ✨
+      - generic: 🎭
+      - generic: 🎯
+      - generic: ✨
+      - generic: 🎭
+      - generic: ✨
+      - generic: 🎨
+      - generic: 🌟
+      - generic: 🎪
+      - generic: ✨
+    - generic [ref=e9]:
+      - button "← Back to Sign In" [ref=e10] [cursor=pointer]
+      - heading "Create Parent Account" [level=2] [ref=e11]
+      - generic [ref=e12]:
+        - textbox "Your Name" [ref=e13]
+        - textbox "Email Address" [ref=e14]
+        - textbox "Password" [ref=e15]
+        - textbox "Confirm Password" [ref=e16]
+        - button "Create Account" [disabled] [ref=e17]
+        - generic [ref=e18]:
+          - strong [ref=e19]: "Demo Credentials:"
+          - text: "Email: parent@demo.com"
+          - text: "Password: demo123"
+        - paragraph [ref=e20]:
+          - text: Already have an account?
+          - button "Sign In" [ref=e21] [cursor=pointer]
+```

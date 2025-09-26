@@ -10,6 +10,7 @@ import { useSound } from '@/hooks/useSound';
 import { AuthService, type ParentCredentials, type ParentSignupData } from '@/services/auth/AuthService';
 import DesignSystem from '@/styles/design-system';
 import { Shield, Lock, Eye, EyeOff, CheckCircle, AlertCircle, Sparkles, Star, Heart, Trophy, Zap, Users, User } from 'lucide-react';
+import { SecureInput } from '@/components/ui/SecureInput';
 
 // Type for view modes - now handles everything inline!
 type ViewMode = 'select' | 'child-age' | 'child-profile' | 'parent' | 'parent-signup';
@@ -764,40 +765,99 @@ const UltraKidsLandingSimple: React.FC = () => {
             </motion.h2>
 
             <div className="space-y-4">
-              <input
-                type="email"
-                placeholder="Email"
+              <SecureInput
+                label="Email Address"
+                inputType="email"
+                placeholder="parent@example.com"
                 value={parentEmail}
                 onChange={(e) => setParentEmail(e.target.value)}
-                className="w-full p-4 text-gray-800 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none bg-white"
+                validation="email"
+                required
+                privacy="pii"
+                variant="outlined"
+                ageGroup="9+"
+                animated
+                floatingLabel
               />
-              <input
-                type="password"
-                placeholder="Password"
+              <SecureInput
+                label="Password"
+                inputType="password"
+                placeholder="Enter your password"
                 value={parentPassword}
                 onChange={(e) => setParentPassword(e.target.value)}
-                className="w-full p-4 text-gray-800 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none bg-white"
+                validation="password"
+                required
+                privacy="sensitive"
+                variant="outlined"
+                ageGroup="9+"
+                showPasswordToggle
+                strengthIndicator
+                animated
+                floatingLabel
               />
 
-              <button
+              <motion.button
                 onClick={handleParentLogin}
                 disabled={!parentEmail || !parentPassword || isLoading}
-                className="w-full p-4 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl font-bold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary w-full p-4 text-white rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  background: `linear-gradient(135deg, ${DesignSystem.colors.primary[500]} 0%, ${DesignSystem.colors.primary[600]} 100%)`,
+                  boxShadow: DesignSystem.effects?.shadows?.lg,
+                  fontFamily: DesignSystem.typography.fonts.heading
+                }}
+                whileHover={{ scale: 1.02, y: -1 }}
+                whileTap={{ scale: 0.98 }}
               >
-                {isLoading ? 'Signing In...' : 'Sign In'}
-              </button>
+                {isLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <motion.div
+                      className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                    />
+                    Signing In...
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    <Shield size={20} />
+                    Sign In Securely
+                  </span>
+                )}
+              </motion.button>
 
               {authError && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="px-4 py-3 rounded-lg flex items-center gap-2"
+                  style={{
+                    background: `${DesignSystem.colors.error}15`,
+                    border: `1px solid ${DesignSystem.colors.error}`,
+                    color: DesignSystem.colors.error
+                  }}
+                >
+                  <AlertCircle size={20} />
                   {authError}
-                </div>
+                </motion.div>
               )}
 
-              <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded text-sm mb-4">
-                <strong>Demo Credentials:</strong><br/>
-                Email: parent@demo.com<br/>
-                Password: demo123
-              </div>
+              <motion.div
+                className="px-4 py-3 rounded-lg text-sm mb-4 flex items-start gap-2"
+                style={{
+                  background: `linear-gradient(135deg, ${DesignSystem.colors.primary[50]}, ${DesignSystem.colors.accent[50]})`,
+                  border: `1px solid ${DesignSystem.colors.primary[200]}`
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                <Sparkles size={16} color={DesignSystem.colors.primary[500]} className="mt-1" />
+                <div style={{ color: DesignSystem.colors.neutral[700] }}>
+                  <strong>Demo Credentials:</strong><br/>
+                  Email: parent@demo.com<br/>
+                  Password: DemoPass123!
+                </div>
+              </motion.div>
 
               <p className="text-center text-gray-600 text-sm">
                 Don't have an account?{' '}
