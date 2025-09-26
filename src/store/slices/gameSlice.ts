@@ -3,6 +3,7 @@ import { GameState, Reward } from '@/types';
 
 interface GameSliceState {
   currentGame: GameState | null;
+  currentSubject: string | null;
   isPlaying: boolean;
   isPaused: boolean;
   currentLevel: number;
@@ -15,14 +16,17 @@ interface GameSliceState {
   soundEnabled: boolean;
   musicEnabled: boolean;
   hapticEnabled: boolean;
-  difficulty: 'easy' | 'medium' | 'hard' | 'adaptive';
+  difficulty: number; // 1-10 scale
+  adaptiveDifficulty: boolean;
   availableGames: any[];
   unlockedGames: string[];
   gameProgress: Record<string, number>;
+  subjectMastery: Record<string, number>; // Mastery level per subject
 }
 
 const initialState: GameSliceState = {
   currentGame: null,
+  currentSubject: null,
   isPlaying: false,
   isPaused: false,
   currentLevel: 1,
@@ -35,10 +39,19 @@ const initialState: GameSliceState = {
   soundEnabled: true,
   musicEnabled: true,
   hapticEnabled: true,
-  difficulty: 'adaptive',
+  difficulty: 1, // Start at easiest level
+  adaptiveDifficulty: true,
   availableGames: [],
-  unlockedGames: ['math-addition-1', 'math-subtraction-1', 'english-letters-1', 'english-words-1', 'science-animals-1', 'science-plants-1'],
+  unlockedGames: ['math-addition-1', 'math-subtraction-1', 'english-letters-1', 'english-words-1', 'science-animals-1', 'science-plants-1', 'geography-continents-1', 'arts-colors-1', 'logic-patterns-1'],
   gameProgress: {},
+  subjectMastery: {
+    mathematics: 1,
+    english: 1,
+    science: 1,
+    geography: 1,
+    arts: 1,
+    logic: 1
+  },
 };
 
 const gameSlice = createSlice({
@@ -223,6 +236,36 @@ const gameSlice = createSlice({
       state.gameProgress[action.payload.gameId] = action.payload.progress;
     },
 
+    setCurrentSubject: (state, action: PayloadAction<string>) => {
+      state.currentSubject = action.payload;
+    },
+
+    setDifficultyLevel: (state, action: PayloadAction<number>) => {
+      state.difficulty = Math.max(1, Math.min(10, action.payload));
+    },
+
+    updateSubjectMastery: (state, action: PayloadAction<{ subject: string; level: number }>) => {
+      state.subjectMastery[action.payload.subject] = action.payload.level;
+    },
+
+    enableAdaptiveDifficulty: (state, action: PayloadAction<boolean>) => {
+      state.adaptiveDifficulty = action.payload;
+    },
+
+    adjustDifficultyBasedOnPerformance: (state, action: PayloadAction<{ performance: number }>) => {
+      if (state.adaptiveDifficulty) {
+        const { performance } = action.payload;
+        // If performance > 80%, increase difficulty
+        if (performance > 0.8 && state.difficulty < 10) {
+          state.difficulty += 1;
+        }
+        // If performance < 50%, decrease difficulty
+        else if (performance < 0.5 && state.difficulty > 1) {
+          state.difficulty -= 1;
+        }
+      }
+    },
+
     completeGame: (state, action: PayloadAction<{
       gameId: string;
       score: number;
@@ -294,6 +337,11 @@ export const {
   setGameData,
   selectGameForStudent,
   updateGameProgress,
+  setCurrentSubject,
+  setDifficultyLevel,
+  updateSubjectMastery,
+  enableAdaptiveDifficulty,
+  adjustDifficultyBasedOnPerformance,
   completeGame,
   submitAnswer,
   skipQuestion,

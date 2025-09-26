@@ -97,7 +97,7 @@ export const useAgeAnimation = (ageGroup: '3-5' | '6-8' | '9+') => {
   const resetAnimation = useCallback(() => {
     controls.start({
       scale: 1,
-      rotate: 0,
+      // Removed rotate: 0 to prevent rotation transitions
       transition: { duration: config.duration }
     });
   }, [controls, config]);
@@ -217,7 +217,7 @@ export const useCardHover = (ageGroup?: '3-5' | '6-8' | '9+') => {
     controls.start({
       scale: 1,
       y: 0,
-      rotate: 0,
+      // Removed rotate: 0 to prevent rotation transitions
       transition: { duration: appleDuration.fast, ease: appleEasing.easeOut }
     });
   }, [controls]);

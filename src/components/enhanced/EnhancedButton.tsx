@@ -130,8 +130,8 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
       boxShadow: `0 4px 12px ${variantStyle.shadow}`,
     },
     hover: {
-      scale: effect === 'bounce' ? 1.05 : 1.02,
-      rotateZ: effect === 'bounce' ? [-1, 1, 0] : 0,
+      scale: 1.02, // Unified scale for all effects
+      rotateZ: 0, // Removed rotation to prevent spinning
       boxShadow: effect === 'glow'
         ? `0 8px 25px ${variantStyle.glow}, 0 0 20px ${variantStyle.glow}`
         : `0 6px 16px ${variantStyle.shadow}`,
@@ -165,23 +165,17 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
     }
   };
 
+  // Removed shimmer animation - was causing floating effect
   const shimmerVariants = {
-    animate: {
-      backgroundPosition: ['200% 0%', '-200% 0%'],
-      transition: {
-        duration: 2,
-        repeat: Infinity,
-        ease: 'linear'
-      }
-    }
+    animate: {}
   };
 
   const getEffectClassName = () => {
     switch (effect) {
       case 'shimmer':
-        return 'bg-gradient-to-r bg-[length:200%_100%] animate-shimmer';
+        return ''; // Removed animate-shimmer to fix floating issue
       case 'pulse':
-        return 'animate-pulse';
+        return ''; // Removed animate-pulse for consistency
       default:
         return '';
     }
@@ -216,22 +210,18 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
         />
       )}
 
-      {/* Shimmer effect overlay */}
+      {/* Shimmer effect replaced with subtle glow */}
       {effect === 'shimmer' && !disabled && (
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-          variants={shimmerVariants}
-          animate="animate"
+        <div
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-50"
         />
       )}
 
       {/* Loading spinner */}
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <motion.div
-            className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+          <div
+            className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
           />
         </div>
       )}
@@ -251,7 +241,7 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
               animate={{
                 scale: [0, 1, 0],
                 opacity: [0, 1, 0],
-                rotate: [0, 180, 360],
+                scale: [1, 1.2, 1],
                 x: (Math.random() - 0.5) * 50,
                 y: (Math.random() - 0.5) * 50
               }}

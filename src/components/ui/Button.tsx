@@ -277,14 +277,8 @@ const LoadingSpinner: React.FC<{ ageGroup: AgeAwareComponentProps['ageGroup'] }>
   };
 
   return (
-    <motion.div
-      className={cn('relative', spinnerSizes[normalizedAgeGroup])}
-      animate={{ rotate: 360 }}
-      transition={{
-        duration: 1,
-        repeat: Infinity,
-        ease: 'linear',
-      }}
+    <div
+      className={cn('relative animate-spin', spinnerSizes[normalizedAgeGroup])}
     >
       <svg
         className="w-full h-full"
@@ -314,7 +308,7 @@ const LoadingSpinner: React.FC<{ ageGroup: AgeAwareComponentProps['ageGroup'] }>
           className="opacity-75"
         />
       </svg>
-    </motion.div>
+    </div>
   );
 };
 

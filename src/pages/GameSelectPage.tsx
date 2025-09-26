@@ -15,9 +15,9 @@ import {
 interface GameCard {
   id: string;
   title: string;
-  subject: 'math' | 'english' | 'science';
+  subject: 'math' | 'english' | 'science' | 'geography' | 'arts' | 'logic';
   description: string;
-  difficulty: number;
+  difficulty: number; // 1-10 scale
   estimatedTime: number;
   icon: string;
   color: string;
@@ -40,8 +40,8 @@ const GameSelectPage: React.FC = () => {
   const { soundEnabled } = useAppSelector(state => state.settings.app);
   const adaptiveData = useAppSelector(state => state.adaptive);
 
-  const [selectedSubject, setSelectedSubject] = useState<'all' | 'math' | 'english' | 'science'>('all');
-  const [selectedDifficulty, setSelectedDifficulty] = useState<'all' | 'easy' | 'medium' | 'hard'>('all');
+  const [selectedSubject, setSelectedSubject] = useState<'all' | 'math' | 'english' | 'science' | 'geography' | 'arts' | 'logic'>('all');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<'all' | number>('all'); // Now supports 1-10 scale
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 

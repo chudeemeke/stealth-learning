@@ -13,7 +13,7 @@ import HomePage from '@/pages/HomePage';
 import UltraKidsLandingSimple from '@/pages/UltraKidsLandingSimple';
 
 // Lazy load other pages - ENHANCED VERSIONS
-const GameSelectPage = React.lazy(() => import('@/pages/EnhancedGameSelectPage'));
+const GameSelectPage = React.lazy(() => import('@/pages/ExpandedGameSelectPage'));
 const GamePlayPage = React.lazy(() => import('@/pages/EnhancedGamePlayPage'));
 const ProfilePage = React.lazy(() => import('@/pages/ProfilePage'));
 const ProgressPage = React.lazy(() => import('@/pages/ProgressPage'));

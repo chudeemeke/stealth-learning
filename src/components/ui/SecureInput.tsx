@@ -162,8 +162,8 @@ export const SecureInput = forwardRef<HTMLInputElement, SecureInputProps>(({
   const validateInput = (inputValue: string): boolean => {
     if (!required && !inputValue) return true;
 
-    if (validation && VALIDATION_PATTERNS[validation]) {
-      const rule = VALIDATION_PATTERNS[validation];
+    if (validation && validation !== 'custom' && validation in VALIDATION_PATTERNS) {
+      const rule = VALIDATION_PATTERNS[validation as keyof typeof VALIDATION_PATTERNS];
       const isValid = rule.pattern.test(inputValue);
 
       if (!isValid) {
@@ -205,8 +205,8 @@ export const SecureInput = forwardRef<HTMLInputElement, SecureInputProps>(({
     let newValue = e.target.value;
 
     // Sanitize input based on type
-    if (validation && VALIDATION_PATTERNS[validation]) {
-      newValue = VALIDATION_PATTERNS[validation].sanitize(newValue);
+    if (validation && validation !== 'custom' && validation in VALIDATION_PATTERNS) {
+      newValue = VALIDATION_PATTERNS[validation as keyof typeof VALIDATION_PATTERNS].sanitize(newValue);
     }
 
     // XSS prevention
@@ -429,7 +429,7 @@ export const SecureInput = forwardRef<HTMLInputElement, SecureInputProps>(({
             placeholder={!floatingLabel ? placeholder : undefined}
             autoComplete={autoComplete}
             aria-label={label}
-            aria-invalid={showError}
+            aria-invalid={showError ? 'true' : undefined}
             aria-describedby={showError ? `${props.id}-error` : undefined}
             {...props}
           />

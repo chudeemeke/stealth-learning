@@ -403,7 +403,8 @@ export const ageAnimationConfig = {
     },
     hover: {
       scale: 1.1,
-      rotate: 5,
+      y: -2,
+      // Removed rotate: 5 - was causing twist on hover
     },
     tap: {
       scale: 0.9,
@@ -422,7 +423,8 @@ export const ageAnimationConfig = {
     },
     hover: {
       scale: 1.05,
-      rotate: 2,
+      y: -1,
+      // Removed rotate: 2 - was causing twist on hover
     },
     tap: {
       scale: 0.95,

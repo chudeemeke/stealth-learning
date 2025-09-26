@@ -299,47 +299,50 @@ const UltraKidsLandingSimple: React.FC = () => {
           50% { background-position: 100% 50%; }
           100% { background-position: 0% 50%; }
         }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes sparkle {
-          0%, 100% { opacity: 0; }
-          50% { opacity: 1; }
+        @keyframes scaleIn {
+          from { transform: scale(0); }
+          to { transform: scale(1); }
         }
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
+        @keyframes progressFill {
+          from { width: 0%; }
+          to { width: 100%; }
         }
-        @keyframes particle-float {
-          0%, 100% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
-          10% { opacity: 1; }
-          90% { opacity: 1; }
-          100% { transform: translateY(-100vh) translateX(50px) rotate(360deg); opacity: 0; }
+        .fade-in { animation: fadeIn 300ms cubic-bezier(0.4, 0, 0.2, 1); }
+        .scale-in { animation: scaleIn 400ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .progress-fill { animation: progressFill 1s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* Duolingo's actual timing functions */
+        :root {
+          --duo-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+          --duo-ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+          --duo-ease-in-out-soft: cubic-bezier(0.42, 0, 0.58, 1);
         }
-        .floating { animation: float 3s ease-in-out infinite; }
-        .sparkle { animation: sparkle 2s ease-in-out infinite; }
-        .bounce { animation: bounce 2s ease-in-out infinite; }
-        .particle { animation: particle-float 10s ease-in-out infinite; }
       `}</style>
 
-      {/* Duolingo-style floating particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute particle"
-            style={{
-              left: `${Math.random() * 100}%`,
-              bottom: '-50px',
-              animationDelay: `${Math.random() * 10}s`,
-              fontSize: `${20 + Math.random() * 30}px`,
-              color: Object.values(DesignSystem.colors.primary)[Math.floor(Math.random() * 5) + 3],
-              opacity: 0.6
+      {/* Duolingo-style achievement indicators */}
+      <div className="absolute top-8 right-8 flex gap-3 z-20">
+        {[Trophy, Star, Zap].map((Icon, index) => (
+          <motion.div
+            key={index}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{
+              delay: index * 0.1,
+              duration: 0.3,
+              ease: [0.34, 1.56, 0.64, 1]
             }}
+            className="p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg"
           >
-            {['⭐', '✨', '🌟', '💫', '🎯', '🎨', '🎪', '🎭'][Math.floor(Math.random() * 8)]}
-          </div>
+            <Icon
+              size={24}
+              color={DesignSystem.colors.accent[500]}
+              fill={index === 0 ? DesignSystem.colors.accent[500] : 'none'}
+            />
+          </motion.div>
         ))}
       </div>
 
@@ -348,9 +351,9 @@ const UltraKidsLandingSimple: React.FC = () => {
         {viewMode === 'select' && (
           <motion.div
             key="select"
-            initial={{ scale: 0, rotate: -180 }}
-            animate={{ scale: 1, rotate: 0 }}
-            exit={{ scale: 0, rotate: 180 }}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
             transition={{
               type: "spring",
               stiffness: 100,
@@ -378,14 +381,23 @@ const UltraKidsLandingSimple: React.FC = () => {
               {/* Achievement stars - Duolingo style */}
               <div className="absolute top-4 left-4 flex gap-2">
                 {[...Array(3)].map((_, i) => (
-                  <Star
+                  <motion.div
                     key={i}
-                    size={24}
-                    fill={i < 2 ? DesignSystem.colors.accent[400] : 'transparent'}
-                    color={DesignSystem.colors.accent[400]}
-                    className="sparkle"
-                    style={{ animationDelay: `${i * 0.3}s` }}
-                  />
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{
+                      delay: 0.5 + i * 0.1,
+                      type: "spring",
+                      stiffness: 200,
+                      damping: 15
+                    }}
+                  >
+                    <Star
+                      size={24}
+                      fill={i < 2 ? DesignSystem.colors.accent[400] : 'transparent'}
+                      color={DesignSystem.colors.accent[400]}
+                    />
+                  </motion.div>
                 ))}
               </div>
 
@@ -411,7 +423,12 @@ const UltraKidsLandingSimple: React.FC = () => {
                 >
                   Welcome to
                 </h1>
-                <div className="text-5xl font-black flex items-center justify-center gap-4 bounce">
+                <motion.div
+                  className="text-5xl font-black flex items-center justify-center gap-4"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7, duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                >
                   <span style={{
                     fontFamily: DesignSystem.typography.fonts.display,
                     background: `linear-gradient(45deg, ${DesignSystem.colors.primary[600]}, ${DesignSystem.colors.secondary[500]})`,
@@ -422,31 +439,43 @@ const UltraKidsLandingSimple: React.FC = () => {
                   }}>
                     Stealth Learning
                   </span>
-                  <Trophy size={48} color={DesignSystem.colors.accent[500]} className="bounce" />
-                </div>
-                <p className="mt-4 text-lg" style={{ color: DesignSystem.colors.neutral[600], fontFamily: DesignSystem.typography.fonts.body }}>
-                  Where education meets adventure! 🚀
-                </p>
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Trophy size={48} color={DesignSystem.colors.accent[500]} />
+                  </motion.div>
+                </motion.div>
+                <motion.p
+                  className="mt-4 text-lg"
+                  style={{ color: DesignSystem.colors.neutral[600], fontFamily: DesignSystem.typography.fonts.body }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.8, duration: 0.3 }}
+                >
+                  Where education meets adventure!
+                </motion.p>
               </motion.div>
 
               {/* Mascot */}
               <motion.div
                 className="flex justify-center mb-8"
-                animate={{
-                  scale: mascotMood === 'excited' ? [1, 1.1, 1] : 1,
-                  rotate: mascotMood === 'excited' ? [0, 5, -5, 0] : 0
-                }}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
                 transition={{
-                  duration: 2,
-                  repeat: Infinity
+                  delay: 0.3,
+                  type: "spring",
+                  stiffness: 200,
+                  damping: 20
                 }}
               >
                 <div className="text-8xl relative">
                   🦉
                   <motion.div
                     className="text-3xl absolute -top-2 -right-2"
-                    animate={{ scale: [0, 1, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 1, duration: 0.3 }}
                   >
                     💡
                   </motion.div>
@@ -456,10 +485,11 @@ const UltraKidsLandingSimple: React.FC = () => {
               {/* Question */}
               <motion.h2
                 className="text-3xl font-bold text-center mb-8 text-gray-800"
-                animate={{ y: [0, -5, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.9, duration: 0.3 }}
               >
-                Who's playing today? 🎯
+                Who's playing today?
               </motion.h2>
 
               {/* Action Buttons */}
@@ -472,14 +502,14 @@ const UltraKidsLandingSimple: React.FC = () => {
                     backgroundSize: '200% 200%',
                     animation: 'gradient 3s ease infinite'
                   }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={handleKidClick}
                 >
                   <span className="relative z-10 flex items-center justify-center gap-3">
-                    <span className="text-4xl">🦸</span>
+                    <User size={32} />
                     <span>I'm a Kid!</span>
-                    <span className="text-4xl">🎮</span>
+                    <Sparkles size={32} />
                   </span>
 
                   {/* Animated shine effect */}
@@ -498,9 +528,6 @@ const UltraKidsLandingSimple: React.FC = () => {
                     }}
                   />
 
-                  {/* Floating decorations around button */}
-                  <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 text-3xl bounce">🎈</div>
-                  <div className="absolute -right-8 top-1/2 transform -translate-y-1/2 text-3xl bounce" style={{ animationDelay: '1s' }}>🎨</div>
                 </motion.button>
 
                 {/* Parent Button - Professional but fun */}
@@ -509,34 +536,33 @@ const UltraKidsLandingSimple: React.FC = () => {
                   style={{
                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
                   }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={handleParentClick}
                 >
                   <span className="flex items-center justify-center gap-3">
-                    <span>👨‍👩‍👧‍👦</span>
+                    <Users size={28} />
                     <span>I'm a Parent</span>
-                    <span>📊</span>
+                    <Shield size={28} />
                   </span>
                 </motion.button>
               </div>
 
               {/* Fun Fact */}
               <motion.div
-                className="mt-8 p-4 bg-gradient-to-r from-yellow-100 to-pink-100 rounded-2xl"
-                animate={{
-                  boxShadow: [
-                    '0 4px 6px rgba(0,0,0,0.1)',
-                    '0 10px 20px rgba(255,182,193,0.3)',
-                    '0 4px 6px rgba(0,0,0,0.1)'
-                  ]
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
+                className="mt-8 p-4 bg-gradient-to-r from-yellow-100 to-pink-100 rounded-2xl shadow-md"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2, duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
               >
                 <div className="flex items-center justify-center gap-2 text-lg font-semibold text-purple-800">
-                  <span className="text-2xl">💡</span>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Zap size={24} color={DesignSystem.colors.accent[500]} />
+                  </motion.div>
                   <span>Did you know? Learning is 300% more fun with games!</span>
-                  <span className="text-2xl">🚀</span>
                 </div>
               </motion.div>
 
@@ -550,8 +576,8 @@ const UltraKidsLandingSimple: React.FC = () => {
                       background: index < 2 ? DesignSystem.colors.accent[100] : DesignSystem.colors.neutral[100],
                       border: `2px solid ${index < 2 ? DesignSystem.colors.accent[400] : DesignSystem.colors.neutral[300]}`
                     }}
-                    initial={{ scale: 0, rotate: -180 }}
-                    animate={{ scale: 1, rotate: 0 }}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
                     transition={{
                       delay: index * 0.1,
                       type: "spring",
@@ -812,7 +838,7 @@ const UltraKidsLandingSimple: React.FC = () => {
                   <span className="flex items-center justify-center gap-2">
                     <motion.div
                       className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
-                      animate={{ rotate: 360 }}
+                      animate={{ opacity: [0.5, 1, 0.5] }}
                       transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                     />
                     Signing In...

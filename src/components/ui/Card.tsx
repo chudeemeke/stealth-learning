@@ -2,6 +2,7 @@ import React, { ReactNode, forwardRef, useImperativeHandle, useRef, useState, us
 import { motion, AnimatePresence, useAnimation, useInView } from 'framer-motion';
 import { cn } from '@/utils/cn';
 import { AgeAwareComponentProps } from '@/types';
+import DesignSystem from '@/styles/design-system';
 
 // Polymorphic card interface that can transform into different component types
 export interface BaseCardProps extends Partial<AgeAwareComponentProps> {
@@ -11,6 +12,7 @@ export interface BaseCardProps extends Partial<AgeAwareComponentProps> {
   image?: string;
   footer?: ReactNode;
   children?: ReactNode;
+  className?: string;
   variant?: 'default' | 'elevated' | 'outlined' | 'gradient' | 'interactive' | 'glassmorphism' | '3d-transform';
   interactive?: boolean;
   onClick?: () => void;
@@ -277,8 +279,7 @@ export const BaseCard = forwardRef<CardHandle, BaseCardProps>((
     style: {
       perspective: variant === '3d-transform' ? '1000px' : undefined,
       transformStyle: variant === '3d-transform' ? ('preserve-3d' as const) : undefined,
-      borderColor: getBorderColor(),
-      transition: DesignSystem.animation?.transitions?.base || '250ms ease-in-out',
+      transition: DesignSystem.animation?.transitions?.base || '200ms cubic-bezier(0.4, 0, 0.2, 1)',
       ...glowEffect,
     },
   };
@@ -345,14 +346,6 @@ export const BaseCard = forwardRef<CardHandle, BaseCardProps>((
                 ageGroup === '6-8' && 'text-3xl',
                 ageGroup === '9+' && 'text-2xl'
               )}
-              animate={ageGroup === '3-5' ? {
-                rotate: [0, 10, -10, 0],
-              } : {}}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                repeatDelay: 2,
-              }}
             >
               {icon}
             </motion.div>
@@ -398,36 +391,6 @@ export const BaseCard = forwardRef<CardHandle, BaseCardProps>((
         </div>
       )}
 
-      {/* Enhanced decorative elements */}
-      {ageGroup === '3-5' && (variant === 'default' || variant === 'interactive') && (
-        <>
-          <motion.div
-            className="absolute -top-2 -left-2 w-8 h-8 bg-yellow-300 rounded-full opacity-50"
-            animate={{
-              scale: [1, 1.2, 1],
-              rotate: [0, 180, 360],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-          <motion.div
-            className="absolute -bottom-2 -right-2 w-10 h-10 bg-blue-300 rounded-full opacity-50"
-            animate={{
-              scale: [1, 0.8, 1],
-              rotate: [0, -180, -360],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: 1,
-            }}
-          />
-        </>
-      )}
 
       {/* Glassmorphism overlay */}
       {variant === 'glassmorphism' && (
