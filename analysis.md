@@ -2916,3 +2916,127 @@ src/store/slices/gameSlice.ts(197,7): error TS2322: Type 'string' is not assigna
 └─────────────────────┴────────────────────────────────────────────────────────┘
 2 vulnerabilities found
 Severity: 2 moderate
+## Running Comprehensive Analysis
+### TypeScript Errors
+
+> stealth-learning-spa@0.1.0-dev type-check /home/runner/work/stealth-learning/stealth-learning
+> tsc --noEmit
+
+src/components/enhanced/EnhancedButton.tsx(244,17): error TS1117: An object literal cannot have multiple properties with the same name.
+src/hooks/useQuestions.ts(67,5): error TS18048: 'profile.age' is possibly 'undefined'.
+src/hooks/useQuestions.ts(68,5): error TS18048: 'profile.age' is possibly 'undefined'.
+src/pages/ExpandedGameSelectPage.tsx(43,20): error TS18048: 'profile.age' is possibly 'undefined'.
+src/pages/ExpandedGameSelectPage.tsx(43,48): error TS18048: 'profile.age' is possibly 'undefined'.
+src/pages/ExpandedGameSelectPage.tsx(146,19): error TS2322: Type '{ children: Element[]; glass: true; glassPreset: string; className: string; onClick: () => false | void; }' is not assignable to type 'IntrinsicAttributes & CardProps'.
+  Property 'glass' does not exist on type 'IntrinsicAttributes & CardProps'.
+src/pages/ExpandedGameSelectPage.tsx(201,25): error TS2322: Type 'string' is not assignable to type '"success" | "primary" | "secondary" | "danger" | "warning" | undefined'.
+src/pages/ExpandedGameSelectPage.tsx(265,17): error TS2322: Type '{ children: Element; glass: true; glassPreset: string; className: string; }' is not assignable to type 'IntrinsicAttributes & CardProps'.
+  Property 'glass' does not exist on type 'IntrinsicAttributes & CardProps'.
+src/pages/GameSelectPage.tsx(217,14): error TS7053: Element implicitly has an 'any' type because expression of type 'number' can't be used to index type '{ easy: number[]; medium: number[]; hard: number[]; }'.
+  No index signature with a parameter of type 'number' was found on type '{ easy: number[]; medium: number[]; hard: number[]; }'.
+src/pages/GameSelectPage.tsx(243,24): error TS7053: Element implicitly has an 'any' type because expression of type '"english" | "science" | "math" | "geography" | "arts" | "logic"' can't be used to index type '{ math: number; english: number; science: number; }'.
+  Property 'geography' does not exist on type '{ math: number; english: number; science: number; }'.
+src/pages/GameSelectPage.tsx(244,24): error TS7053: Element implicitly has an 'any' type because expression of type '"english" | "science" | "math" | "geography" | "arts" | "logic"' can't be used to index type '{ math: number; english: number; science: number; }'.
+  Property 'geography' does not exist on type '{ math: number; english: number; science: number; }'.
+src/pages/GameSelectPage.tsx(366,52): error TS2345: Argument of type '"easy"' is not assignable to parameter of type 'SetStateAction<number | "all">'.
+src/pages/GameSelectPage.tsx(367,24): error TS2367: This comparison appears to be unintentional because the types 'number | "all"' and '"easy"' have no overlap.
+src/pages/GameSelectPage.tsx(373,52): error TS2345: Argument of type '"medium"' is not assignable to parameter of type 'SetStateAction<number | "all">'.
+src/pages/GameSelectPage.tsx(374,24): error TS2367: This comparison appears to be unintentional because the types 'number | "all"' and '"medium"' have no overlap.
+src/pages/GameSelectPage.tsx(380,52): error TS2345: Argument of type '"hard"' is not assignable to parameter of type 'SetStateAction<number | "all">'.
+src/pages/GameSelectPage.tsx(381,24): error TS2367: This comparison appears to be unintentional because the types 'number | "all"' and '"hard"' have no overlap.
+src/services/QuestionService.ts(127,27): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/store/slices/gameSlice.ts(197,7): error TS2322: Type 'string' is not assignable to type 'number'.
+  Type 'string' is not assignable to type 'number'.
+ ELIFECYCLE  Command failed with exit code 2.
+### Lint Errors
+
+> stealth-learning-spa@0.1.0-dev lint /home/runner/work/stealth-learning/stealth-learning
+> eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 -c config/.eslintrc.cjs
+
+
+Oops! Something went wrong! :(
+
+ESLint: 8.57.1
+
+ESLint couldn't find the config "@typescript-eslint/recommended" to extend from. Please check that the name of the config is correct.
+
+The config "@typescript-eslint/recommended" was referenced from the config file in "/home/runner/work/stealth-learning/stealth-learning/config/.eslintrc.cjs".
+
+If you still have problems, please stop by https://eslint.org/chat/help to chat with the team.
+
+ ELIFECYCLE  Command failed with exit code 2.
+### Test Results
+undefined
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command "test:unit" not found
+
+Did you mean "pnpm test:ui"?
+### Build Status
+
+> stealth-learning-spa@0.1.0-dev build /home/runner/work/stealth-learning/stealth-learning
+> tsc && vite build
+
+src/components/enhanced/EnhancedButton.tsx(244,17): error TS1117: An object literal cannot have multiple properties with the same name.
+src/hooks/useQuestions.ts(67,5): error TS18048: 'profile.age' is possibly 'undefined'.
+src/hooks/useQuestions.ts(68,5): error TS18048: 'profile.age' is possibly 'undefined'.
+src/pages/ExpandedGameSelectPage.tsx(43,20): error TS18048: 'profile.age' is possibly 'undefined'.
+src/pages/ExpandedGameSelectPage.tsx(43,48): error TS18048: 'profile.age' is possibly 'undefined'.
+src/pages/ExpandedGameSelectPage.tsx(146,19): error TS2322: Type '{ children: Element[]; glass: true; glassPreset: string; className: string; onClick: () => false | void; }' is not assignable to type 'IntrinsicAttributes & CardProps'.
+  Property 'glass' does not exist on type 'IntrinsicAttributes & CardProps'.
+src/pages/ExpandedGameSelectPage.tsx(201,25): error TS2322: Type 'string' is not assignable to type '"success" | "primary" | "secondary" | "danger" | "warning" | undefined'.
+src/pages/ExpandedGameSelectPage.tsx(265,17): error TS2322: Type '{ children: Element; glass: true; glassPreset: string; className: string; }' is not assignable to type 'IntrinsicAttributes & CardProps'.
+  Property 'glass' does not exist on type 'IntrinsicAttributes & CardProps'.
+src/pages/GameSelectPage.tsx(217,14): error TS7053: Element implicitly has an 'any' type because expression of type 'number' can't be used to index type '{ easy: number[]; medium: number[]; hard: number[]; }'.
+  No index signature with a parameter of type 'number' was found on type '{ easy: number[]; medium: number[]; hard: number[]; }'.
+src/pages/GameSelectPage.tsx(243,24): error TS7053: Element implicitly has an 'any' type because expression of type '"english" | "science" | "math" | "geography" | "arts" | "logic"' can't be used to index type '{ math: number; english: number; science: number; }'.
+  Property 'geography' does not exist on type '{ math: number; english: number; science: number; }'.
+src/pages/GameSelectPage.tsx(244,24): error TS7053: Element implicitly has an 'any' type because expression of type '"english" | "science" | "math" | "geography" | "arts" | "logic"' can't be used to index type '{ math: number; english: number; science: number; }'.
+  Property 'geography' does not exist on type '{ math: number; english: number; science: number; }'.
+src/pages/GameSelectPage.tsx(366,52): error TS2345: Argument of type '"easy"' is not assignable to parameter of type 'SetStateAction<number | "all">'.
+src/pages/GameSelectPage.tsx(367,24): error TS2367: This comparison appears to be unintentional because the types 'number | "all"' and '"easy"' have no overlap.
+src/pages/GameSelectPage.tsx(373,52): error TS2345: Argument of type '"medium"' is not assignable to parameter of type 'SetStateAction<number | "all">'.
+src/pages/GameSelectPage.tsx(374,24): error TS2367: This comparison appears to be unintentional because the types 'number | "all"' and '"medium"' have no overlap.
+src/pages/GameSelectPage.tsx(380,52): error TS2345: Argument of type '"hard"' is not assignable to parameter of type 'SetStateAction<number | "all">'.
+src/pages/GameSelectPage.tsx(381,24): error TS2367: This comparison appears to be unintentional because the types 'number | "all"' and '"hard"' have no overlap.
+src/services/QuestionService.ts(127,27): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/store/slices/gameSlice.ts(197,7): error TS2322: Type 'string' is not assignable to type 'number'.
+  Type 'string' is not assignable to type 'number'.
+ ELIFECYCLE  Command failed with exit code 2.
+### Security Audit
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ moderate            │ esbuild enables any website to send any requests to    │
+│                     │ the development server and read the response           │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ esbuild                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ <=0.24.2                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=0.25.0                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-controls@7.6.20 >                     │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild@0.18.20        │
+│                     │                                                        │
+│                     │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-controls@7.6.20 >                     │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild-register@3.6.0 │
+│                     │ > esbuild@0.18.20                                      │
+│                     │                                                        │
+│                     │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-docs@7.6.20 >                         │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild@0.18.20        │
+│                     │                                                        │
+│                     │ ... Found 31 paths, run `pnpm why esbuild` for more    │
+│                     │ information                                            │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-67mh-4wv8-2f99      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+2 vulnerabilities found
+Severity: 2 moderate
