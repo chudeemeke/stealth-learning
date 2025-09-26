@@ -1,13 +1,22 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/store';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/Button';
+import { useSound } from '@/hooks/useSound';
 
 const HomePage: React.FC = () => {
+  const navigate = useNavigate();
+  const { playSound } = useSound();
   const { profile, achievements } = useAppSelector(state => state.student);
   const { theme } = useTheme();
   const ageGroup = profile?.ageGroup || '6-8';
+
+  const handleStartPlaying = () => {
+    playSound('success');
+    navigate('/games');
+  };
 
   return (
     <motion.div
@@ -70,7 +79,7 @@ const HomePage: React.FC = () => {
         {ageGroup === '3-5' && (
           <div className="text-center">
             <p className="text-xl mb-4">🌟 Let's have fun learning together!</p>
-            <Button ageGroup="3-5" variant="primary" size="large">
+            <Button ageGroup="3-5" variant="primary" size="large" onClick={handleStartPlaying}>
               🎈 Start Playing!
             </Button>
           </div>
@@ -79,7 +88,7 @@ const HomePage: React.FC = () => {
         {ageGroup === '6-8' && (
           <div className="text-center">
             <p className="text-xl mb-4">🚀 Time for exciting learning adventures!</p>
-            <Button ageGroup="6-8" variant="primary" size="large">
+            <Button ageGroup="6-8" variant="primary" size="large" onClick={handleStartPlaying}>
               🎯 Begin Your Quest!
             </Button>
           </div>
@@ -88,7 +97,7 @@ const HomePage: React.FC = () => {
         {ageGroup === '9+' && (
           <div className="text-center">
             <p className="text-xl mb-4">💡 Ready to master new skills?</p>
-            <Button ageGroup="9+" variant="primary" size="large">
+            <Button ageGroup="9+" variant="primary" size="large" onClick={handleStartPlaying}>
               🎓 Start Learning!
             </Button>
           </div>

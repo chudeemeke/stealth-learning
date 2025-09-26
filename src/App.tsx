@@ -9,9 +9,7 @@ import { coppaService } from '@/services/compliance/COPPAService';
 
 // Import HomePage directly (critical path - no lazy loading)
 import HomePage from '@/pages/HomePage';
-// Import LoginPage directly (critical path - no lazy loading)
-import LoginPage from '@/pages/LoginPage';
-// Import Ultra Kids Landing Page for enhanced visuals
+// Import Ultra Kids Landing Page - handles all login flows inline
 import UltraKidsLandingSimple from '@/pages/UltraKidsLandingSimple';
 
 // Lazy load other pages - ENHANCED VERSIONS
@@ -166,11 +164,8 @@ function App() {
         
         <AnimatePresence mode="wait">
           <Routes>
-            {/* Public Routes */}
+            {/* Public Route - Single login entry point */}
             <Route path="/login" element={<UltraKidsLandingSimple />} />
-            <Route path="/ultra-landing" element={<UltraKidsLandingSimple />} />
-            <Route path="/kid-login" element={<LoginPage />} />
-            <Route path="/parent-login" element={<LoginPage />} />
             
             {/* Landing/Home Route */}
             <Route
