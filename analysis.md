@@ -3596,3 +3596,441 @@ files generated
 └─────────────────────┴────────────────────────────────────────────────────────┘
 2 vulnerabilities found
 Severity: 2 moderate
+## Running Comprehensive Analysis
+### TypeScript Errors
+
+> stealth-learning-spa@0.1.0-dev type-check /home/runner/work/stealth-learning/stealth-learning
+> tsc --noEmit
+
+src/components/dashboard/CelebrationSettings.tsx(47,54): error TS2339: Property 'parent' does not exist on type '{ student: StudentState & PersistPartial; session: SessionState; game: GameSliceState; settings: SettingsState & PersistPartial; analytics: AnalyticsState & PersistPartial; adaptive: AdaptiveState; }'.
+src/components/dashboard/CelebrationSettings.tsx(128,34): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/components/dashboard/CelebrationSettings.tsx(223,26): error TS7006: Parameter 'child' implicitly has an 'any' type.
+src/components/dashboard/CelebrationSettings.tsx(498,14): error TS2322: Type '{ children: string; jsx: true; }' is not assignable to type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+  Property 'jsx' does not exist on type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+src/pages/EnhancedGamePlayPage.tsx(338,9): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/services/accessibility/VoiceInteractionService.ts(65,5): error TS2687: All declarations of 'SpeechRecognition' must have identical modifiers.
+src/services/accessibility/VoiceInteractionService.ts(65,5): error TS2717: Subsequent property declarations must have the same type.  Property 'SpeechRecognition' must be of type 'SpeechRecognitionConstructor | undefined', but here has type 'any'.
+src/services/accessibility/VoiceInteractionService.ts(66,5): error TS2687: All declarations of 'webkitSpeechRecognition' must have identical modifiers.
+src/services/accessibility/VoiceInteractionService.ts(66,5): error TS2717: Subsequent property declarations must have the same type.  Property 'webkitSpeechRecognition' must be of type 'SpeechRecognitionConstructor | undefined', but here has type 'any'.
+src/services/cloud/CloudSyncService.ts(8,10): error TS2724: '"../security/UltraEncryptionService"' has no exported member named 'UltraEncryptionService'. Did you mean 'ultraEncryption'?
+src/services/cloud/CloudSyncService.ts(74,3): error TS7008: Member 'isS' implicitly has an 'any' type.
+src/services/cloud/CloudSyncService.ts(133,7): error TS2561: Object literal may only specify known properties, but 'isSyncing' does not exist in type 'SyncStatus'. Did you mean to write 'yncing'?
+src/services/cloud/CloudSyncService.ts(272,25): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/cloud/CloudSyncService.ts(276,21): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/cloud/CloudSyncService.ts(326,23): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/feedback/QuickFeedbackEngine.ts(101,12): error TS2339: Property 'style' does not exist on type 'Element'.
+src/services/feedback/QuickFeedbackEngine.ts(110,26): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(172,29): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(176,28): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(185,25): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(338,27): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/gamification/DailyChallengesService.ts(509,42): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/services/gamification/DailyChallengesService.ts(511,37): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/services/multiplayer/MultiplayerService.ts(869,23): error TS18046: 'b' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(869,30): error TS18046: 'a' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(872,19): error TS18046: 'entry' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(873,16): error TS18046: 'entry' is of type 'unknown'.
+src/services/pwa/service-worker.ts(136,7): error TS2322: Type 'Response | undefined' is not assignable to type 'Response'.
+  Type 'undefined' is not assignable to type 'Response'.
+src/services/pwa/service-worker.ts(317,5): error TS2353: Object literal may only specify known properties, and 'vibrate' does not exist in type 'NotificationOptions'.
+ ELIFECYCLE  Command failed with exit code 2.
+### Lint Errors
+
+> stealth-learning-spa@0.1.0-dev lint /home/runner/work/stealth-learning/stealth-learning
+> eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 -c config/.eslintrc.cjs
+
+
+Oops! Something went wrong! :(
+
+ESLint: 8.57.1
+
+ESLint couldn't find the config "@typescript-eslint/recommended" to extend from. Please check that the name of the config is correct.
+
+The config "@typescript-eslint/recommended" was referenced from the config file in "/home/runner/work/stealth-learning/stealth-learning/config/.eslintrc.cjs".
+
+If you still have problems, please stop by https://eslint.org/chat/help to chat with the team.
+
+ ELIFECYCLE  Command failed with exit code 2.
+### Test Results
+undefined
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command "test:unit" not found
+
+Did you mean "pnpm test:ui"?
+### Build Status
+
+> stealth-learning-spa@0.1.0-dev build /home/runner/work/stealth-learning/stealth-learning
+> tsc && vite build
+
+src/components/dashboard/CelebrationSettings.tsx(47,54): error TS2339: Property 'parent' does not exist on type '{ student: StudentState & PersistPartial; session: SessionState; game: GameSliceState; settings: SettingsState & PersistPartial; analytics: AnalyticsState & PersistPartial; adaptive: AdaptiveState; }'.
+src/components/dashboard/CelebrationSettings.tsx(128,34): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/components/dashboard/CelebrationSettings.tsx(223,26): error TS7006: Parameter 'child' implicitly has an 'any' type.
+src/components/dashboard/CelebrationSettings.tsx(498,14): error TS2322: Type '{ children: string; jsx: true; }' is not assignable to type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+  Property 'jsx' does not exist on type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+src/pages/EnhancedGamePlayPage.tsx(338,9): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/services/accessibility/VoiceInteractionService.ts(65,5): error TS2687: All declarations of 'SpeechRecognition' must have identical modifiers.
+src/services/accessibility/VoiceInteractionService.ts(65,5): error TS2717: Subsequent property declarations must have the same type.  Property 'SpeechRecognition' must be of type 'SpeechRecognitionConstructor | undefined', but here has type 'any'.
+src/services/accessibility/VoiceInteractionService.ts(66,5): error TS2687: All declarations of 'webkitSpeechRecognition' must have identical modifiers.
+src/services/accessibility/VoiceInteractionService.ts(66,5): error TS2717: Subsequent property declarations must have the same type.  Property 'webkitSpeechRecognition' must be of type 'SpeechRecognitionConstructor | undefined', but here has type 'any'.
+src/services/cloud/CloudSyncService.ts(8,10): error TS2724: '"../security/UltraEncryptionService"' has no exported member named 'UltraEncryptionService'. Did you mean 'ultraEncryption'?
+src/services/cloud/CloudSyncService.ts(74,3): error TS7008: Member 'isS' implicitly has an 'any' type.
+src/services/cloud/CloudSyncService.ts(133,7): error TS2561: Object literal may only specify known properties, but 'isSyncing' does not exist in type 'SyncStatus'. Did you mean to write 'yncing'?
+src/services/cloud/CloudSyncService.ts(272,25): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/cloud/CloudSyncService.ts(276,21): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/cloud/CloudSyncService.ts(326,23): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/feedback/QuickFeedbackEngine.ts(101,12): error TS2339: Property 'style' does not exist on type 'Element'.
+src/services/feedback/QuickFeedbackEngine.ts(110,26): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(172,29): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(176,28): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(185,25): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(338,27): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/gamification/DailyChallengesService.ts(509,42): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/services/gamification/DailyChallengesService.ts(511,37): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/services/multiplayer/MultiplayerService.ts(869,23): error TS18046: 'b' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(869,30): error TS18046: 'a' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(872,19): error TS18046: 'entry' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(873,16): error TS18046: 'entry' is of type 'unknown'.
+src/services/pwa/service-worker.ts(136,7): error TS2322: Type 'Response | undefined' is not assignable to type 'Response'.
+  Type 'undefined' is not assignable to type 'Response'.
+src/services/pwa/service-worker.ts(317,5): error TS2353: Object literal may only specify known properties, and 'vibrate' does not exist in type 'NotificationOptions'.
+ ELIFECYCLE  Command failed with exit code 2.
+### Security Audit
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ moderate            │ esbuild enables any website to send any requests to    │
+│                     │ the development server and read the response           │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ esbuild                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ <=0.24.2                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=0.25.0                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-controls@7.6.20 >                     │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild@0.18.20        │
+│                     │                                                        │
+│                     │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-controls@7.6.20 >                     │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild-register@3.6.0 │
+│                     │ > esbuild@0.18.20                                      │
+│                     │                                                        │
+│                     │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-docs@7.6.20 >                         │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild@0.18.20        │
+│                     │                                                        │
+│                     │ ... Found 31 paths, run `pnpm why esbuild` for more    │
+│                     │ information                                            │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-67mh-4wv8-2f99      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+2 vulnerabilities found
+Severity: 2 moderate
+## Running Comprehensive Analysis
+### TypeScript Errors
+
+> stealth-learning-spa@0.1.0-dev type-check /home/runner/work/stealth-learning/stealth-learning
+> tsc --noEmit
+
+src/components/dashboard/CelebrationSettings.tsx(47,54): error TS2339: Property 'parent' does not exist on type '{ student: StudentState & PersistPartial; session: SessionState; game: GameSliceState; settings: SettingsState & PersistPartial; analytics: AnalyticsState & PersistPartial; adaptive: AdaptiveState; }'.
+src/components/dashboard/CelebrationSettings.tsx(128,34): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/components/dashboard/CelebrationSettings.tsx(223,26): error TS7006: Parameter 'child' implicitly has an 'any' type.
+src/components/dashboard/CelebrationSettings.tsx(498,14): error TS2322: Type '{ children: string; jsx: true; }' is not assignable to type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+  Property 'jsx' does not exist on type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+src/pages/EnhancedGamePlayPage.tsx(338,9): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/services/accessibility/VoiceInteractionService.ts(65,5): error TS2687: All declarations of 'SpeechRecognition' must have identical modifiers.
+src/services/accessibility/VoiceInteractionService.ts(65,5): error TS2717: Subsequent property declarations must have the same type.  Property 'SpeechRecognition' must be of type 'SpeechRecognitionConstructor | undefined', but here has type 'any'.
+src/services/accessibility/VoiceInteractionService.ts(66,5): error TS2687: All declarations of 'webkitSpeechRecognition' must have identical modifiers.
+src/services/accessibility/VoiceInteractionService.ts(66,5): error TS2717: Subsequent property declarations must have the same type.  Property 'webkitSpeechRecognition' must be of type 'SpeechRecognitionConstructor | undefined', but here has type 'any'.
+src/services/cloud/CloudSyncService.ts(8,10): error TS2724: '"../security/UltraEncryptionService"' has no exported member named 'UltraEncryptionService'. Did you mean 'ultraEncryption'?
+src/services/cloud/CloudSyncService.ts(74,3): error TS7008: Member 'isS' implicitly has an 'any' type.
+src/services/cloud/CloudSyncService.ts(133,7): error TS2561: Object literal may only specify known properties, but 'isSyncing' does not exist in type 'SyncStatus'. Did you mean to write 'yncing'?
+src/services/cloud/CloudSyncService.ts(272,25): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/cloud/CloudSyncService.ts(276,21): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/cloud/CloudSyncService.ts(326,23): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/feedback/QuickFeedbackEngine.ts(101,12): error TS2339: Property 'style' does not exist on type 'Element'.
+src/services/feedback/QuickFeedbackEngine.ts(110,26): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(172,29): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(176,28): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(185,25): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(338,27): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/gamification/DailyChallengesService.ts(509,42): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/services/gamification/DailyChallengesService.ts(511,37): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/services/multiplayer/MultiplayerService.ts(869,23): error TS18046: 'b' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(869,30): error TS18046: 'a' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(872,19): error TS18046: 'entry' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(873,16): error TS18046: 'entry' is of type 'unknown'.
+src/services/pwa/service-worker.ts(136,7): error TS2322: Type 'Response | undefined' is not assignable to type 'Response'.
+  Type 'undefined' is not assignable to type 'Response'.
+src/services/pwa/service-worker.ts(317,5): error TS2353: Object literal may only specify known properties, and 'vibrate' does not exist in type 'NotificationOptions'.
+ ELIFECYCLE  Command failed with exit code 2.
+### Lint Errors
+
+> stealth-learning-spa@0.1.0-dev lint /home/runner/work/stealth-learning/stealth-learning
+> eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 -c config/.eslintrc.cjs
+
+
+Oops! Something went wrong! :(
+
+ESLint: 8.57.1
+
+ESLint couldn't find the config "@typescript-eslint/recommended" to extend from. Please check that the name of the config is correct.
+
+The config "@typescript-eslint/recommended" was referenced from the config file in "/home/runner/work/stealth-learning/stealth-learning/config/.eslintrc.cjs".
+
+If you still have problems, please stop by https://eslint.org/chat/help to chat with the team.
+
+ ELIFECYCLE  Command failed with exit code 2.
+### Test Results
+undefined
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command "test:unit" not found
+
+Did you mean "pnpm test:ui"?
+### Build Status
+
+> stealth-learning-spa@0.1.0-dev build /home/runner/work/stealth-learning/stealth-learning
+> tsc && vite build
+
+src/components/dashboard/CelebrationSettings.tsx(47,54): error TS2339: Property 'parent' does not exist on type '{ student: StudentState & PersistPartial; session: SessionState; game: GameSliceState; settings: SettingsState & PersistPartial; analytics: AnalyticsState & PersistPartial; adaptive: AdaptiveState; }'.
+src/components/dashboard/CelebrationSettings.tsx(128,34): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/components/dashboard/CelebrationSettings.tsx(223,26): error TS7006: Parameter 'child' implicitly has an 'any' type.
+src/components/dashboard/CelebrationSettings.tsx(498,14): error TS2322: Type '{ children: string; jsx: true; }' is not assignable to type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+  Property 'jsx' does not exist on type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+src/pages/EnhancedGamePlayPage.tsx(338,9): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/services/accessibility/VoiceInteractionService.ts(65,5): error TS2687: All declarations of 'SpeechRecognition' must have identical modifiers.
+src/services/accessibility/VoiceInteractionService.ts(65,5): error TS2717: Subsequent property declarations must have the same type.  Property 'SpeechRecognition' must be of type 'SpeechRecognitionConstructor | undefined', but here has type 'any'.
+src/services/accessibility/VoiceInteractionService.ts(66,5): error TS2687: All declarations of 'webkitSpeechRecognition' must have identical modifiers.
+src/services/accessibility/VoiceInteractionService.ts(66,5): error TS2717: Subsequent property declarations must have the same type.  Property 'webkitSpeechRecognition' must be of type 'SpeechRecognitionConstructor | undefined', but here has type 'any'.
+src/services/cloud/CloudSyncService.ts(8,10): error TS2724: '"../security/UltraEncryptionService"' has no exported member named 'UltraEncryptionService'. Did you mean 'ultraEncryption'?
+src/services/cloud/CloudSyncService.ts(74,3): error TS7008: Member 'isS' implicitly has an 'any' type.
+src/services/cloud/CloudSyncService.ts(133,7): error TS2561: Object literal may only specify known properties, but 'isSyncing' does not exist in type 'SyncStatus'. Did you mean to write 'yncing'?
+src/services/cloud/CloudSyncService.ts(272,25): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/cloud/CloudSyncService.ts(276,21): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/cloud/CloudSyncService.ts(326,23): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/feedback/QuickFeedbackEngine.ts(101,12): error TS2339: Property 'style' does not exist on type 'Element'.
+src/services/feedback/QuickFeedbackEngine.ts(110,26): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(172,29): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(176,28): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(185,25): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(338,27): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/gamification/DailyChallengesService.ts(509,42): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/services/gamification/DailyChallengesService.ts(511,37): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/services/multiplayer/MultiplayerService.ts(869,23): error TS18046: 'b' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(869,30): error TS18046: 'a' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(872,19): error TS18046: 'entry' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(873,16): error TS18046: 'entry' is of type 'unknown'.
+src/services/pwa/service-worker.ts(136,7): error TS2322: Type 'Response | undefined' is not assignable to type 'Response'.
+  Type 'undefined' is not assignable to type 'Response'.
+src/services/pwa/service-worker.ts(317,5): error TS2353: Object literal may only specify known properties, and 'vibrate' does not exist in type 'NotificationOptions'.
+ ELIFECYCLE  Command failed with exit code 2.
+### Security Audit
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ moderate            │ esbuild enables any website to send any requests to    │
+│                     │ the development server and read the response           │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ esbuild                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ <=0.24.2                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=0.25.0                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-controls@7.6.20 >                     │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild@0.18.20        │
+│                     │                                                        │
+│                     │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-controls@7.6.20 >                     │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild-register@3.6.0 │
+│                     │ > esbuild@0.18.20                                      │
+│                     │                                                        │
+│                     │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-docs@7.6.20 >                         │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild@0.18.20        │
+│                     │                                                        │
+│                     │ ... Found 31 paths, run `pnpm why esbuild` for more    │
+│                     │ information                                            │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-67mh-4wv8-2f99      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+2 vulnerabilities found
+Severity: 2 moderate
+## Running Comprehensive Analysis
+### TypeScript Errors
+
+> stealth-learning-spa@0.1.0-dev type-check /home/runner/work/stealth-learning/stealth-learning
+> tsc --noEmit
+
+src/components/dashboard/CelebrationSettings.tsx(47,54): error TS2339: Property 'parent' does not exist on type '{ student: StudentState & PersistPartial; session: SessionState; game: GameSliceState; settings: SettingsState & PersistPartial; analytics: AnalyticsState & PersistPartial; adaptive: AdaptiveState; }'.
+src/components/dashboard/CelebrationSettings.tsx(128,34): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/components/dashboard/CelebrationSettings.tsx(223,26): error TS7006: Parameter 'child' implicitly has an 'any' type.
+src/components/dashboard/CelebrationSettings.tsx(498,14): error TS2322: Type '{ children: string; jsx: true; }' is not assignable to type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+  Property 'jsx' does not exist on type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+src/pages/EnhancedGamePlayPage.tsx(338,9): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/services/accessibility/VoiceInteractionService.ts(65,5): error TS2687: All declarations of 'SpeechRecognition' must have identical modifiers.
+src/services/accessibility/VoiceInteractionService.ts(65,5): error TS2717: Subsequent property declarations must have the same type.  Property 'SpeechRecognition' must be of type 'SpeechRecognitionConstructor | undefined', but here has type 'any'.
+src/services/accessibility/VoiceInteractionService.ts(66,5): error TS2687: All declarations of 'webkitSpeechRecognition' must have identical modifiers.
+src/services/accessibility/VoiceInteractionService.ts(66,5): error TS2717: Subsequent property declarations must have the same type.  Property 'webkitSpeechRecognition' must be of type 'SpeechRecognitionConstructor | undefined', but here has type 'any'.
+src/services/cloud/CloudSyncService.ts(8,10): error TS2724: '"../security/UltraEncryptionService"' has no exported member named 'UltraEncryptionService'. Did you mean 'ultraEncryption'?
+src/services/cloud/CloudSyncService.ts(74,3): error TS7008: Member 'isS' implicitly has an 'any' type.
+src/services/cloud/CloudSyncService.ts(133,7): error TS2561: Object literal may only specify known properties, but 'isSyncing' does not exist in type 'SyncStatus'. Did you mean to write 'yncing'?
+src/services/cloud/CloudSyncService.ts(272,25): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/cloud/CloudSyncService.ts(276,21): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/cloud/CloudSyncService.ts(326,23): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/feedback/QuickFeedbackEngine.ts(101,12): error TS2339: Property 'style' does not exist on type 'Element'.
+src/services/feedback/QuickFeedbackEngine.ts(110,26): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(172,29): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(176,28): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(185,25): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(338,27): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/gamification/DailyChallengesService.ts(509,42): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/services/gamification/DailyChallengesService.ts(511,37): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/services/multiplayer/MultiplayerService.ts(869,23): error TS18046: 'b' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(869,30): error TS18046: 'a' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(872,19): error TS18046: 'entry' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(873,16): error TS18046: 'entry' is of type 'unknown'.
+src/services/pwa/service-worker.ts(136,7): error TS2322: Type 'Response | undefined' is not assignable to type 'Response'.
+  Type 'undefined' is not assignable to type 'Response'.
+src/services/pwa/service-worker.ts(317,5): error TS2353: Object literal may only specify known properties, and 'vibrate' does not exist in type 'NotificationOptions'.
+ ELIFECYCLE  Command failed with exit code 2.
+### Lint Errors
+
+> stealth-learning-spa@0.1.0-dev lint /home/runner/work/stealth-learning/stealth-learning
+> eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 -c config/.eslintrc.cjs
+
+
+Oops! Something went wrong! :(
+
+ESLint: 8.57.1
+
+ESLint couldn't find the config "@typescript-eslint/recommended" to extend from. Please check that the name of the config is correct.
+
+The config "@typescript-eslint/recommended" was referenced from the config file in "/home/runner/work/stealth-learning/stealth-learning/config/.eslintrc.cjs".
+
+If you still have problems, please stop by https://eslint.org/chat/help to chat with the team.
+
+ ELIFECYCLE  Command failed with exit code 2.
+### Test Results
+undefined
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command "test:unit" not found
+
+Did you mean "pnpm test:ui"?
+### Build Status
+
+> stealth-learning-spa@0.1.0-dev build /home/runner/work/stealth-learning/stealth-learning
+> tsc && vite build
+
+src/components/dashboard/CelebrationSettings.tsx(47,54): error TS2339: Property 'parent' does not exist on type '{ student: StudentState & PersistPartial; session: SessionState; game: GameSliceState; settings: SettingsState & PersistPartial; analytics: AnalyticsState & PersistPartial; adaptive: AdaptiveState; }'.
+src/components/dashboard/CelebrationSettings.tsx(128,34): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/components/dashboard/CelebrationSettings.tsx(223,26): error TS7006: Parameter 'child' implicitly has an 'any' type.
+src/components/dashboard/CelebrationSettings.tsx(498,14): error TS2322: Type '{ children: string; jsx: true; }' is not assignable to type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+  Property 'jsx' does not exist on type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+src/pages/EnhancedGamePlayPage.tsx(338,9): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/services/accessibility/VoiceInteractionService.ts(65,5): error TS2687: All declarations of 'SpeechRecognition' must have identical modifiers.
+src/services/accessibility/VoiceInteractionService.ts(65,5): error TS2717: Subsequent property declarations must have the same type.  Property 'SpeechRecognition' must be of type 'SpeechRecognitionConstructor | undefined', but here has type 'any'.
+src/services/accessibility/VoiceInteractionService.ts(66,5): error TS2687: All declarations of 'webkitSpeechRecognition' must have identical modifiers.
+src/services/accessibility/VoiceInteractionService.ts(66,5): error TS2717: Subsequent property declarations must have the same type.  Property 'webkitSpeechRecognition' must be of type 'SpeechRecognitionConstructor | undefined', but here has type 'any'.
+src/services/cloud/CloudSyncService.ts(8,10): error TS2724: '"../security/UltraEncryptionService"' has no exported member named 'UltraEncryptionService'. Did you mean 'ultraEncryption'?
+src/services/cloud/CloudSyncService.ts(74,3): error TS7008: Member 'isS' implicitly has an 'any' type.
+src/services/cloud/CloudSyncService.ts(133,7): error TS2561: Object literal may only specify known properties, but 'isSyncing' does not exist in type 'SyncStatus'. Did you mean to write 'yncing'?
+src/services/cloud/CloudSyncService.ts(272,25): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/cloud/CloudSyncService.ts(276,21): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/cloud/CloudSyncService.ts(326,23): error TS2551: Property 'isSyncing' does not exist on type 'SyncStatus'. Did you mean 'yncing'?
+src/services/feedback/QuickFeedbackEngine.ts(101,12): error TS2339: Property 'style' does not exist on type 'Element'.
+src/services/feedback/QuickFeedbackEngine.ts(110,26): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(172,29): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(176,28): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(185,25): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/feedback/QuickFeedbackEngine.ts(338,27): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement'.
+  Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 130 more.
+src/services/gamification/DailyChallengesService.ts(509,42): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/services/gamification/DailyChallengesService.ts(511,37): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+src/services/multiplayer/MultiplayerService.ts(869,23): error TS18046: 'b' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(869,30): error TS18046: 'a' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(872,19): error TS18046: 'entry' is of type 'unknown'.
+src/services/multiplayer/MultiplayerService.ts(873,16): error TS18046: 'entry' is of type 'unknown'.
+src/services/pwa/service-worker.ts(136,7): error TS2322: Type 'Response | undefined' is not assignable to type 'Response'.
+  Type 'undefined' is not assignable to type 'Response'.
+src/services/pwa/service-worker.ts(317,5): error TS2353: Object literal may only specify known properties, and 'vibrate' does not exist in type 'NotificationOptions'.
+ ELIFECYCLE  Command failed with exit code 2.
+### Security Audit
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ moderate            │ esbuild enables any website to send any requests to    │
+│                     │ the development server and read the response           │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ esbuild                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ <=0.24.2                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=0.25.0                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-controls@7.6.20 >                     │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild@0.18.20        │
+│                     │                                                        │
+│                     │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-controls@7.6.20 >                     │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild-register@3.6.0 │
+│                     │ > esbuild@0.18.20                                      │
+│                     │                                                        │
+│                     │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-docs@7.6.20 >                         │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild@0.18.20        │
+│                     │                                                        │
+│                     │ ... Found 31 paths, run `pnpm why esbuild` for more    │
+│                     │ information                                            │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-67mh-4wv8-2f99      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+2 vulnerabilities found
+Severity: 2 moderate
