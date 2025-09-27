@@ -92,6 +92,7 @@ export interface Question {
   id: string;
   type: 'multiple-choice' | 'drag-drop' | 'typing' | 'drawing' | 'sorting' | 'matching';
   question: string;
+  subject?: string; // Optional subject field
   options?: string[];
   correctAnswer: string | string[];
   hint?: string;
@@ -100,6 +101,7 @@ export interface Question {
     type: 'image' | 'audio' | 'video';
     url: string;
     alt?: string;
+    diagramType?: string; // For science diagrams
   };
   difficulty: number; // 1-10 scale
   points: number;

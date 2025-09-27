@@ -23,6 +23,9 @@ interface StudentState {
     math: number;
     english: number;
     science: number;
+    geography?: number;
+    logic?: number;
+    arts?: number;
   };
   preferences: {
     theme: string;
@@ -46,6 +49,9 @@ const initialState: StudentState = {
     math: 1,
     english: 1,
     science: 1,
+    geography: 1,
+    logic: 1,
+    arts: 1,
   },
   preferences: {
     theme: 'default',
