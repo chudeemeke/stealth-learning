@@ -4822,3 +4822,81 @@ src/pages/GameSelectPage.tsx(349,17): error TS18048: 'skillLevels.arts' is possi
 └─────────────────────┴────────────────────────────────────────────────────────┘
 2 vulnerabilities found
 Severity: 2 moderate
+## Running Comprehensive Analysis
+### TypeScript Errors
+
+> stealth-learning-spa@0.1.0-dev type-check /home/runner/work/stealth-learning/stealth-learning
+> tsc --noEmit
+
+src/pages/GameSelectPage.tsx(251,17): error TS18048: 'skillLevels.geography' is possibly 'undefined'.
+src/pages/GameSelectPage.tsx(300,17): error TS18048: 'skillLevels.logic' is possibly 'undefined'.
+src/pages/GameSelectPage.tsx(349,17): error TS18048: 'skillLevels.arts' is possibly 'undefined'.
+ ELIFECYCLE  Command failed with exit code 2.
+### Lint Errors
+
+> stealth-learning-spa@0.1.0-dev lint /home/runner/work/stealth-learning/stealth-learning
+> eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 -c config/.eslintrc.cjs
+
+
+Oops! Something went wrong! :(
+
+ESLint: 8.57.1
+
+ESLint couldn't find the config "@typescript-eslint/recommended" to extend from. Please check that the name of the config is correct.
+
+The config "@typescript-eslint/recommended" was referenced from the config file in "/home/runner/work/stealth-learning/stealth-learning/config/.eslintrc.cjs".
+
+If you still have problems, please stop by https://eslint.org/chat/help to chat with the team.
+
+ ELIFECYCLE  Command failed with exit code 2.
+### Test Results
+undefined
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command "test:unit" not found
+
+Did you mean "pnpm test:ui"?
+### Build Status
+
+> stealth-learning-spa@0.1.0-dev build /home/runner/work/stealth-learning/stealth-learning
+> tsc && vite build
+
+src/pages/GameSelectPage.tsx(251,17): error TS18048: 'skillLevels.geography' is possibly 'undefined'.
+src/pages/GameSelectPage.tsx(300,17): error TS18048: 'skillLevels.logic' is possibly 'undefined'.
+src/pages/GameSelectPage.tsx(349,17): error TS18048: 'skillLevels.arts' is possibly 'undefined'.
+ ELIFECYCLE  Command failed with exit code 2.
+### Security Audit
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ moderate            │ esbuild enables any website to send any requests to    │
+│                     │ the development server and read the response           │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ esbuild                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ <=0.24.2                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=0.25.0                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-controls@7.6.20 >                     │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild@0.18.20        │
+│                     │                                                        │
+│                     │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-controls@7.6.20 >                     │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild-register@3.6.0 │
+│                     │ > esbuild@0.18.20                                      │
+│                     │                                                        │
+│                     │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-docs@7.6.20 >                         │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild@0.18.20        │
+│                     │                                                        │
+│                     │ ... Found 31 paths, run `pnpm why esbuild` for more    │
+│                     │ information                                            │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-67mh-4wv8-2f99      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+2 vulnerabilities found
+Severity: 2 moderate
