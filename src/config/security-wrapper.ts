@@ -103,14 +103,16 @@ export const isSecureEnvironment = (): boolean => {
 export const getCSPDirectives = (): string => {
   if (!securityConfig.CSP_ENABLED) return '';
 
-  // More restrictive CSP for better security
+  // More restrictive CSP for better security with necessary exceptions
   const basePolicy = [
     "default-src 'self'",
-    "script-src 'self'", // Removed 'unsafe-inline' for better security
-    "style-src 'self' 'unsafe-inline'", // Still needed for Tailwind
+    "script-src 'self' blob:", // Added blob: for web workers (confetti)
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", // Allow Google Fonts
+    "style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com", // Specific for <link> elements
     "img-src 'self' data: https:",
-    "font-src 'self' data: https:",
-    "connect-src 'self'", // Only allow same-origin connections
+    "font-src 'self' data: https: https://fonts.gstatic.com", // Allow Google Fonts
+    "connect-src 'self' http://localhost:4000/api", // Allow API calls
+    "worker-src 'self' blob:", // Allow web workers from blob URLs
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",

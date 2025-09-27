@@ -22,8 +22,8 @@ export interface AdaptiveState {
     hintsUsed: number;
   };
   contentQueue: Content[];
-  masteredSkills: Set<string>;
-  strugglingSkills: Set<string>;
+  masteredSkills: string[];
+  strugglingSkills: string[];
   lastAdjustment: {
     timestamp: Date | null;
     direction: 'increase' | 'decrease' | 'maintain';
@@ -66,8 +66,8 @@ const initialState: AdaptiveState = {
     hintsUsed: 0,
   },
   contentQueue: [],
-  masteredSkills: new Set(),
-  strugglingSkills: new Set(),
+  masteredSkills: [],
+  strugglingSkills: [],
   lastAdjustment: {
     timestamp: null,
     direction: 'maintain',
@@ -214,13 +214,21 @@ const adaptiveSlice = createSlice({
     },
     
     markSkillMastered: (state, action: PayloadAction<string>) => {
-      state.masteredSkills.add(action.payload);
-      state.strugglingSkills.delete(action.payload);
+      // Add to mastered if not already present
+      if (!state.masteredSkills.includes(action.payload)) {
+        state.masteredSkills.push(action.payload);
+      }
+      // Remove from struggling if present
+      state.strugglingSkills = state.strugglingSkills.filter(skill => skill !== action.payload);
     },
-    
+
     markSkillStruggling: (state, action: PayloadAction<string>) => {
-      state.strugglingSkills.add(action.payload);
-      state.masteredSkills.delete(action.payload);
+      // Add to struggling if not already present
+      if (!state.strugglingSkills.includes(action.payload)) {
+        state.strugglingSkills.push(action.payload);
+      }
+      // Remove from mastered if present
+      state.masteredSkills = state.masteredSkills.filter(skill => skill !== action.payload);
     },
     
     setPerformanceThresholds: (state, action: PayloadAction<{

@@ -37,8 +37,8 @@ describe('adaptiveSlice', () => {
       hintsUsed: 0,
     },
     contentQueue: [],
-    masteredSkills: new Set(),
-    strugglingSkills: new Set(),
+    masteredSkills: [],
+    strugglingSkills: [],
     lastAdjustment: {
       timestamp: null,
       direction: 'maintain',
@@ -240,23 +240,23 @@ describe('adaptiveSlice', () => {
     it('should mark skill as mastered', () => {
       const state = adaptiveReducer(initialState, markSkillMastered('addition'));
 
-      expect(state.masteredSkills.has('addition')).toBe(true);
-      expect(state.strugglingSkills.has('addition')).toBe(false);
+      expect(state.masteredSkills.includes('addition')).toBe(true);
+      expect(state.strugglingSkills.includes('addition')).toBe(false);
     });
 
     it('should mark skill as struggling', () => {
       const state = adaptiveReducer(initialState, markSkillStruggling('division'));
 
-      expect(state.strugglingSkills.has('division')).toBe(true);
-      expect(state.masteredSkills.has('division')).toBe(false);
+      expect(state.strugglingSkills.includes('division')).toBe(true);
+      expect(state.masteredSkills.includes('division')).toBe(false);
     });
 
     it('should move skill from struggling to mastered', () => {
       let state = adaptiveReducer(initialState, markSkillStruggling('multiplication'));
       state = adaptiveReducer(state, markSkillMastered('multiplication'));
 
-      expect(state.masteredSkills.has('multiplication')).toBe(true);
-      expect(state.strugglingSkills.has('multiplication')).toBe(false);
+      expect(state.masteredSkills.includes('multiplication')).toBe(true);
+      expect(state.strugglingSkills.includes('multiplication')).toBe(false);
     });
   });
 

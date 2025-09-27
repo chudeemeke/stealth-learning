@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <!-- Gradient definitions for depth and quality -->
+    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667EEA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764BA2;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="capGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E293B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+    </linearGradient>
+
+    <radialGradient id="buttonGlow">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+    </radialGradient>
+
+    <!-- Shadow filter for depth -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.2"/>
+    </filter>
+
+    <filter id="innerShadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.2"/>
+      <feComposite in2="offsetblur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background circle with gradient -->
+  <circle cx="256" cy="256" r="240" fill="url(#mainGradient)" filter="url(#shadow)"/>
+
+  <!-- Inner circle for depth -->
+  <circle cx="256" cy="256" r="220" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.2"/>
+
+  <!-- Game controller body -->
+  <g id="controller" transform="translate(256, 280)">
+    <!-- Main controller shape -->
+    <path d="M -120 0
+             C -120 -40, -80 -60, -40 -60
+             L 40 -60
+             C 80 -60, 120 -40, 120 0
+             C 120 40, 80 60, 40 60
+             L -40 60
+             C -80 60, -120 40, -120 0 Z"
+          fill="#FFFFFF"
+          filter="url(#innerShadow)"/>
+
+    <!-- D-pad on left side -->
+    <g transform="translate(-70, 0)">
+      <rect x="-8" y="-30" width="16" height="60" rx="4" fill="#94A3B8"/>
+      <rect x="-30" y="-8" width="60" height="16" rx="4" fill="#94A3B8"/>
+    </g>
+
+    <!-- Action buttons on right side (representing subjects) -->
+    <!-- Math button (red) -->
+    <circle cx="70" cy="-15" r="16" fill="#EF4444">
+      <title>Mathematics</title>
+    </circle>
+    <text x="70" y="-10" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="white" text-anchor="middle">π</text>
+
+    <!-- English button (blue) -->
+    <circle cx="90" cy="5" r="16" fill="#3B82F6">
+      <title>English</title>
+    </circle>
+    <text x="90" y="10" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="white" text-anchor="middle">A</text>
+
+    <!-- Science button (green) -->
+    <circle cx="70" cy="25" r="16" fill="#10B981">
+      <title>Science</title>
+    </circle>
+    <text x="70" y="30" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="white" text-anchor="middle">⚛</text>
+
+    <!-- Arts button (yellow) -->
+    <circle cx="50" cy="5" r="16" fill="#F59E0B">
+      <title>Arts</title>
+    </circle>
+    <text x="50" y="10" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="white" text-anchor="middle">🎨</text>
+
+    <!-- Center home button -->
+    <circle cx="0" cy="0" r="12" fill="#E2E8F0"/>
+    <circle cx="0" cy="0" r="8" fill="#64748B"/>
+
+    <!-- Shoulder buttons hints -->
+    <ellipse cx="-90" cy="-50" rx="25" ry="8" fill="#CBD5E1" opacity="0.5"/>
+    <ellipse cx="90" cy="-50" rx="25" ry="8" fill="#CBD5E1" opacity="0.5"/>
+  </g>
+
+  <!-- Graduation cap on top -->
+  <g id="graduationCap" transform="translate(256, 140)">
+    <!-- Cap board -->
+    <path d="M 0 0 L -100 -30 L 0 -60 L 100 -30 Z" fill="url(#capGradient)"/>
+    <path d="M 0 -60 L 100 -30 L 100 -20 L 0 -50 Z" fill="#1E293B" opacity="0.7"/>
+    <path d="M 0 -60 L -100 -30 L -100 -20 L 0 -50 Z" fill="#0F172A" opacity="0.5"/>
+
+    <!-- Cap top -->
+    <ellipse cx="0" cy="-60" rx="100" ry="25" fill="#1E293B"/>
+
+    <!-- Tassel -->
+    <line x1="0" y1="-60" x2="40" y2="-20" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="40" cy="-20" r="8" fill="#F59E0B"/>
+    <path d="M 40 -12 L 35 0 L 40 2 L 45 0 Z" fill="#D97706"/>
+  </g>
+
+  <!-- Sparkles for magic/learning -->
+  <g id="sparkles">
+    <g transform="translate(150, 180)">
+      <path d="M 0 -8 L 2 0 L 0 8 L -2 0 Z" fill="#FCD34D"/>
+      <path d="M -8 0 L 0 -2 L 8 0 L 0 2 Z" fill="#FCD34D"/>
+    </g>
+    <g transform="translate(362, 200) scale(0.7)">
+      <path d="M 0 -8 L 2 0 L 0 8 L -2 0 Z" fill="#A78BFA"/>
+      <path d="M -8 0 L 0 -2 L 8 0 L 0 2 Z" fill="#A78BFA"/>
+    </g>
+    <g transform="translate(380, 320) scale(0.5)">
+      <path d="M 0 -8 L 2 0 L 0 8 L -2 0 Z" fill="#34D399"/>
+      <path d="M -8 0 L 0 -2 L 8 0 L 0 2 Z" fill="#34D399"/>
+    </g>
+    <g transform="translate(132, 320) scale(0.6)">
+      <path d="M 0 -8 L 2 0 L 0 8 L -2 0 Z" fill="#F472B6"/>
+      <path d="M -8 0 L 0 -2 L 8 0 L 0 2 Z" fill="#F472B6"/>
+    </g>
+  </g>
+
+  <!-- Subtle glow effect -->
+  <circle cx="256" cy="256" r="230" fill="none" stroke="url(#buttonGlow)" stroke-width="20" opacity="0.5"/>
+</svg>
