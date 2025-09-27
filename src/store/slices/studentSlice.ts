@@ -23,9 +23,9 @@ interface StudentState {
     math: number;
     english: number;
     science: number;
-    geography?: number;
-    logic?: number;
-    arts?: number;
+    geography: number;
+    logic: number;
+    arts: number;
   };
   preferences: {
     theme: string;
