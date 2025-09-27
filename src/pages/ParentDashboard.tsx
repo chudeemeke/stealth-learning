@@ -25,6 +25,7 @@ import { ProgressBar } from '@/components/ui/ProgressBar';
 import { updateParentalControls } from '@/store/slices/settingsSlice';
 import { trackEvent } from '@/store/slices/analyticsSlice';
 import { ToastContainer, useToast } from '@/components/ui/ToastNotification';
+import { CelebrationSettings } from '@/components/dashboard/CelebrationSettings';
 
 interface InsightCard {
   id: string;
@@ -58,7 +59,7 @@ const ParentDashboard: React.FC = () => {
 
   const [selectedChild, setSelectedChild] = useState('current');
   const [selectedTimeRange, setSelectedTimeRange] = useState<'day' | 'week' | 'month'>('week');
-  const [activeTab, setActiveTab] = useState<'overview' | 'progress' | 'activity' | 'controls'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'progress' | 'activity' | 'controls' | 'celebrations'>('overview');
   const [showPinModal, setShowPinModal] = useState(false);
   const [pin, setPin] = useState('');
 
@@ -353,6 +354,13 @@ const ParentDashboard: React.FC = () => {
             size="sm"
           >
             Controls
+          </Button>
+          <Button
+            onClick={() => setActiveTab('celebrations')}
+            variant={activeTab === 'celebrations' ? 'primary' : 'outline'}
+            size="sm"
+          >
+            🎉 Celebrations
           </Button>
         </div>
 
@@ -867,6 +875,18 @@ const ParentDashboard: React.FC = () => {
                 </div>
               </Card>
             </motion.div>
+          </motion.div>
+        )}
+
+        {/* Celebrations Tab */}
+        {activeTab === 'celebrations' && (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-6"
+          >
+            <CelebrationSettings />
           </motion.div>
         )}
 

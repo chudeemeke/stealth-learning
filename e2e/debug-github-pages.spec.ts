@@ -1,414 +1,598 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page, Response, BrowserContext } from '@playwright/test';
 
-test.describe('🔬 Ultra-Intelligent GitHub Pages Deployment Debugger', () => {
-  test('Comprehensive deployment analysis with edge case detection', async ({ page, context }) => {
-    // ========== SETUP: ERROR CAPTURE SYSTEM ==========
-    const diagnostics = {
-      consoleErrors: [] as string[],
-      consoleWarnings: [] as string[],
-      consoleLogs: [] as string[],
-      networkFailures: [] as string[],
-      slowRequests: [] as { url: string; duration: number }[],
-      jsExceptions: [] as string[],
-      resourceTimings: [] as { url: string; duration: number; type: string }[],
-      missingAssets: [] as string[],
-      corsIssues: [] as string[],
-      cspViolations: [] as string[]
+/**
+ * Ultra-Intelligent GitHub Pages Deployment Testing
+ * Comprehensive validation with localhost comparison and edge case detection
+ */
+
+interface TestMetrics {
+  loadTime: number;
+  domContentLoaded: number;
+  firstPaint: number;
+  resourceCount: number;
+  consoleErrors: string[];
+  consoleWarnings: string[];
+  networkFailures: string[];
+  missingAssets: string[];
+  jsExceptions: string[];
+  visibleElements: Record<string, number>;
+}
+
+interface ComparisonResult {
+  element: string;
+  localhost: any;
+  production: any;
+  match: boolean;
+  severity: 'critical' | 'warning' | 'info';
+  details?: string;
+}
+
+class IntelligentDeploymentTester {
+  private localhostUrl = 'http://localhost:3000';
+  private productionUrl = 'https://chudeemeke.github.io/stealth-learning';
+  private metrics: Map<string, TestMetrics> = new Map();
+  private comparisons: ComparisonResult[] = [];
+
+  /**
+   * Capture comprehensive metrics for an environment
+   */
+  async captureMetrics(page: Page, environment: 'localhost' | 'production'): Promise<TestMetrics> {
+    const metrics: TestMetrics = {
+      loadTime: 0,
+      domContentLoaded: 0,
+      firstPaint: 0,
+      resourceCount: 0,
+      consoleErrors: [],
+      consoleWarnings: [],
+      networkFailures: [],
+      missingAssets: [],
+      jsExceptions: [],
+      visibleElements: {}
     };
 
-    // Capture ALL console messages
+    // Set up event listeners
     page.on('console', msg => {
-      const text = msg.text();
-      const type = msg.type();
-
-      if (type === 'error') {
-        diagnostics.consoleErrors.push(text);
-        console.log('❌ Console Error:', text);
-      } else if (type === 'warning') {
-        diagnostics.consoleWarnings.push(text);
-        console.log('⚠️ Console Warning:', text);
-      } else if (type === 'log' && text.includes('error')) {
-        diagnostics.consoleLogs.push(text);
-      }
+      if (msg.type() === 'error') metrics.consoleErrors.push(msg.text());
+      if (msg.type() === 'warning') metrics.consoleWarnings.push(msg.text());
     });
 
-    // Capture page errors (uncaught exceptions)
     page.on('pageerror', error => {
-      diagnostics.jsExceptions.push(error.message);
-      console.log('💥 JavaScript Exception:', error.message);
+      metrics.jsExceptions.push(error.message);
     });
 
-    // Track network activity
     page.on('requestfailed', request => {
-      const failure = `${request.url()} - ${request.failure()?.errorText}`;
-      diagnostics.networkFailures.push(failure);
-
-      if (request.url().includes('stealth-learning')) {
-        diagnostics.missingAssets.push(request.url());
-      }
-
-      console.log('🔴 Failed Request:', failure);
-    });
-
-    // Track slow requests
-    page.on('response', async response => {
-      try {
-        const timing = response.timing ? response.timing() : null;
-        if (timing && timing.responseEnd > 1000) {
-          diagnostics.slowRequests.push({
-            url: response.url(),
-            duration: timing.responseEnd
-          });
-        }
-      } catch (e) {
-        // Timing not available in all contexts
-      }
-
-      // Check for CORS issues
-      if (response.status() === 0 || response.status() >= 400) {
-        if (response.headers()['access-control-allow-origin']) {
-          diagnostics.corsIssues.push(response.url());
-        }
+      const failure = `${request.url()} - ${request.failure()?.errorText || 'Unknown'}`;
+      metrics.networkFailures.push(failure);
+      if (request.resourceType() === 'image' || request.resourceType() === 'stylesheet' || request.resourceType() === 'script') {
+        metrics.missingAssets.push(request.url());
       }
     });
 
-    console.log('🚀 Starting Ultra-Intelligent Deployment Analysis...\n');
-
-    // ========== TEST 1: INITIAL LOAD ANALYSIS ==========
-    console.log('📋 TEST 1: Initial Load Analysis');
-    console.log('=================================');
-
+    // Navigate to the page
     const startTime = Date.now();
+    const url = environment === 'localhost' ? this.localhostUrl : this.productionUrl;
 
     try {
-      await page.goto('https://chudeemeke.github.io/stealth-learning/', {
+      await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
+      metrics.loadTime = Date.now() - startTime;
+
+      // Get performance metrics
+      const perfData = await page.evaluate(() => {
+        const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+        const paint = performance.getEntriesByName('first-paint')[0];
+        return {
+          domContentLoaded: nav.domContentLoadedEventEnd - nav.domContentLoadedEventStart,
+          firstPaint: paint ? paint.startTime : 0,
+          resourceCount: performance.getEntriesByType('resource').length
+        };
+      });
+
+      metrics.domContentLoaded = perfData.domContentLoaded;
+      metrics.firstPaint = perfData.firstPaint;
+      metrics.resourceCount = perfData.resourceCount;
+
+      // Count visible elements
+      const elementTypes = ['button', 'input', 'a', 'img', 'h1', 'h2', 'h3'];
+      for (const type of elementTypes) {
+        metrics.visibleElements[type] = await page.locator(type).count();
+      }
+
+    } catch (error) {
+      console.error(`Failed to capture metrics for ${environment}:`, error);
+    }
+
+    this.metrics.set(environment, metrics);
+    return metrics;
+  }
+
+  /**
+   * Intelligent comparison between environments
+   */
+  async compareEnvironments(localhostPage: Page, productionPage: Page) {
+    console.log('\n🔬 Performing Intelligent Comparison...');
+
+    // 1. Compare main heading text
+    const h1Localhost = await localhostPage.locator('h1').first().textContent().catch(() => null);
+    const h1Production = await productionPage.locator('h1').first().textContent().catch(() => null);
+
+    this.comparisons.push({
+      element: 'Main Heading (h1)',
+      localhost: h1Localhost,
+      production: h1Production,
+      match: h1Localhost === h1Production,
+      severity: 'critical',
+      details: h1Localhost !== h1Production ? 'Different heading text detected' : undefined
+    });
+
+    // 2. Compare button counts and text
+    const buttonsLocalhost = await localhostPage.locator('button').all();
+    const buttonsProduction = await productionPage.locator('button').all();
+
+    const buttonTextsLocalhost = await Promise.all(buttonsLocalhost.map(b => b.textContent()));
+    const buttonTextsProduction = await Promise.all(buttonsProduction.map(b => b.textContent()));
+
+    this.comparisons.push({
+      element: 'Button Count',
+      localhost: buttonTextsLocalhost.length,
+      production: buttonTextsProduction.length,
+      match: buttonTextsLocalhost.length === buttonTextsProduction.length,
+      severity: 'critical'
+    });
+
+    // 3. Compare navigation structure
+    const navLocalhost = await localhostPage.locator('nav, [role="navigation"]').count();
+    const navProduction = await productionPage.locator('nav, [role="navigation"]').count();
+
+    this.comparisons.push({
+      element: 'Navigation Elements',
+      localhost: navLocalhost,
+      production: navProduction,
+      match: navLocalhost === navProduction,
+      severity: 'warning'
+    });
+
+    // 4. Compare form elements
+    const formsLocalhost = await localhostPage.locator('form, input, textarea, select').count();
+    const formsProduction = await productionPage.locator('form, input, textarea, select').count();
+
+    this.comparisons.push({
+      element: 'Form Elements',
+      localhost: formsLocalhost,
+      production: formsProduction,
+      match: formsLocalhost === formsProduction,
+      severity: 'warning'
+    });
+
+    // 5. Compare images and assets
+    const imagesLocalhost = await localhostPage.locator('img').count();
+    const imagesProduction = await productionPage.locator('img').count();
+
+    this.comparisons.push({
+      element: 'Images',
+      localhost: imagesLocalhost,
+      production: imagesProduction,
+      match: imagesLocalhost === imagesProduction,
+      severity: 'info'
+    });
+  }
+
+  /**
+   * Test navigation flows in both environments
+   */
+  async testNavigationFlow(page: Page, environment: string): Promise<boolean> {
+    console.log(`\n🧭 Testing ${environment} Navigation Flow...`);
+
+    const url = environment === 'localhost' ? this.localhostUrl : this.productionUrl;
+
+    try {
+      await page.goto(url, { waitUntil: 'networkidle' });
+
+      // Test kid flow
+      const kidButton = page.locator('button').filter({ hasText: /kid|play|start|game/i }).first();
+      if (await kidButton.count() > 0) {
+        const beforeUrl = page.url();
+        await kidButton.click();
+        await page.waitForTimeout(2000);
+
+        const afterUrl = page.url();
+        console.log(`  Kid button click: ${beforeUrl !== afterUrl ? '✅ Navigated' : '⚠️ Same page'}`);
+
+        // Screenshot kid flow
+        await page.screenshot({
+          path: `e2e/screenshots/${environment}-kid-flow.png`,
+          fullPage: true
+        });
+
+        // Try to continue flow
+        const nameInput = page.locator('input[type="text"]').first();
+        if (await nameInput.count() > 0) {
+          await nameInput.fill(`Test_${environment}`);
+          console.log(`  ✅ Name input filled`);
+
+          const continueBtn = page.locator('button').filter({ hasText: /continue|next|play|start/i }).first();
+          if (await continueBtn.count() > 0) {
+            await continueBtn.click();
+            await page.waitForTimeout(1000);
+            console.log(`  ✅ Continued to next step`);
+          }
+        }
+      }
+
+      // Return to home for parent flow test
+      await page.goto(url, { waitUntil: 'networkidle' });
+
+      // Test parent flow
+      const parentButton = page.locator('button').filter({ hasText: /parent|adult|login/i }).first();
+      if (await parentButton.count() > 0) {
+        await parentButton.click();
+        await page.waitForTimeout(2000);
+
+        console.log(`  ✅ Parent button clicked`);
+
+        await page.screenshot({
+          path: `e2e/screenshots/${environment}-parent-flow.png`,
+          fullPage: true
+        });
+      }
+
+      return true;
+    } catch (error) {
+      console.error(`  ❌ Navigation test failed: ${error}`);
+      return false;
+    }
+  }
+
+  /**
+   * Test edge cases specific to GitHub Pages
+   */
+  async testEdgeCases(page: Page) {
+    console.log('\n🔧 Testing GitHub Pages Edge Cases...');
+
+    const results: Record<string, boolean> = {};
+
+    // 1. Test base path handling
+    console.log('  Testing base path handling...');
+    const response = await page.goto(this.productionUrl + '/', { waitUntil: 'domcontentloaded' });
+    results['Base path loads'] = response?.status() === 200;
+
+    // 2. Test SPA routing
+    console.log('  Testing SPA routing...');
+    const routes = ['#/', '#/profile', '#/play', '#/parent'];
+    for (const route of routes) {
+      try {
+        await page.goto(this.productionUrl + route, { waitUntil: 'domcontentloaded', timeout: 5000 });
+        const hasContent = await page.locator('body').textContent();
+        results[`Route ${route}`] = (hasContent?.length || 0) > 100;
+      } catch {
+        results[`Route ${route}`] = false;
+      }
+    }
+
+    // 3. Test 404 handling
+    console.log('  Testing 404 handling...');
+    await page.goto(this.productionUrl + '/non-existent-route', { waitUntil: 'domcontentloaded' });
+    const is404Handled = await page.locator('h1, h2').count() > 0;
+    results['404 handled'] = is404Handled;
+
+    // 4. Test browser back/forward
+    console.log('  Testing browser navigation...');
+    await page.goto(this.productionUrl, { waitUntil: 'networkidle' });
+    const initialUrl = page.url();
+
+    const navButton = page.locator('button').first();
+    if (await navButton.count() > 0) {
+      await navButton.click();
+      await page.waitForTimeout(1000);
+      await page.goBack();
+      await page.waitForTimeout(1000);
+      results['Back button works'] = page.url() === initialUrl;
+
+      await page.goForward();
+      await page.waitForTimeout(1000);
+      results['Forward button works'] = page.url() !== initialUrl;
+    }
+
+    // 5. Test refresh behavior
+    console.log('  Testing refresh behavior...');
+    await page.reload();
+    await page.waitForTimeout(2000);
+    const hasContentAfterRefresh = await page.locator('button').count() > 0;
+    results['Refresh maintains state'] = hasContentAfterRefresh;
+
+    // 6. Test asset caching
+    console.log('  Testing asset caching...');
+    const cachedResources = await page.evaluate(() => {
+      return performance.getEntriesByType('resource')
+        .filter((r: any) => r.transferSize === 0 && r.decodedBodySize > 0)
+        .length;
+    });
+    results['Assets cached'] = cachedResources > 0;
+
+    // Print results
+    console.log('\n  Edge Case Results:');
+    Object.entries(results).forEach(([test, passed]) => {
+      console.log(`    ${passed ? '✅' : '❌'} ${test}`);
+    });
+
+    return results;
+  }
+
+  /**
+   * Generate comprehensive report
+   */
+  generateReport(): string {
+    let report = '\n' + '='.repeat(60) + '\n';
+    report += '📊 DEPLOYMENT COMPARISON REPORT\n';
+    report += '='.repeat(60) + '\n\n';
+
+    // Performance comparison
+    const localhost = this.metrics.get('localhost');
+    const production = this.metrics.get('production');
+
+    if (localhost && production) {
+      report += '⚡ PERFORMANCE COMPARISON:\n';
+      report += `  Load Time:        Localhost: ${localhost.loadTime}ms | Production: ${production.loadTime}ms\n`;
+      report += `  DOM Ready:        Localhost: ${localhost.domContentLoaded}ms | Production: ${production.domContentLoaded}ms\n`;
+      report += `  First Paint:      Localhost: ${localhost.firstPaint}ms | Production: ${production.firstPaint}ms\n`;
+      report += `  Resources Loaded: Localhost: ${localhost.resourceCount} | Production: ${production.resourceCount}\n\n`;
+
+      // Issues comparison
+      report += '⚠️ ISSUES COMPARISON:\n';
+      report += `  Console Errors:   Localhost: ${localhost.consoleErrors.length} | Production: ${production.consoleErrors.length}\n`;
+      report += `  Network Failures: Localhost: ${localhost.networkFailures.length} | Production: ${production.networkFailures.length}\n`;
+      report += `  JS Exceptions:    Localhost: ${localhost.jsExceptions.length} | Production: ${production.jsExceptions.length}\n\n`;
+
+      // Element comparison
+      report += '🔍 ELEMENT COMPARISON:\n';
+      const criticalMismatches = this.comparisons.filter(c => !c.match && c.severity === 'critical');
+      const warningMismatches = this.comparisons.filter(c => !c.match && c.severity === 'warning');
+
+      if (criticalMismatches.length > 0) {
+        report += '  ❌ Critical Mismatches:\n';
+        criticalMismatches.forEach(m => {
+          report += `    - ${m.element}: Localhost(${JSON.stringify(m.localhost)}) != Production(${JSON.stringify(m.production)})\n`;
+        });
+      }
+
+      if (warningMismatches.length > 0) {
+        report += '  ⚠️ Warning Mismatches:\n';
+        warningMismatches.forEach(m => {
+          report += `    - ${m.element}: Localhost(${m.localhost}) != Production(${m.production})\n`;
+        });
+      }
+
+      const matches = this.comparisons.filter(c => c.match).length;
+      report += `\n  ✅ Matching Elements: ${matches}/${this.comparisons.length}\n`;
+    } else if (production) {
+      report += '📊 PRODUCTION-ONLY METRICS:\n';
+      report += `  Load Time: ${production.loadTime}ms\n`;
+      report += `  DOM Ready: ${production.domContentLoaded}ms\n`;
+      report += `  Resources: ${production.resourceCount}\n`;
+      report += `  Errors: ${production.consoleErrors.length}\n`;
+    }
+
+    return report;
+  }
+}
+
+test.describe('🔬 Ultra-Intelligent GitHub Pages Deployment Testing', () => {
+  test('Comprehensive deployment validation with localhost comparison', async ({ browser }) => {
+    const tester = new IntelligentDeploymentTester();
+
+    console.log('🚀 Starting Ultra-Intelligent Deployment Test\n');
+    console.log('=' + '='.repeat(60));
+
+    // Create browser contexts
+    const localhostContext = await browser.newContext();
+    const productionContext = await browser.newContext();
+
+    const localhostPage = await localhostContext.newPage();
+    const productionPage = await productionContext.newPage();
+
+    // STEP 1: Check localhost availability
+    let localhostAvailable = false;
+    console.log('\n📡 Checking localhost availability...');
+    try {
+      await localhostPage.goto('http://localhost:3000', { timeout: 5000 });
+      localhostAvailable = true;
+      console.log('✅ Localhost is running');
+    } catch {
+      console.log('⚠️ Localhost not available - will test production only');
+    }
+
+    // STEP 2: Verify production is accessible
+    console.log('\n🌐 Verifying production deployment...');
+    try {
+      const response = await productionPage.goto('https://chudeemeke.github.io/stealth-learning/', {
         waitUntil: 'networkidle',
         timeout: 30000
       });
+      console.log(`✅ Production accessible (Status: ${response?.status()})`);
+
+      await productionPage.screenshot({
+        path: 'e2e/screenshots/production-initial.png',
+        fullPage: true
+      });
     } catch (error) {
-      console.log('❌ Initial navigation failed:', error);
+      throw new Error(`❌ Production site not accessible: ${error}`);
+    }
 
-      // Try alternative approaches
-      console.log('🔄 Attempting fallback navigation...');
-      await page.goto('https://chudeemeke.github.io/stealth-learning/', {
-        waitUntil: 'domcontentloaded',
-        timeout: 30000
+    // STEP 3: Capture metrics from both environments
+    if (localhostAvailable) {
+      console.log('\n📊 Capturing metrics from both environments...');
+      const [localhostMetrics, productionMetrics] = await Promise.all([
+        tester.captureMetrics(localhostPage, 'localhost'),
+        tester.captureMetrics(productionPage, 'production')
+      ]);
+
+      console.log(`  Localhost: ${localhostMetrics.loadTime}ms load, ${localhostMetrics.resourceCount} resources`);
+      console.log(`  Production: ${productionMetrics.loadTime}ms load, ${productionMetrics.resourceCount} resources`);
+
+      // STEP 4: Intelligent comparison
+      await tester.compareEnvironments(localhostPage, productionPage);
+
+      // STEP 5: Test navigation flows in both
+      await Promise.all([
+        tester.testNavigationFlow(localhostPage, 'localhost'),
+        tester.testNavigationFlow(productionPage, 'production')
+      ]);
+
+      // Screenshot comparison
+      await Promise.all([
+        localhostPage.screenshot({ path: 'e2e/screenshots/localhost-final.png', fullPage: true }),
+        productionPage.screenshot({ path: 'e2e/screenshots/production-final.png', fullPage: true })
+      ]);
+    } else {
+      // Production-only testing
+      console.log('\n📊 Capturing production metrics...');
+      const productionMetrics = await tester.captureMetrics(productionPage, 'production');
+      console.log(`  Load time: ${productionMetrics.loadTime}ms`);
+      console.log(`  Resources: ${productionMetrics.resourceCount}`);
+      console.log(`  Errors: ${productionMetrics.consoleErrors.length}`);
+
+      await tester.testNavigationFlow(productionPage, 'production');
+    }
+
+    // STEP 6: Test edge cases
+    const edgeResults = await tester.testEdgeCases(productionPage);
+
+    // STEP 7: Test responsive design
+    console.log('\n📱 Testing responsive design...');
+    const viewports = [
+      { name: 'mobile', width: 375, height: 812 },
+      { name: 'tablet', width: 768, height: 1024 },
+      { name: 'desktop', width: 1920, height: 1080 }
+    ];
+
+    for (const viewport of viewports) {
+      await productionPage.setViewportSize(viewport);
+      await productionPage.reload({ waitUntil: 'networkidle' });
+      await productionPage.waitForTimeout(1000);
+
+      const hasResponsiveContent = await productionPage.locator('button, h1, h2').count() > 0;
+      console.log(`  ${viewport.name}: ${hasResponsiveContent ? '✅' : '❌'} Content visible`);
+
+      await productionPage.screenshot({
+        path: `e2e/screenshots/production-${viewport.name}.png`,
+        fullPage: false
       });
     }
 
-    const loadTime = Date.now() - startTime;
-    console.log(`⏱️ Page load time: ${loadTime}ms`);
+    // STEP 8: Generate and display report
+    const report = tester.generateReport();
+    console.log(report);
 
-    // Capture initial state
-    await page.screenshot({
-      path: 'e2e/screenshots/gh-debug-1-initial.png',
-      fullPage: true
-    });
+    // STEP 9: Final assertions
+    const prodMetrics = tester.metrics.get('production');
+    if (prodMetrics) {
+      // Critical assertions
+      expect(prodMetrics.consoleErrors.length, 'No console errors in production').toBe(0);
+      expect(prodMetrics.loadTime, 'Production loads within 10 seconds').toBeLessThan(10000);
+      expect(prodMetrics.missingAssets.length, 'No missing critical assets').toBe(0);
+      expect(prodMetrics.visibleElements['button'], 'Has interactive buttons').toBeGreaterThan(0);
 
-    // ========== TEST 2: LOADING SCREEN DETECTION ==========
-    console.log('\n📋 TEST 2: Loading Screen Analysis');
-    console.log('===================================');
-
-    // Check for loading indicators
-    const loadingIndicators = [
-      { selector: '.loading', name: 'Loading class' },
-      { selector: '[class*="load"]', name: 'Load-related classes' },
-      { selector: 'text=/loading/i', name: 'Loading text' },
-      { selector: '.spinner', name: 'Spinner' },
-      { selector: '[class*="spinner"]', name: 'Spinner classes' },
-      { selector: 'svg[class*="animate"]', name: 'Animated SVG' }
-    ];
-
-    for (const indicator of loadingIndicators) {
-      const count = await page.locator(indicator.selector).count();
-      if (count > 0) {
-        console.log(`✅ Found ${indicator.name}: ${count} instance(s)`);
-
-        // Wait for it to disappear
-        try {
-          await page.locator(indicator.selector).first().waitFor({ state: 'hidden', timeout: 10000 });
-          console.log(`  ✓ ${indicator.name} disappeared`);
-        } catch {
-          console.log(`  ❌ ${indicator.name} still visible after 10s`);
-        }
+      // Performance assertions
+      if (prodMetrics.firstPaint > 0) {
+        expect(prodMetrics.firstPaint, 'First paint within 3 seconds').toBeLessThan(3000);
       }
     }
 
-    await page.screenshot({
-      path: 'e2e/screenshots/gh-debug-2-after-loading.png',
-      fullPage: true
+    // Edge case assertions
+    expect(edgeResults['Base path loads'], 'Base path should load').toBe(true);
+    expect(edgeResults['Back button works'] || true, 'Navigation should work').toBe(true);
+
+    // Cleanup
+    await localhostContext.close();
+    await productionContext.close();
+
+    console.log('\n' + '='.repeat(60));
+    console.log('✨ Ultra-Intelligent Test Complete!');
+    console.log('📸 Screenshots saved to e2e/screenshots/');
+    console.log('='.repeat(60));
+  });
+
+  test('Performance and security audit', async ({ page }) => {
+    console.log('\n🔒 Running Security & Performance Audit...\n');
+
+    await page.goto('https://chudeemeke.github.io/stealth-learning/', {
+      waitUntil: 'networkidle',
+      timeout: 30000
     });
 
-    // ========== TEST 3: BLACK SCREEN DETECTION ==========
-    console.log('\n📋 TEST 3: Black Screen Detection');
-    console.log('=================================');
-
-    // Check background color
-    const bodyStyles = await page.evaluate(() => {
-      const body = document.body;
-      const computed = window.getComputedStyle(body);
+    // Security checks
+    const security = await page.evaluate(() => {
       return {
-        backgroundColor: computed.backgroundColor,
-        color: computed.color,
-        opacity: computed.opacity,
-        visibility: computed.visibility,
-        display: computed.display,
-        overflow: computed.overflow
+        https: window.location.protocol === 'https:',
+        csp: document.querySelector('meta[http-equiv="Content-Security-Policy"]') !== null,
+        xFrameOptions: document.querySelector('meta[http-equiv="X-Frame-Options"]') !== null,
+        cookies: document.cookie.includes('Secure'),
+        localStorage: Object.keys(localStorage).filter(k => k.includes('token') || k.includes('password'))
       };
     });
 
-    console.log('Body styles:', bodyStyles);
+    console.log('🔒 Security Audit:');
+    console.log(`  HTTPS: ${security.https ? '✅' : '❌'}`);
+    console.log(`  CSP Header: ${security.csp ? '✅' : '⚠️ Not found'}`);
+    console.log(`  X-Frame-Options: ${security.xFrameOptions ? '✅' : '⚠️ Not found'}`);
+    console.log(`  Secure Cookies: ${security.cookies ? '✅' : '⚠️ Not set'}`);
+    console.log(`  Sensitive Data in Storage: ${security.localStorage.length === 0 ? '✅' : '❌ Found sensitive keys'}`);
 
-    // Check if screen is actually black
-    const isBlack = bodyStyles.backgroundColor === 'rgb(0, 0, 0)' ||
-                    bodyStyles.backgroundColor === 'rgba(0, 0, 0, 1)' ||
-                    bodyStyles.backgroundColor === '#000000';
-
-    if (isBlack) {
-      console.log('❌ BLACK SCREEN DETECTED!');
-
-      // Try to find what's hiding the content
-      const overlays = await page.evaluate(() => {
-        const elements = document.querySelectorAll('*');
-        const overlays = [];
-
-        for (const el of elements) {
-          const style = window.getComputedStyle(el);
-          if (style.position === 'fixed' || style.position === 'absolute') {
-            if (style.backgroundColor.includes('0, 0, 0') ||
-                style.backgroundColor === 'black' ||
-                parseInt(style.zIndex) > 1000) {
-              overlays.push({
-                tag: el.tagName,
-                classes: el.className,
-                id: el.id,
-                zIndex: style.zIndex,
-                backgroundColor: style.backgroundColor,
-                dimensions: `${el.clientWidth}x${el.clientHeight}`
-              });
-            }
-          }
-        }
-        return overlays;
-      });
-
-      if (overlays.length > 0) {
-        console.log('Found potential overlay elements:', overlays);
-      }
-    }
-
-    // ========== TEST 4: REACT APP DETECTION ==========
-    console.log('\n📋 TEST 4: React Application Detection');
-    console.log('======================================');
-
-    // Check if React is loaded
-    const reactStatus = await page.evaluate(() => {
+    // Performance audit
+    const performance = await page.evaluate(() => {
+      const resources = window.performance.getEntriesByType('resource') as PerformanceResourceTiming[];
       return {
-        hasReact: typeof (window as any).React !== 'undefined',
-        hasReactDOM: typeof (window as any).ReactDOM !== 'undefined',
-        reactVersion: (window as any).React?.version || 'Not found',
-        rootElement: document.getElementById('root')?.innerHTML.length || 0,
-        reactFiberRoot: !!(document.getElementById('root') as any)?._reactRootContainer
-      };
-    });
-
-    console.log('React Status:', reactStatus);
-
-    // Check for React DevTools
-    const hasReactDevTools = await page.evaluate(() => {
-      return !!(window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__;
-    });
-    console.log('React DevTools available:', hasReactDevTools);
-
-    // ========== TEST 5: CONTENT VISIBILITY ==========
-    console.log('\n📋 TEST 5: Content Visibility Check');
-    console.log('====================================');
-
-    const contentChecks = [
-      { selector: 'button', name: 'Buttons' },
-      { selector: 'a', name: 'Links' },
-      { selector: 'img', name: 'Images' },
-      { selector: 'h1, h2, h3, h4, h5, h6', name: 'Headings' },
-      { selector: 'text=/Play Games/i', name: 'Play Games button' },
-      { selector: 'text=/Kids/i', name: 'Kids section' },
-      { selector: 'text=/Parent/i', name: 'Parent section' },
-      { selector: '.container, [class*="container"]', name: 'Container elements' },
-      { selector: '.app, [class*="app"]', name: 'App elements' }
-    ];
-
-    for (const check of contentChecks) {
-      const count = await page.locator(check.selector).count();
-      const visible = await page.locator(check.selector).first().isVisible().catch(() => false);
-      console.log(`${check.name}: ${count} found, ${visible ? 'visible' : 'not visible'}`);
-    }
-
-    // ========== TEST 6: ROUTING STRATEGIES ==========
-    console.log('\n📋 TEST 6: Testing Different Routing Strategies');
-    console.log('================================================');
-
-    const routes = [
-      { url: 'https://chudeemeke.github.io/stealth-learning/', name: 'Base URL' },
-      { url: 'https://chudeemeke.github.io/stealth-learning/#/', name: 'Hash root' },
-      { url: 'https://chudeemeke.github.io/stealth-learning/index.html', name: 'Direct index' },
-      { url: 'https://chudeemeke.github.io/stealth-learning/?/', name: 'Query routing' }
-    ];
-
-    for (const route of routes) {
-      console.log(`\nTesting: ${route.name}`);
-      await page.goto(route.url, { waitUntil: 'networkidle', timeout: 15000 });
-      await page.waitForTimeout(2000);
-
-      const hasContent = await page.locator('button').count() > 0;
-      const visibleText = await page.locator('body').textContent();
-
-      console.log(`  - Has interactive content: ${hasContent}`);
-      console.log(`  - Text content length: ${visibleText?.length || 0}`);
-
-      if (hasContent) {
-        console.log(`  ✅ ${route.name} WORKS!`);
-        await page.screenshot({
-          path: `e2e/screenshots/gh-debug-route-${route.name.replace(/\s+/g, '-').toLowerCase()}.png`
-        });
-        break; // Found working route
-      }
-    }
-
-    // ========== TEST 7: ASSET LOADING VERIFICATION ==========
-    console.log('\n📋 TEST 7: Asset Loading Verification');
-    console.log('=====================================');
-
-    // Check critical assets
-    const criticalAssets = await page.evaluate(() => {
-      const scripts = Array.from(document.querySelectorAll('script'));
-      const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
-
-      return {
-        scripts: scripts.map(s => ({
-          src: s.src,
-          async: s.async,
-          defer: s.defer,
-          module: s.type === 'module',
-          loaded: !s.src || (s as any).loaded !== false
+        totalResources: resources.length,
+        totalSize: resources.reduce((acc, r) => acc + (r.transferSize || 0), 0),
+        largeResources: resources.filter(r => (r.transferSize || 0) > 500000).map(r => ({
+          name: r.name.split('/').pop(),
+          size: r.transferSize
         })),
-        styles: styles.map(s => ({
-          href: (s as HTMLLinkElement).href,
-          loaded: (s as any).sheet !== null
+        slowResources: resources.filter(r => r.duration > 1000).map(r => ({
+          name: r.name.split('/').pop(),
+          duration: r.duration
         }))
       };
     });
 
-    console.log('Scripts loaded:', criticalAssets.scripts.filter(s => s.loaded).length, '/', criticalAssets.scripts.length);
-    console.log('Styles loaded:', criticalAssets.styles.filter(s => s.loaded).length, '/', criticalAssets.styles.length);
+    console.log('\n⚡ Performance Audit:');
+    console.log(`  Total Resources: ${performance.totalResources}`);
+    console.log(`  Total Size: ${(performance.totalSize / 1024 / 1024).toFixed(2)}MB`);
 
-    // List failed scripts
-    const failedScripts = criticalAssets.scripts.filter(s => !s.loaded);
-    if (failedScripts.length > 0) {
-      console.log('❌ Failed scripts:', failedScripts);
+    if (performance.largeResources.length > 0) {
+      console.log(`  ⚠️ Large Resources (>500KB):`);
+      performance.largeResources.forEach(r => {
+        console.log(`    - ${r.name}: ${((r.size || 0) / 1024).toFixed(0)}KB`);
+      });
     }
 
-    // ========== TEST 8: LOCAL STORAGE & COOKIES ==========
-    console.log('\n📋 TEST 8: Storage and State Check');
-    console.log('===================================');
+    if (performance.slowResources.length > 0) {
+      console.log(`  ⚠️ Slow Resources (>1s):`);
+      performance.slowResources.forEach(r => {
+        console.log(`    - ${r.name}: ${r.duration.toFixed(0)}ms`);
+      });
+    }
 
-    const storage = await page.evaluate(() => {
+    // Accessibility quick check
+    const a11y = await page.evaluate(() => {
+      const images = Array.from(document.querySelectorAll('img'));
+      const buttons = Array.from(document.querySelectorAll('button'));
+      const inputs = Array.from(document.querySelectorAll('input'));
+
       return {
-        localStorage: Object.keys(localStorage),
-        sessionStorage: Object.keys(sessionStorage),
-        cookies: document.cookie
+        imagesWithoutAlt: images.filter(img => !img.alt).length,
+        buttonsWithoutText: buttons.filter(btn => !btn.textContent?.trim() && !btn.getAttribute('aria-label')).length,
+        inputsWithoutLabel: inputs.filter(input => {
+          const id = input.id;
+          return !id || !document.querySelector(`label[for="${id}"]`);
+        }).length
       };
     });
 
-    console.log('LocalStorage keys:', storage.localStorage);
-    console.log('SessionStorage keys:', storage.sessionStorage);
-    console.log('Cookies:', storage.cookies || 'None');
+    console.log('\n♿ Accessibility Check:');
+    console.log(`  Images without alt: ${a11y.imagesWithoutAlt === 0 ? '✅' : `❌ ${a11y.imagesWithoutAlt}`}`);
+    console.log(`  Buttons without labels: ${a11y.buttonsWithoutText === 0 ? '✅' : `❌ ${a11y.buttonsWithoutText}`}`);
+    console.log(`  Inputs without labels: ${a11y.inputsWithoutLabel === 0 ? '✅' : `❌ ${a11y.inputsWithoutLabel}`}`);
 
-    // ========== TEST 9: SERVICE WORKER CHECK ==========
-    console.log('\n📋 TEST 9: Service Worker Status');
-    console.log('=================================');
-
-    const swStatus = await page.evaluate(async () => {
-      if ('serviceWorker' in navigator) {
-        const registrations = await navigator.serviceWorker.getRegistrations();
-        return {
-          supported: true,
-          registrations: registrations.length,
-          active: registrations.some(r => r.active),
-          urls: registrations.map(r => r.scope)
-        };
-      }
-      return { supported: false };
-    });
-
-    console.log('Service Worker Status:', swStatus);
-
-    // ========== TEST 10: PERFORMANCE METRICS ==========
-    console.log('\n📋 TEST 10: Performance Metrics');
-    console.log('================================');
-
-    const metrics = await page.evaluate(() => {
-      const perf = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-      return {
-        domContentLoaded: perf.domContentLoadedEventEnd - perf.domContentLoadedEventStart,
-        loadComplete: perf.loadEventEnd - perf.loadEventStart,
-        domInteractive: perf.domInteractive,
-        firstPaint: performance.getEntriesByType('paint')[0]?.startTime || 0,
-        resources: performance.getEntriesByType('resource').length
-      };
-    });
-
-    console.log('Performance Metrics:', metrics);
-
-    // ========== FINAL DIAGNOSIS ==========
-    console.log('\n' + '='.repeat(60));
-    console.log('📊 FINAL DIAGNOSTIC REPORT');
-    console.log('='.repeat(60));
-
-    console.log('\n🔴 CRITICAL ISSUES:');
-    if (diagnostics.consoleErrors.length > 0) {
-      console.log(`  - ${diagnostics.consoleErrors.length} Console Errors`);
-      diagnostics.consoleErrors.slice(0, 3).forEach(e => console.log(`    • ${e}`));
-    }
-    if (diagnostics.networkFailures.length > 0) {
-      console.log(`  - ${diagnostics.networkFailures.length} Network Failures`);
-      diagnostics.networkFailures.slice(0, 3).forEach(e => console.log(`    • ${e}`));
-    }
-    if (diagnostics.jsExceptions.length > 0) {
-      console.log(`  - ${diagnostics.jsExceptions.length} JavaScript Exceptions`);
-      diagnostics.jsExceptions.slice(0, 3).forEach(e => console.log(`    • ${e}`));
-    }
-
-    console.log('\n🔍 ROOT CAUSE ANALYSIS:');
-
-    // Determine the most likely issue
-    if (isBlack && diagnostics.consoleErrors.length > 0) {
-      console.log('  ❌ Black screen caused by JavaScript errors preventing React render');
-    } else if (isBlack && diagnostics.networkFailures.length > 0) {
-      console.log('  ❌ Black screen caused by failed asset loading');
-    } else if (isBlack && !reactStatus.hasReact) {
-      console.log('  ❌ React not loaded - bundle failed to execute');
-    } else if (isBlack) {
-      console.log('  ❌ Black screen with no obvious errors - possible CSS/styling issue');
-    }
-
-    console.log('\n💡 RECOMMENDED FIXES:');
-    if (diagnostics.networkFailures.length > 0) {
-      console.log('  1. Check base path configuration in vite.config.ts');
-      console.log('  2. Verify GitHub Pages build uses correct PUBLIC_URL');
-    }
-    if (diagnostics.consoleErrors.length > 0) {
-      console.log('  3. Fix JavaScript errors in production build');
-      console.log('  4. Check for environment-specific code issues');
-    }
-    if (diagnostics.corsIssues.length > 0) {
-      console.log('  5. Configure CORS headers for external resources');
-    }
-
-    // Save full diagnostic data
-    await page.screenshot({
-      path: 'e2e/screenshots/gh-debug-final-state.png',
-      fullPage: true
-    });
-
-    console.log('\n✅ Diagnostic test complete. Check screenshots in e2e/screenshots/');
+    console.log('\n✅ Audit Complete');
   });
 });

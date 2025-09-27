@@ -57,6 +57,7 @@ const ExpandedGameSelectPage: React.FC = () => {
     stars: Math.floor(Math.random() * 3) // TODO: Get from achievements
   }));
 
+
   const handleSelectSubject = (subject: string) => {
     if (soundEnabled) {
       playSound('select');
@@ -65,7 +66,7 @@ const ExpandedGameSelectPage: React.FC = () => {
 
     dispatch(setCurrentSubject(subject));
     dispatch(setDifficultyLevel(selectedDifficulty));
-    navigate(`/play/${subject}`);
+    navigate(`/games/${subject}`);
   };
 
   const getDifficultyColor = (level: number) => {
@@ -86,7 +87,7 @@ const ExpandedGameSelectPage: React.FC = () => {
           className="text-center mb-8"
         >
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
-            Choose Your Adventure!
+            Choose Your Adventure
           </h1>
           <p className="text-gray-600 text-lg">
             Pick a subject and start learning through play
@@ -142,12 +143,15 @@ const ExpandedGameSelectPage: React.FC = () => {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <Card
-                  variant="glassmorphism"
-                  className={`relative h-full cursor-pointer overflow-hidden transition-all duration-300 ${
+                <div
+                  className={`relative h-full cursor-pointer overflow-hidden rounded-xl bg-white/10 backdrop-blur-lg border border-white/20 transition-all duration-300 ${
                     !subject.unlocked ? 'opacity-60' : ''
                   }`}
-                  onClick={() => subject.unlocked && handleSelectSubject(subject.subject)}
+                  onClick={() => {
+                    if (subject.unlocked) {
+                      handleSelectSubject(subject.subject);
+                    }
+                  }}
                 >
                   {/* Background Pattern */}
                   <div
@@ -248,7 +252,7 @@ const ExpandedGameSelectPage: React.FC = () => {
                       )}
                     </AnimatePresence>
                   </div>
-                </Card>
+                </div>
               </motion.div>
             ))}
           </AnimatePresence>

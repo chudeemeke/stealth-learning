@@ -6,6 +6,8 @@ import { useAppSelector, useAppDispatch } from '@/store';
 import { FeedbackModal } from '@/components/ui/FeedbackModal';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { useHaptic } from '@/hooks/useHaptic';
+import { advancedCelebrationService } from '@/services/celebrations/AdvancedCelebrationService';
+import { quickFeedbackEngine } from '@/services/feedback/QuickFeedbackEngine';
 import { useToast, ToastContainer } from '@/components/ui/ToastNotification';
 import { Z_INDEX_CLASSES } from '@/styles/z-index';
 
@@ -262,16 +264,40 @@ const EnhancedGamePlayPage: React.FC = () => {
 
     // Enhanced feedback based on correctness
     if (isCorrect) {
-      // Play subject-specific success sound
-      const subject = gameContent?.subject || 'mathematics';
-      const successSounds = {
-        mathematics: 'mathCorrect',
-        english: 'englishCorrect',
-        science: 'scienceCorrect'
+      // Get user preferences for celebrations
+      const savedPrefs = localStorage.getItem(`celebration-prefs-${profile?.id || 'default'}`);
+      const preferences = savedPrefs ? JSON.parse(savedPrefs) : {
+        celebrationStyle: 'cosmic',
+        feedbackStyle: 'pulse',
+        intensity: 'medium',
+        soundEnabled: soundEnabled,
+        hapticEnabled: true,
+        reducedMotion: false
       };
-      audioService.playSound(successSounds[subject as keyof typeof successSounds] || 'correct');
 
-      triggerHaptic('success');
+      // Determine subject for celebration
+      const subjectMap: Record<string, 'math' | 'english' | 'science' | 'logic' | 'geography' | 'arts'> = {
+        mathematics: 'math',
+        english: 'english',
+        science: 'science',
+        logic: 'logic',
+        geography: 'geography',
+        arts: 'arts'
+      };
+      const subject = subjectMap[gameContent?.subject || 'mathematics'] || 'math';
+
+      // Use advanced celebration service
+      advancedCelebrationService.celebrate({
+        subject,
+        style: preferences.celebrationStyle,
+        intensity: preferences.intensity,
+        ageGroup: profile?.ageGroup || '6-8',
+        streakLevel: gameState.combo + 1,
+        soundEnabled: preferences.soundEnabled,
+        hapticEnabled: preferences.hapticEnabled,
+        reducedMotion: preferences.reducedMotion
+      });
+
       setFeedbackType('success');
 
       // Dynamic success messages based on combo
@@ -288,35 +314,56 @@ const EnhancedGamePlayPage: React.FC = () => {
       setCharacterEmotion('celebrating');
       setCharacterMessage('Fantastic work! You are becoming a real expert!');
 
-      // Enhanced confetti based on streak
-      if (visualEffects) {
-        const confettiOptions = {
-          particleCount: 50 + (gameState.combo * 10),
-          spread: 60 + (gameState.combo * 5),
-          origin: { y: 0.6 },
-          colors: gameContent?.subject === 'mathematics' ? ['#3B82F6', '#1D4ED8'] :
-                  gameContent?.subject === 'english' ? ['#EF4444', '#DC2626'] :
-                  ['#10B981', '#059669']
-        };
+      // Increment streak in celebration service
+      advancedCelebrationService.incrementStreak();
 
-        if (gameState.combo >= 5) {
-          // Epic celebration for long streaks
-          confetti({
-            ...confettiOptions,
-            particleCount: 200,
-            spread: 120,
-            startVelocity: 50
-          });
-          setCelebrationTrigger(true);
-          setTimeout(() => setCelebrationTrigger(false), 2000);
-        } else {
-          confetti(confettiOptions);
-        }
-      }
+      // Trigger celebration for particle system
+      setCelebrationTrigger(true);
+      setTimeout(() => setCelebrationTrigger(false), 2000);
 
     } else {
-      audioService.playSound('incorrect');
-      triggerHaptic('error');
+      // Handle incorrect answer with quick feedback
+      const savedPrefs = localStorage.getItem(`celebration-prefs-${profile?.id || 'default'}`);
+      const preferences = savedPrefs ? JSON.parse(savedPrefs) : {
+        celebrationStyle: 'cosmic',
+        feedbackStyle: 'pulse',
+        intensity: 'medium',
+        soundEnabled: soundEnabled,
+        hapticEnabled: true
+      };
+
+      // Calculate proximity to correct answer
+      const proximity = quickFeedbackEngine.calculateProximity(
+        selectedAnswer,
+        currentQuestion.correctAnswer
+      );
+
+      // Determine subject
+      const subjectMap: Record<string, 'math' | 'english' | 'science' | 'logic' | 'geography' | 'arts'> = {
+        mathematics: 'math',
+        english: 'english',
+        science: 'science',
+        logic: 'logic',
+        geography: 'geography',
+        arts: 'arts'
+      };
+      const subject = subjectMap[gameContent?.subject || 'mathematics'] || 'math';
+
+      // Provide quick, non-intrusive feedback
+      const answerArea = document.querySelector('.answer-selection-area');
+      quickFeedbackEngine.provideFeedback({
+        style: preferences.feedbackStyle,
+        ageGroup: profile?.ageGroup || '6-8',
+        subject,
+        soundEnabled: preferences.soundEnabled,
+        hapticEnabled: preferences.hapticEnabled,
+        proximity,
+        attemptNumber: gameState.answers.filter(a => a.questionId === currentQuestion.id).length + 1
+      }, answerArea as HTMLElement);
+
+      // Reset streak in celebration service
+      advancedCelebrationService.resetStreak();
+
       setFeedbackType('error');
       setFeedbackMessage(
         currentQuestion.explanation ||

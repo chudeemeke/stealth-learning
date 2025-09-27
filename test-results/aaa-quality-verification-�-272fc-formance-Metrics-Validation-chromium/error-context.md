@@ -1,0 +1,51 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: 🔧
+    - generic [ref=e6]: Development Mode - Security features disabled for testing
+  - generic [ref=e8]:
+    - generic [ref=e9]:
+      - img [ref=e11]
+      - img [ref=e18]
+      - img [ref=e21]
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - img [ref=e26]
+        - generic [ref=e28]: Secure
+      - generic [ref=e29]:
+        - img [ref=e31]
+        - img [ref=e34]
+        - img [ref=e37]
+      - generic [ref=e39]:
+        - heading "Welcome to" [level=1] [ref=e40]
+        - generic [ref=e41]:
+          - generic [ref=e42]: Stealth Learning
+          - img [ref=e44]
+        - paragraph [ref=e50]: Where education meets adventure!
+      - generic [ref=e52]:
+        - text: 🦉
+        - generic [ref=e53]: 💡
+      - heading "Who's playing today?" [level=2] [ref=e54]
+      - generic [ref=e55]:
+        - button "I'm a Kid!" [ref=e56] [cursor=pointer]:
+          - generic [ref=e57] [cursor=pointer]:
+            - img [ref=e58] [cursor=pointer]
+            - generic [ref=e61] [cursor=pointer]: I'm a Kid!
+            - img [ref=e62] [cursor=pointer]
+        - button "I'm a Parent" [ref=e66] [cursor=pointer]:
+          - generic [ref=e67] [cursor=pointer]:
+            - img [ref=e68] [cursor=pointer]
+            - generic [ref=e73] [cursor=pointer]: I'm a Parent
+            - img [ref=e74] [cursor=pointer]
+      - generic [ref=e77]:
+        - img [ref=e79]
+        - generic [ref=e81]: Did you know? Learning is 300% more fun with games!
+      - generic [ref=e82]:
+        - img [ref=e84] [cursor=pointer]
+        - img [ref=e91] [cursor=pointer]
+        - img [ref=e94] [cursor=pointer]
+        - img [ref=e97] [cursor=pointer]
+        - img [ref=e100] [cursor=pointer]
+```
