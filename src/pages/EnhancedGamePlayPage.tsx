@@ -335,7 +335,7 @@ const EnhancedGamePlayPage: React.FC = () => {
       // Calculate proximity to correct answer
       const proximity = quickFeedbackEngine.calculateProximity(
         selectedAnswer,
-        currentQuestion.correctAnswer
+        String(currentQuestion.correctAnswer)
       );
 
       // Determine subject

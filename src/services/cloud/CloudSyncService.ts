@@ -5,7 +5,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { UltraEncryptionService } from '../security/UltraEncryptionService';
+// Encryption service will be implemented later
+// import { UltraEncryptionService } from '../security/UltraEncryptionService';
 
 export interface CloudSaveData {
   id: string;
@@ -71,9 +72,7 @@ interface UserSettings {
 }
 
 interface SyncStatus {
-  isS
-
-yncing: boolean;
+  isSyncing: boolean;
   lastSyncTime: Date | null;
   pendingChanges: number;
   syncProgress: number;
@@ -94,7 +93,7 @@ interface ConflictResolution {
 
 export class CloudSyncService extends EventEmitter {
   private static instance: CloudSyncService;
-  private encryptionService: UltraEncryptionService;
+  // private encryptionService: UltraEncryptionService;
   private localData: CloudSaveData | null = null;
   private syncStatus: SyncStatus;
   private syncQueue: any[] = [];
@@ -112,7 +111,7 @@ export class CloudSyncService extends EventEmitter {
 
   private constructor() {
     super();
-    this.encryptionService = UltraEncryptionService.getInstance();
+    // this.encryptionService = UltraEncryptionService.getInstance();
     this.deviceId = this.getDeviceId();
     this.syncStatus = this.initializeSyncStatus();
     this.conflictResolution = {
@@ -168,7 +167,7 @@ export class CloudSyncService extends EventEmitter {
 
     // Store auth token securely
     if (token) {
-      await this.encryptionService.encryptData({ token });
+      // await this.encryptionService.encryptData({ token });
     }
 
     // Perform initial sync
@@ -678,7 +677,7 @@ export class CloudSyncService extends EventEmitter {
 
     for (const field of sensitive) {
       if (encrypted[field]) {
-        encrypted[field] = await this.encryptionService.encryptData(encrypted[field]);
+        // encrypted[field] = await this.encryptionService.encryptData(encrypted[field]);
       }
     }
 
@@ -694,7 +693,7 @@ export class CloudSyncService extends EventEmitter {
 
     for (const field of sensitive) {
       if (decrypted[field] && typeof decrypted[field] === 'string') {
-        decrypted[field] = await this.encryptionService.decryptData(decrypted[field]);
+        // decrypted[field] = await this.encryptionService.decryptData(decrypted[field]);
       }
     }
 

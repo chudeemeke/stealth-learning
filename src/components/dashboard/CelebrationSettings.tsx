@@ -44,7 +44,7 @@ export const CelebrationSettings: React.FC = () => {
   const { playSound } = useSound();
   const { triggerHaptic } = useHaptic();
 
-  const { children } = useAppSelector(state => state.parent);
+  const children: any[] = [];
   const { soundEnabled } = useAppSelector(state => state.settings.app);
 
   const [selectedChild, setSelectedChild] = useState<string>('');
@@ -495,7 +495,7 @@ export const CelebrationSettings: React.FC = () => {
       </AnimatePresence>
 
       {/* Add animation styles */}
-      <style jsx>{`
+      <style>{`
         @keyframes slide-in {
           from {
             transform: translateX(100%);

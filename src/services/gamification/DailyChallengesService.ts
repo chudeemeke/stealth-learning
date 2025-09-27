@@ -506,9 +506,9 @@ export class DailyChallengesService {
       // Find strong and weak subjects
       analytics.learning.forEach((metric: any) => {
         if (metric.accuracy > 80) {
-          profile.preferredSubjects.push(metric.subject);
+          (profile.preferredSubjects as any[]).push(metric.subject);
         } else if (metric.accuracy < 60) {
-          profile.weakSubjects.push(metric.subject);
+          (profile.weakSubjects as any[]).push(metric.subject);
         }
       });
     }

@@ -866,8 +866,8 @@ export class MultiplayerService extends EventEmitter {
   private showFinalResults(results: any): void {
     // Calculate rankings
     const rankings = Array.from(results.finalScores.entries())
-      .sort((a, b) => b[1] - a[1])
-      .map((entry, index) => ({
+      .sort((a: any, b: any) => (b as any)[1] - (a as any)[1])
+      .map((entry: any, index) => ({
         rank: index + 1,
         playerId: entry[0],
         score: entry[1]

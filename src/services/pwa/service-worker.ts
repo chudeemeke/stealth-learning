@@ -133,7 +133,8 @@ async function networkFirst(request: Request): Promise<Response> {
 
     // Return offline page for navigation requests
     if (request.destination === 'document') {
-      return caches.match(OFFLINE_URL) || new Response('Offline', {
+      const offlineResponse = await caches.match(OFFLINE_URL);
+      return offlineResponse || new Response('Offline', {
         status: 503,
         statusText: 'Service Unavailable'
       });
@@ -314,23 +315,10 @@ self.addEventListener('push', (event: PushEvent) => {
     body: event.data?.text() || 'New activity in Stealth Learning!',
     icon: '/assets/icons/icon-192x192.png',
     badge: '/assets/icons/badge-72x72.png',
-    vibrate: [200, 100, 200],
     data: {
       dateOfArrival: Date.now(),
       primaryKey: 1
-    },
-    actions: [
-      {
-        action: 'explore',
-        title: 'Play Now',
-        icon: '/assets/icons/play.png'
-      },
-      {
-        action: 'close',
-        title: 'Close',
-        icon: '/assets/icons/close.png'
-      }
-    ]
+    }
   };
 
   event.waitUntil(

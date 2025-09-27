@@ -81,7 +81,7 @@ const FEEDBACK_THEMES = {
 class PulseFeedback {
   execute(config: FeedbackConfig, element?: HTMLElement): void {
     const theme = FEEDBACK_THEMES[config.subject];
-    const target = element || document.querySelector('.answer-input-area') || document.body;
+    const target = element || document.querySelector('.answer-input-area') as HTMLElement || document.body;
 
     // Create pulse overlay
     const pulse = document.createElement('div');
@@ -166,7 +166,7 @@ class PulseFeedback {
 class QuantumFeedback {
   execute(config: FeedbackConfig, element?: HTMLElement): void {
     const theme = FEEDBACK_THEMES[config.subject];
-    const target = element || document.querySelector('.answer-input-area') || document.body;
+    const target = element || document.querySelector('.answer-input-area') as HTMLElement || document.body;
 
     // Create rewind effect
     this.createRewindEffect(target);
@@ -282,7 +282,7 @@ class QuantumFeedback {
   }
 
   private autoResetInput(target: HTMLElement): void {
-    const input = target.querySelector('input') as HTMLInputElement;
+    const input = target.querySelector('input') as HTMLElement as HTMLInputElement;
     if (input) {
       // Smooth fade and clear
       input.style.transition = 'opacity 0.3s ease-out';
@@ -321,7 +321,7 @@ class AuroraFeedback {
 
   execute(config: FeedbackConfig, element?: HTMLElement): void {
     const theme = FEEDBACK_THEMES[config.subject];
-    const target = element || document.querySelector('.answer-input-area') || document.body;
+    const target = element || document.querySelector('.answer-input-area') as HTMLElement || document.body;
 
     // Create aurora effect
     this.createAuroraEffect(theme, config);

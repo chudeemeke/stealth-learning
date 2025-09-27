@@ -62,8 +62,6 @@ interface SpeechRecognitionAlternative {
 
 declare global {
   interface Window {
-    SpeechRecognition: any;
-    webkitSpeechRecognition: any;
   }
 }
 
