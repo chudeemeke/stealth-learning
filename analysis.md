@@ -4900,3 +4900,112 @@ src/pages/GameSelectPage.tsx(349,17): error TS18048: 'skillLevels.arts' is possi
 └─────────────────────┴────────────────────────────────────────────────────────┘
 2 vulnerabilities found
 Severity: 2 moderate
+## Running Comprehensive Analysis
+### TypeScript Errors
+
+> stealth-learning-spa@0.1.0-dev type-check /home/runner/work/stealth-learning/stealth-learning
+> tsc --noEmit
+
+### Lint Errors
+
+> stealth-learning-spa@0.1.0-dev lint /home/runner/work/stealth-learning/stealth-learning
+> eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 -c config/.eslintrc.cjs
+
+
+Oops! Something went wrong! :(
+
+ESLint: 8.57.1
+
+ESLint couldn't find the config "@typescript-eslint/recommended" to extend from. Please check that the name of the config is correct.
+
+The config "@typescript-eslint/recommended" was referenced from the config file in "/home/runner/work/stealth-learning/stealth-learning/config/.eslintrc.cjs".
+
+If you still have problems, please stop by https://eslint.org/chat/help to chat with the team.
+
+ ELIFECYCLE  Command failed with exit code 2.
+### Test Results
+undefined
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command "test:unit" not found
+
+Did you mean "pnpm test:ui"?
+### Build Status
+
+> stealth-learning-spa@0.1.0-dev build /home/runner/work/stealth-learning/stealth-learning
+> tsc && vite build
+
+[33mbuild.terserOptions is specified but build.minify is not set to use Terser. Note Vite now defaults to use esbuild for minification. If you still prefer Terser, set build.minify to "terser".[39m
+[36mvite v5.4.20 [32mbuilding for production...[36m[39m
+transforming...
+[32m✓[39m 2955 modules transformed.
+rendering chunks...
+[1m[33m[plugin:vite:reporter][39m[22m [33m[plugin vite:reporter] 
+(!) /home/runner/work/stealth-learning/stealth-learning/src/store/slices/studentSlice.ts is dynamically imported by /home/runner/work/stealth-learning/stealth-learning/src/App.tsx but also statically imported by /home/runner/work/stealth-learning/stealth-learning/src/components/Layout.tsx, /home/runner/work/stealth-learning/stealth-learning/src/components/SessionTimer.tsx, /home/runner/work/stealth-learning/stealth-learning/src/pages/ProfilePage.tsx, /home/runner/work/stealth-learning/stealth-learning/src/pages/UltraKidsLandingSimple.tsx, /home/runner/work/stealth-learning/stealth-learning/src/store/index.ts, dynamic import will not move module into another chunk.
+[39m
+computing gzip size...
+[2mdist/[22m[32mregisterSW.js                                 [39m[1m[2m  0.17 kB[22m[1m[22m
+[2mdist/[22m[32mmanifest.json                                 [39m[1m[2m  0.59 kB[22m[1m[22m[2m │ gzip:   0.30 kB[22m
+[2mdist/[22m[32mindex.html                                    [39m[1m[2m  7.28 kB[22m[1m[22m[2m │ gzip:   2.38 kB[22m
+[2mdist/[22m[2massets/[22m[35mindex-BrXZuSrZ.css                     [39m[1m[2m250.25 kB[22m[1m[22m[2m │ gzip:  36.02 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/ToastNotification-8gg2fwEX.js       [39m[1m[2m  6.01 kB[22m[1m[22m[2m │ gzip:   2.45 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/Card-DojJ8Sy9.js                    [39m[1m[2m 10.66 kB[22m[1m[22m[2m │ gzip:   4.06 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/AuthenticationService-DgrZI8_k.js   [39m[1m[2m 12.59 kB[22m[1m[22m[2m │ gzip:   3.88 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/ProfilePage-CMLjBC19.js             [39m[1m[2m 15.94 kB[22m[1m[22m[2m │ gzip:   4.14 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/SettingsPage-7mo5WTre.js            [39m[1m[2m 21.66 kB[22m[1m[22m[2m │ gzip:   4.19 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/ExpandedGameSelectPage-C24VbAW5.js  [39m[1m[2m 23.88 kB[22m[1m[22m[2m │ gzip:   7.58 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/redux-vendor--TX21DhT.js            [39m[1m[2m 27.87 kB[22m[1m[22m[2m │ gzip:  10.52 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/ProgressPage-BdxuUNSQ.js            [39m[1m[2m 38.71 kB[22m[1m[22m[2m │ gzip:   9.55 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/QuickFeedbackEngine-CnJCNZqX.js     [39m[1m[2m 40.29 kB[22m[1m[22m[2m │ gzip:   9.34 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/ParentDashboard-DJgBlwAS.js         [39m[1m[2m 41.56 kB[22m[1m[22m[2m │ gzip:  11.51 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/game-vendor-Dw0mPGd_.js             [39m[1m[2m 47.78 kB[22m[1m[22m[2m │ gzip:  14.15 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/crypto-vendor-DBXp-go_.js           [39m[1m[2m 69.94 kB[22m[1m[22m[2m │ gzip:  26.13 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/EnhancedGamePlayPage-sungzgqW.js    [39m[1m[2m102.60 kB[22m[1m[22m[2m │ gzip:  30.95 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/ui-vendor-DwJzIzJi.js               [39m[1m[2m105.60 kB[22m[1m[22m[2m │ gzip:  35.76 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/DatabaseService-DcDMGikp.js         [39m[1m[2m117.29 kB[22m[1m[22m[2m │ gzip:  37.68 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/react-vendor-BqsuP7LV.js            [39m[1m[2m163.33 kB[22m[1m[22m[2m │ gzip:  53.20 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/index--hpZlPWE.js                   [39m[1m[2m296.33 kB[22m[1m[22m[2m │ gzip:  88.06 kB[22m
+[2mdist/[22m[2massets/[22m[36mjs/PieChart-CU0g9g_k.js                [39m[1m[2m399.72 kB[22m[1m[22m[2m │ gzip: 108.22 kB[22m
+[32m✓ built in 8.96s[39m
+
+[36mPWA v0.17.5[39m
+mode      [35mgenerateSW[39m
+precache  [32m23 entries[39m [2m(1759.67 KiB)[22m
+files generated
+  [2mdist/sw.js[22m
+  [2mdist/workbox-6c5b4cd0.js[22m
+### Security Audit
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ moderate            │ esbuild enables any website to send any requests to    │
+│                     │ the development server and read the response           │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ esbuild                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ <=0.24.2                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=0.25.0                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-controls@7.6.20 >                     │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild@0.18.20        │
+│                     │                                                        │
+│                     │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-controls@7.6.20 >                     │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild-register@3.6.0 │
+│                     │ > esbuild@0.18.20                                      │
+│                     │                                                        │
+│                     │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-docs@7.6.20 >                         │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild@0.18.20        │
+│                     │                                                        │
+│                     │ ... Found 31 paths, run `pnpm why esbuild` for more    │
+│                     │ information                                            │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-67mh-4wv8-2f99      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+2 vulnerabilities found
+Severity: 2 moderate
