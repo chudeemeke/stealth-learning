@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
 interface ImmersiveBackgroundProps {
-  subject: 'math' | 'english' | 'science' | 'general';
+  subject: 'math' | 'english' | 'science' | 'geography' | 'logic' | 'arts' | 'general';
   intensity?: 'subtle' | 'medium' | 'dynamic';
   children?: React.ReactNode;
   className?: string;
@@ -32,6 +32,30 @@ const BACKGROUND_CONFIGS = {
     pattern: 'scientific',
     symbols: ['⚛️', '🧬', '⚗️', '🔬', '💫', '🌟', '⚡', '🧪', '🌍', '🔬', '🧲', '💊'],
     gradientOverlay: 'bg-gradient-to-br from-green-900/80 via-teal-900/60 to-cyan-900/80'
+  },
+  geography: {
+    primary: 'from-amber-900 via-yellow-800 to-orange-900',
+    secondary: 'from-amber-600/20 to-yellow-600/20',
+    accent: '#F59E0B',
+    pattern: 'geographical',
+    symbols: ['🌍', '🗺️', '⛰️', '🏔️', '🌊', '🏝️', '🧭', '📍', '🌐', '🗾', '🌏', '🌎'],
+    gradientOverlay: 'bg-gradient-to-br from-amber-900/80 via-yellow-900/60 to-orange-900/80'
+  },
+  logic: {
+    primary: 'from-slate-900 via-gray-800 to-zinc-900',
+    secondary: 'from-slate-600/20 to-gray-600/20',
+    accent: '#64748B',
+    pattern: 'logical',
+    symbols: ['🧩', '♟️', '🎯', '⚙️', '🔗', '💡', '🧮', '🎲', '🔀', '🔄', '⚖️', '🔧'],
+    gradientOverlay: 'bg-gradient-to-br from-slate-900/80 via-gray-900/60 to-zinc-900/80'
+  },
+  arts: {
+    primary: 'from-pink-900 via-rose-800 to-fuchsia-900',
+    secondary: 'from-pink-600/20 to-rose-600/20',
+    accent: '#EC4899',
+    pattern: 'artistic',
+    symbols: ['🎨', '🖌️', '✏️', '🖍️', '🎭', '🎪', '🎬', '🎼', '🎵', '🎶', '🖼️', '✨'],
+    gradientOverlay: 'bg-gradient-to-br from-pink-900/80 via-rose-900/60 to-fuchsia-900/80'
   },
   general: {
     primary: 'from-purple-900 via-pink-800 to-indigo-900',

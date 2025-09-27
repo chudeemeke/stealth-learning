@@ -4,7 +4,7 @@ import { Z_INDEX_CLASSES } from '@/styles/z-index';
 import { getAccessibleTextColor, ACCESSIBLE_COLORS } from '@/utils/contrast';
 
 interface GameCharacterProps {
-  subject: 'math' | 'english' | 'science';
+  subject: 'math' | 'english' | 'science' | 'geography' | 'logic' | 'arts';
   emotion?: 'happy' | 'excited' | 'thinking' | 'celebrating' | 'encouraging';
   size?: 'small' | 'medium' | 'large';
   position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center';
@@ -64,6 +64,57 @@ const CHARACTER_CONFIGS = {
       encouraging: '💪'
     },
     accessories: ['⚗️', '🧪', '⚛️', '🏆', '💫']
+  },
+  geography: {
+    base: '🌍',
+    name: 'Geo',
+    colors: {
+      primary: '#F59E0B',
+      secondary: '#D97706',
+      accent: '#FCD34D'
+    },
+    expressions: {
+      happy: '😊',
+      excited: '🤩',
+      thinking: '🤔',
+      celebrating: '🎉',
+      encouraging: '💪'
+    },
+    accessories: ['🗺️', '⛰️', '🌊', '🏆', '🧭']
+  },
+  logic: {
+    base: '🧩',
+    name: 'Logix',
+    colors: {
+      primary: '#64748B',
+      secondary: '#475569',
+      accent: '#94A3B8'
+    },
+    expressions: {
+      happy: '😊',
+      excited: '🤩',
+      thinking: '🤔',
+      celebrating: '🎉',
+      encouraging: '💪'
+    },
+    accessories: ['♟️', '🎯', '⚙️', '🏆', '💡']
+  },
+  arts: {
+    base: '🎨',
+    name: 'Arty',
+    colors: {
+      primary: '#EC4899',
+      secondary: '#DB2777',
+      accent: '#F9A8D4'
+    },
+    expressions: {
+      happy: '😊',
+      excited: '🤩',
+      thinking: '🤔',
+      celebrating: '🎉',
+      encouraging: '💪'
+    },
+    accessories: ['🖌️', '✏️', '🎭', '🏆', '✨']
   }
 };
 

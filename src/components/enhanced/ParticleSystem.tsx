@@ -18,7 +18,7 @@ interface Particle {
 }
 
 interface ParticleSystemProps {
-  subject: 'math' | 'english' | 'science' | 'general';
+  subject: 'math' | 'english' | 'science' | 'geography' | 'logic' | 'arts' | 'general';
   intensity?: 'low' | 'medium' | 'high';
   trigger?: boolean;
   celebration?: boolean;
@@ -40,6 +40,21 @@ const PARTICLE_CONFIGS = {
     symbols: ['⚗️', '🔬', '🧪', '⚛️', '💫', '🌟', '✨', '🔬'],
     colors: ['#10B981', '#059669', '#34D399', '#6EE7B7'],
     theme: 'scientific'
+  },
+  geography: {
+    symbols: ['🌍', '🗺️', '⛰️', '🌊', '🏔️', '🧭', '✨', '🌐'],
+    colors: ['#F59E0B', '#D97706', '#FCD34D', '#FDE68A'],
+    theme: 'geographical'
+  },
+  logic: {
+    symbols: ['🧩', '♟️', '🎯', '⚙️', '🔗', '💡', '✨', '🧮'],
+    colors: ['#64748B', '#475569', '#94A3B8', '#CBD5E1'],
+    theme: 'logical'
+  },
+  arts: {
+    symbols: ['🎨', '🖌️', '✏️', '🎭', '🎵', '🎶', '✨', '🖼️'],
+    colors: ['#EC4899', '#DB2777', '#F9A8D4', '#FBCFE8'],
+    theme: 'artistic'
   },
   general: {
     symbols: ['✨', '⭐', '💫', '🌟', '💎', '🎉', '✨'],

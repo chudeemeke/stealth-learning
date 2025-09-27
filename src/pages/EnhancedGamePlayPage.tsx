@@ -829,10 +829,13 @@ const EnhancedGamePlayPage: React.FC = () => {
     );
   }
 
-  // Main game interface
+  // Main game interface - properly map all subjects
   const subject = gameContent?.subject === 'mathematics' ? 'math' :
                   gameContent?.subject === 'english' ? 'english' :
-                  gameContent?.subject === 'science' ? 'science' : 'math';
+                  gameContent?.subject === 'science' ? 'science' :
+                  gameContent?.subject === 'geography' ? 'geography' :
+                  gameContent?.subject === 'logic' ? 'logic' :
+                  gameContent?.subject === 'arts' ? 'arts' : 'math';
 
   return (
     <ImmersiveBackground subject={subject} intensity="medium">

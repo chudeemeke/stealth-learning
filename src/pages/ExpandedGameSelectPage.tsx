@@ -307,7 +307,7 @@ const ExpandedGameSelectPage: React.FC = () => {
         >
           <Button
             variant="ghost"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/profile')}
             className="text-gray-600 hover:text-gray-800"
           >
             ← Back to Profile
