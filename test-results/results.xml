@@ -1,0 +1,17 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="29.704556">
+<testsuite name="direct-games-test.spec.ts" timestamp="2025-09-27T10:12:57.599Z" hostname="chromium" tests="1" failures="0" skipped="0" time="9.209" errors="0">
+<testcase name="Direct navigation to games page" classname="direct-games-test.spec.ts" time="9.209">
+<system-out>
+<![CDATA[🚀 Navigating directly to /games...
+📍 Current URL: http://localhost:3000/games
+
+📊 Checking for game cards...
+✅ Found 1 cards with selector: div[class*="card"]:has(button)
+
+✅ Game cards found! Listing them:
+  1. SecureWelcome toStealth LearningWhere education meets adventure!🦉💡Who's playing today?I'm a Kid!I'm a ParentDid you know? Learning is 300% more fun with games!
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

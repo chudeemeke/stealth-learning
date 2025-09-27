@@ -36,6 +36,99 @@ import { contentFactory } from '@/services/content/ContentFactory';
 import { GameContent, Question } from '@/services/database/schema';
 import { DifficultyLevel } from '@/types';
 
+// Science Diagram Component
+const ScienceDiagram: React.FC<{ type: string }> = ({ type }) => {
+  const diagrams: Record<string, JSX.Element> = {
+    photosynthesis: (
+      <svg viewBox="0 0 400 300" className="w-full max-w-md">
+        <rect x="150" y="100" width="100" height="150" fill="#8B4513" rx="10"/>
+        <circle cx="200" cy="50" r="40" fill="#228B22"/>
+        <path d="M160 50 Q100 20 50 30" stroke="#FFD700" strokeWidth="3" fill="none"/>
+        <text x="30" y="25" fill="#FFD700" fontSize="20">☀️ Sun</text>
+        <path d="M200 250 L180 280 L220 280" stroke="#8B4513" strokeWidth="3" fill="#8B4513"/>
+        <text x="150" y="290" fill="#654321" fontSize="14">Roots</text>
+        <text x="210" y="50" fill="white" fontSize="12">Leaves</text>
+        <path d="M50 30 L160 50" stroke="#FFD700" strokeWidth="2" markerEnd="url(#arrowhead)"/>
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#FFD700"/>
+          </marker>
+        </defs>
+      </svg>
+    ),
+    watercycle: (
+      <svg viewBox="0 0 400 300" className="w-full max-w-md">
+        <rect x="0" y="200" width="400" height="100" fill="#4682B4"/>
+        <circle cx="350" cy="50" r="30" fill="#FFD700"/>
+        <path d="M50 100 Q100 50 150 100" fill="#87CEEB" opacity="0.7"/>
+        <path d="M100 90 Q150 40 200 90" fill="#87CEEB" opacity="0.7"/>
+        <path d="M350 80 L320 150" stroke="#FFD700" strokeWidth="2" strokeDasharray="5,5"/>
+        <path d="M150 100 L150 200" stroke="#4682B4" strokeWidth="2" strokeDasharray="3,3"/>
+        <text x="20" y="230" fill="white" fontSize="14">Ocean</text>
+        <text x="120" y="80" fill="#333" fontSize="12">Clouds</text>
+        <text x="140" y="150" fill="#4682B4" fontSize="10">Rain</text>
+        <text x="310" y="120" fill="#FFD700" fontSize="10">Evaporation</text>
+      </svg>
+    ),
+    solarsystem: (
+      <svg viewBox="0 0 500 300" className="w-full max-w-md">
+        <circle cx="250" cy="150" r="30" fill="#FFD700"/>
+        <text x="235" y="155" fill="#8B4513" fontSize="12">Sun</text>
+        <circle cx="250" cy="150" r="60" fill="none" stroke="#999" strokeWidth="1" strokeDasharray="2,2"/>
+        <circle cx="310" cy="150" r="5" fill="#A0522D"/>
+        <circle cx="250" cy="150" r="90" fill="none" stroke="#999" strokeWidth="1" strokeDasharray="2,2"/>
+        <circle cx="250" cy="60" r="8" fill="#4169E1"/>
+        <circle cx="250" cy="150" r="120" fill="none" stroke="#999" strokeWidth="1" strokeDasharray="2,2"/>
+        <circle cx="130" cy="150" r="6" fill="#DC143C"/>
+        <text x="300" y="170" fill="#666" fontSize="10">Mercury</text>
+        <text x="240" y="45" fill="#666" fontSize="10">Earth</text>
+        <text x="110" y="170" fill="#666" fontSize="10">Mars</text>
+      </svg>
+    ),
+    humanbody: (
+      <svg viewBox="0 0 300 400" className="w-full max-w-md">
+        <circle cx="150" cy="50" r="30" fill="#FDBCB4"/>
+        <rect x="120" y="80" width="60" height="100" fill="#87CEEB" rx="10"/>
+        <rect x="100" y="90" width="20" height="70" fill="#FDBCB4"/>
+        <rect x="180" y="90" width="20" height="70" fill="#FDBCB4"/>
+        <rect x="125" y="180" width="20" height="80" fill="#4169E1"/>
+        <rect x="155" y="180" width="20" height="80" fill="#4169E1"/>
+        <circle cx="150" cy="110" r="5" fill="#DC143C"/>
+        <text x="160" y="115" fill="#666" fontSize="10">Heart</text>
+        <text x="130" y="40" fill="#333" fontSize="12">Head</text>
+        <text x="110" y="140" fill="#333" fontSize="10">Arms</text>
+        <text x="130" y="240" fill="#333" fontSize="10">Legs</text>
+      </svg>
+    ),
+    default: (
+      <div className="p-8 bg-gradient-to-br from-green-400 to-blue-500 rounded-lg">
+        <div className="text-6xl mb-2">🔬</div>
+        <p className="text-white font-semibold">Science Diagram</p>
+      </div>
+    )
+  };
+
+  return diagrams[type] || diagrams.default;
+};
+
+// Helper function to determine diagram type from question text
+const getScienceDiagramType = (question: string): string => {
+  const lowercaseQuestion = question.toLowerCase();
+  if (lowercaseQuestion.includes('photosynth') || lowercaseQuestion.includes('plant') && lowercaseQuestion.includes('sun')) {
+    return 'photosynthesis';
+  }
+  if (lowercaseQuestion.includes('water cycle') || lowercaseQuestion.includes('rain') || lowercaseQuestion.includes('evapor')) {
+    return 'watercycle';
+  }
+  if (lowercaseQuestion.includes('solar') || lowercaseQuestion.includes('planet')) {
+    return 'solarsystem';
+  }
+  if (lowercaseQuestion.includes('body') || lowercaseQuestion.includes('organ') || lowercaseQuestion.includes('heart')) {
+    return 'humanbody';
+  }
+  return 'default';
+};
+
 interface GameState {
   currentQuestionIndex: number;
   score: number;
@@ -909,7 +1002,7 @@ const EnhancedGamePlayPage: React.FC = () => {
               animate={{ x: 0, opacity: 1, rotateY: 0 }}
               transition={{ duration: 0.6, type: 'spring' }}
             >
-              {/* Question Media */}
+              {/* Question Media - Enhanced with Science Diagrams */}
               {currentQuestion.media && (
                 <motion.div
                   className="mb-8 text-center"
@@ -919,8 +1012,16 @@ const EnhancedGamePlayPage: React.FC = () => {
                 >
                   {currentQuestion.media.type === 'image' && (
                     <div className="inline-block bg-white/20 rounded-2xl p-6 border border-white/30">
-                      <div className="text-6xl mb-2">📷</div>
-                      <p className="text-white/80">{currentQuestion.media.alt}</p>
+                      {currentQuestion.media.url ? (
+                        <img
+                          src={currentQuestion.media.url}
+                          alt={currentQuestion.media.alt}
+                          className="max-w-md mx-auto rounded-lg shadow-lg"
+                        />
+                      ) : (
+                        <ScienceDiagram type={currentQuestion.media.diagramType || 'default'} />
+                      )}
+                      <p className="text-white/80 mt-4">{currentQuestion.media.alt}</p>
                     </div>
                   )}
                   {currentQuestion.media.type === 'audio' && (
@@ -929,6 +1030,21 @@ const EnhancedGamePlayPage: React.FC = () => {
                       <p className="text-white/80">Audio content</p>
                     </div>
                   )}
+                </motion.div>
+              )}
+
+              {/* Auto-generated Science Diagrams for Science Questions */}
+              {!currentQuestion.media && currentQuestion.subject === 'science' && (
+                <motion.div
+                  className="mb-8 text-center"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <div className="inline-block bg-white/20 rounded-2xl p-6 border border-white/30">
+                    <ScienceDiagram type={getScienceDiagramType(currentQuestion.question)} />
+                    <p className="text-white/80 mt-4">Scientific Diagram</p>
+                  </div>
                 </motion.div>
               )}
 
