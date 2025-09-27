@@ -1,0 +1,127 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: 🔧
+      - generic [ref=e6]: Development Mode - Security features disabled for testing
+    - generic [ref=e8]:
+      - navigation [ref=e9]:
+        - generic [ref=e10]:
+          - generic [ref=e11]:
+            - link "StealthLearn" [ref=e12] [cursor=pointer]:
+              - /url: "#/"
+            - generic [ref=e13]:
+              - link "🏠Home" [ref=e14] [cursor=pointer]:
+                - /url: "#/"
+                - generic [ref=e15] [cursor=pointer]: 🏠
+                - text: Home
+              - link "🎮Games" [ref=e16] [cursor=pointer]:
+                - /url: "#/games"
+                - generic [ref=e17] [cursor=pointer]: 🎮
+                - text: Games
+              - link "⭐Progress" [ref=e18] [cursor=pointer]:
+                - /url: "#/progress"
+                - generic [ref=e19] [cursor=pointer]: ⭐
+                - text: Progress
+              - link "👤Profile" [ref=e20] [cursor=pointer]:
+                - /url: "#/profile"
+                - generic [ref=e21] [cursor=pointer]: 👤
+                - text: Profile
+              - link "⚙️Settings" [ref=e22] [cursor=pointer]:
+                - /url: "#/settings"
+                - generic [ref=e23] [cursor=pointer]: ⚙️
+                - text: Settings
+          - generic [ref=e24]:
+            - generic [ref=e25]:
+              - generic [ref=e26]:
+                - generic [ref=e27]: 💎
+                - generic [ref=e28]: "0"
+              - generic [ref=e29]:
+                - generic [ref=e30]: 🔥
+                - generic [ref=e31]: "0"
+            - button "Avatar newparent@test.com" [ref=e33] [cursor=pointer]:
+              - img "Avatar" [ref=e34] [cursor=pointer]
+              - generic [ref=e35] [cursor=pointer]: newparent@test.com
+              - img [ref=e36] [cursor=pointer]
+      - main [ref=e38]:
+        - generic [ref=e41]:
+          - generic [ref=e43]:
+            - generic [ref=e44]:
+              - heading "Parent Dashboard" [level=1] [ref=e45]
+              - paragraph [ref=e46]: Monitor and guide your child's learning journey
+            - button "⚙️ Settings" [ref=e47] [cursor=pointer]
+          - generic [ref=e49]:
+            - generic [ref=e50]: "Viewing:"
+            - combobox [ref=e51]:
+              - option "🧒 Test Parent User (Age 7)" [selected]
+            - button "+ Add Child" [ref=e52] [cursor=pointer]
+          - generic [ref=e53]:
+            - button "Overview" [ref=e54] [cursor=pointer]
+            - button "Progress" [ref=e55] [cursor=pointer]
+            - button "Activity" [ref=e56] [cursor=pointer]
+            - button "Controls" [ref=e57] [cursor=pointer]
+            - button "🎉 Celebrations" [ref=e58] [cursor=pointer]
+          - generic [ref=e59]:
+            - generic [ref=e60]:
+              - generic [ref=e63]:
+                - generic [ref=e64]:
+                  - generic [ref=e65]: 📈
+                  - generic [ref=e66]: +5%
+                - paragraph [ref=e67]: 92%
+                - paragraph [ref=e68]: Engagement Score
+                - paragraph [ref=e69]: Great engagement! Keep up the daily practice.
+              - generic [ref=e72]:
+                - generic [ref=e73]:
+                  - generic [ref=e74]: 🎯
+                  - generic [ref=e75]: "-2%"
+                - paragraph [ref=e76]: 0%
+                - paragraph [ref=e77]: Average Accuracy
+                - paragraph [ref=e78]: Consider focusing on problem areas.
+              - generic [ref=e81]:
+                - generic [ref=e82]:
+                  - generic [ref=e83]: ⏱️
+                  - generic [ref=e84]: +10%
+                - paragraph [ref=e85]: 5.2 hrs
+                - paragraph [ref=e86]: Weekly Time
+                - paragraph [ref=e87]: On track with recommended learning time.
+              - generic [ref=e90]:
+                - generic [ref=e91]:
+                  - generic [ref=e92]: 🔥
+                  - generic [ref=e93]: 0%
+                - paragraph [ref=e94]: 0 days
+                - paragraph [ref=e95]: Current Streak
+                - paragraph [ref=e96]: Maintain daily practice for best results.
+            - generic [ref=e97]:
+              - generic [ref=e100]:
+                - heading "Weekly Learning Time" [level=3] [ref=e101]
+                - img [ref=e104]:
+                  - generic [ref=e109]:
+                    - generic [ref=e112]: Mon
+                    - generic [ref=e115]: Tue
+                    - generic [ref=e118]: Wed
+                    - generic [ref=e121]: Thu
+                    - generic [ref=e124]: Fri
+                    - generic [ref=e127]: Sat
+                    - generic [ref=e130]: Sun
+                  - generic [ref=e132]:
+                    - generic [ref=e135]: "0"
+                    - generic [ref=e138]: "45"
+                    - generic [ref=e141]: "90"
+                    - generic [ref=e144]: "135"
+                    - generic [ref=e147]: "180"
+              - generic [ref=e156]:
+                - heading "Time of Day Distribution" [level=3] [ref=e157]
+                - img [ref=e160]:
+                  - generic [ref=e161]:
+                    - generic [ref=e162]:
+                      - img [ref=e164]
+                      - img [ref=e166]
+                      - img [ref=e168]
+                    - generic [ref=e169]:
+                      - generic [ref=e172]: Morning 35%
+                      - generic [ref=e175]: Afternoon 45%
+                      - generic [ref=e178]: Evening 20%
+  - generic [ref=e179]: "0"
+```
