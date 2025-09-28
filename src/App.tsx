@@ -85,8 +85,13 @@ function App() {
         // Initialize services in parallel for faster load
         const initPromises = [
           // Security headers - non-critical
-          securityHeaders.setupCSPViolationReporting()
-            .catch(err => console.warn('Security headers setup skipped:', err)),
+          Promise.resolve().then(() => {
+            try {
+              securityHeaders.setupCSPViolationReporting();
+            } catch (err) {
+              console.warn('Security headers setup skipped:', err);
+            }
+          }),
 
           // COPPA compliance - non-critical
           coppaService.cleanupExpiredData()
