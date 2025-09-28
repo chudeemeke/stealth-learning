@@ -5,7 +5,10 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const base = mode === 'production' ? '/stealth-learning/' : '/';
+  // Check if deploying to Vercel (VERCEL env var is set by Vercel during builds)
+  const isVercel = process.env.VERCEL === '1';
+  // Use root path for Vercel, subdirectory for GitHub Pages
+  const base = mode === 'production' && !isVercel ? '/stealth-learning/' : '/';
 
   return {
     base,
