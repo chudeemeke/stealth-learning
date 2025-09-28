@@ -7112,3 +7112,126 @@ files generated
 └─────────────────────┴────────────────────────────────────────────────────────┘
 5 vulnerabilities found
 Severity: 1 low | 4 moderate
+## Running Comprehensive Analysis
+### TypeScript Errors
+
+> stealth-learning-spa@0.1.0-dev type-check /home/runner/work/stealth-learning/stealth-learning
+> tsc --noEmit
+
+src/App.tsx(89,14): error TS2339: Property 'catch' does not exist on type 'void'.
+src/App.tsx(89,20): error TS7006: Parameter 'err' implicitly has an 'any' type.
+ ELIFECYCLE  Command failed with exit code 2.
+### Lint Errors
+
+> stealth-learning-spa@0.1.0-dev lint /home/runner/work/stealth-learning/stealth-learning
+> eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 -c config/.eslintrc.cjs
+
+
+Oops! Something went wrong! :(
+
+ESLint: 8.57.1
+
+ESLint couldn't find the config "@typescript-eslint/recommended" to extend from. Please check that the name of the config is correct.
+
+The config "@typescript-eslint/recommended" was referenced from the config file in "/home/runner/work/stealth-learning/stealth-learning/config/.eslintrc.cjs".
+
+If you still have problems, please stop by https://eslint.org/chat/help to chat with the team.
+
+ ELIFECYCLE  Command failed with exit code 2.
+### Test Results
+undefined
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command "test:unit" not found
+
+Did you mean "pnpm test:ui"?
+### Build Status
+
+> stealth-learning-spa@0.1.0-dev build /home/runner/work/stealth-learning/stealth-learning
+> tsc && vite build
+
+src/App.tsx(89,14): error TS2339: Property 'catch' does not exist on type 'void'.
+src/App.tsx(89,20): error TS7006: Parameter 'err' implicitly has an 'any' type.
+ ELIFECYCLE  Command failed with exit code 2.
+### Security Audit
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ moderate            │ Use of Insufficiently Random Values in undici          │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ undici                                                 │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ >=4.5.0 <5.28.5                                        │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=5.28.5                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ . > vercel@48.1.6 > @vercel/express@0.0.22 >           │
+│                     │ @vercel/node@5.3.24 > undici@5.28.4                    │
+│                     │                                                        │
+│                     │ . > vercel@48.1.6 > @vercel/h3@0.1.2 >                 │
+│                     │ @vercel/node@5.3.24 > undici@5.28.4                    │
+│                     │                                                        │
+│                     │ . > vercel@48.1.6 > @vercel/hono@0.1.2 >               │
+│                     │ @vercel/node@5.3.24 > undici@5.28.4                    │
+│                     │                                                        │
+│                     │ ... Found 4 paths, run `pnpm why undici` for more      │
+│                     │ information                                            │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-c76h-2ccp-4975      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ moderate            │ esbuild enables any website to send any requests to    │
+│                     │ the development server and read the response           │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ esbuild                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ <=0.24.2                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=0.25.0                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-controls@7.6.20 >                     │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild@0.18.20        │
+│                     │                                                        │
+│                     │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-controls@7.6.20 >                     │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild-register@3.6.0 │
+│                     │ > esbuild@0.18.20                                      │
+│                     │                                                        │
+│                     │ . > @storybook/addon-essentials@7.6.20 >               │
+│                     │ @storybook/addon-docs@7.6.20 >                         │
+│                     │ @storybook/blocks@7.6.20 >                             │
+│                     │ @storybook/docs-tools@7.6.20 >                         │
+│                     │ @storybook/core-common@7.6.20 > esbuild@0.18.20        │
+│                     │                                                        │
+│                     │ ... Found 36 paths, run `pnpm why esbuild` for more    │
+│                     │ information                                            │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-67mh-4wv8-2f99      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ low                 │ undici Denial of Service attack via bad certificate    │
+│                     │ data                                                   │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ undici                                                 │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ <5.29.0                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=5.29.0                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ . > vercel@48.1.6 > @vercel/express@0.0.22 >           │
+│                     │ @vercel/node@5.3.24 > undici@5.28.4                    │
+│                     │                                                        │
+│                     │ . > vercel@48.1.6 > @vercel/h3@0.1.2 >                 │
+│                     │ @vercel/node@5.3.24 > undici@5.28.4                    │
+│                     │                                                        │
+│                     │ . > vercel@48.1.6 > @vercel/hono@0.1.2 >               │
+│                     │ @vercel/node@5.3.24 > undici@5.28.4                    │
+│                     │                                                        │
+│                     │ ... Found 4 paths, run `pnpm why undici` for more      │
+│                     │ information                                            │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-cxrh-j4jr-qwg3      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+5 vulnerabilities found
+Severity: 1 low | 4 moderate
