@@ -2,13 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%logo.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="%BASE_URL%favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="%BASE_URL%favicon-16.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 
     <!-- Manifest -->
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="manifest" href="%BASE_URL%manifest.json" />
 
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#667EEA" />
@@ -19,17 +19,17 @@
     <meta name="mobile-web-app-capable" content="yes" />
 
     <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57.png" />
-    <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60.png" />
-    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72.png" />
-    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76.png" />
-    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114.png" />
-    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120.png" />
-    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144.png" />
-    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180.png" />
-    <link rel="mask-icon" href="/logo.svg" color="#667EEA" />
+    <link rel="apple-touch-icon" href="%BASE_URL%apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="57x57" href="%BASE_URL%apple-touch-icon-57.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="%BASE_URL%apple-touch-icon-60.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="%BASE_URL%apple-touch-icon-72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="%BASE_URL%apple-touch-icon-76.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="%BASE_URL%apple-touch-icon-114.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="%BASE_URL%apple-touch-icon-120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="%BASE_URL%apple-touch-icon-144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="%BASE_URL%apple-touch-icon-152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="%BASE_URL%apple-touch-icon-180.png" />
+    <link rel="mask-icon" href="%BASE_URL%logo.svg" color="#667EEA" />
     
     <!-- SEO Meta Tags -->
     <meta name="description" content="Fun educational games for children aged 3-9. Learn Mathematics, English, and Science through engaging stealth learning experiences." />
@@ -137,7 +137,7 @@
     <!-- Splash Screen -->
     <div id="splash-screen">
       <div class="splash-logo">
-        <img src="/logo.svg" alt="Stealth Learning Games" style="width: 100px; height: 100px;" />
+        <img src="%BASE_URL%logo.svg" alt="Stealth Learning Games" style="width: 100px; height: 100px;" />
       </div>
       <div class="splash-text">Stealth Learning Games</div>
       <div class="splash-loader">
@@ -183,7 +183,8 @@
       // Register service worker for PWA
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').then(
+          const swPath = '%BASE_URL%sw.js';
+          navigator.serviceWorker.register(swPath).then(
             (registration) => {
               console.log('ServiceWorker registration successful');
             },
