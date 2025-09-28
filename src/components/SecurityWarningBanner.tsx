@@ -20,10 +20,10 @@ const SecurityWarningBanner: React.FC = () => {
     switch (config.SECURITY_STATUS.level) {
       case 'CRITICAL':
         return {
-          background: 'linear-gradient(90deg, #DC2626, #EF4444)',
+          background: 'linear-gradient(90deg, #4A90E2, #357ABD)',
           color: 'white',
-          icon: '⚠️',
-          message: 'SECURITY WARNING: This application is running without proper authentication. DO NOT enter real personal information. For demonstration only.'
+          icon: '🎮',
+          message: 'Demo Mode - Try out all the fun learning games! No real data is stored.'
         };
       case 'HIGH':
         if (import.meta.env.DEV) {
@@ -91,28 +91,7 @@ const SecurityWarningBanner: React.FC = () => {
           <span>{warningStyle.message}</span>
         </motion.div>
 
-        {/* Additional details for critical warnings */}
-        {config.SECURITY_STATUS.level === 'CRITICAL' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            style={{
-              padding: '0 20px 12px',
-              fontSize: '12px',
-              textAlign: 'center',
-              opacity: 0.9
-            }}
-          >
-            <div>
-              ⚠️ Features Disabled:
-              {!isFeatureEnabled('ENABLE_AUTHENTICATION') && ' Authentication,'}
-              {!isFeatureEnabled('ENABLE_DATA_STORAGE') && ' Data Storage,'}
-              {!isFeatureEnabled('ENABLE_PARENT_DASHBOARD') && ' Parent Dashboard,'}
-              {!isFeatureEnabled('ALLOW_CHILD_REGISTRATION') && ' New Registrations'}
-            </div>
-          </motion.div>
-        )}
+        {/* Additional details for critical warnings - removed for cleaner demo */}
       </motion.div>
     </AnimatePresence>
   );

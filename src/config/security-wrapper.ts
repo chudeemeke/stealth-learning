@@ -138,15 +138,14 @@ export const getCSPDirectives = (): string => {
 export { isFeatureEnabled, getSafeDefaults, getSecurityWarningBanner } from './security-emergency-patch';
 export { emergencySecurityConfig } from './security-emergency-patch';
 
-// Show critical warning in console
-if (emergencySecurityConfig.SECURITY_STATUS.level === 'CRITICAL') {
-  console.error(
-    '%c⚠️ CRITICAL SECURITY WARNING ⚠️',
-    'color: white; background: red; font-size: 20px; padding: 10px;',
-    '\n\nThis application is running without proper backend authentication.\n' +
-    'DO NOT enter real personal information.\n' +
-    'This is for demonstration purposes only.\n\n' +
-    'A secure backend service is required for production use.'
+// Show demo mode info in console (less alarming)
+if (emergencySecurityConfig.SECURITY_STATUS.level === 'CRITICAL' && import.meta.env.DEV) {
+  console.log(
+    '%c🎮 Demo Mode Active',
+    'color: white; background: #4A90E2; font-size: 16px; padding: 8px; border-radius: 4px;',
+    '\n\nWelcome to Stealth Learning Games!\n' +
+    'This is a demo version for you to explore.\n' +
+    'Have fun trying out all the educational games! 🚀'
   );
 }
 

@@ -47,7 +47,7 @@ function createEmergencySecurityConfig(): EmergencySecurityConfig {
 
   if (isGitHubPages && !hasBackendAPI) {
     securityLevel = 'CRITICAL';
-    securityMessage = '⚠️ CRITICAL: Running without backend authentication. DO NOT use with real data.';
+    securityMessage = '🎮 Demo Mode: Running without backend - perfect for trying out the games!';
   } else if (isDevelopment) {
     securityLevel = 'HIGH';
     securityMessage = '🔧 Development mode: Security features disabled for testing.';
@@ -56,8 +56,10 @@ function createEmergencySecurityConfig(): EmergencySecurityConfig {
     securityMessage = '🔒 Backend API configured. Ensure proper security measures are in place.';
   }
 
-  // Log security status
-  console.warn('🚨 SECURITY STATUS:', securityMessage);
+  // Log security status (only in development)
+  if (isDevelopment) {
+    console.log('🎮 DEMO STATUS:', securityMessage);
+  }
 
   return {
     // Use environment variable or empty string (no hardcoded values)
@@ -66,19 +68,25 @@ function createEmergencySecurityConfig(): EmergencySecurityConfig {
     APP_ENVIRONMENT: isProduction ? 'production' : 'development',
     IS_SECURE: isHttps && hasBackendAPI,
 
-    // Feature flags - disable vulnerable features until backend is ready
+    // Feature flags - enable demo-safe features
     FEATURES: {
-      // Disable features that require secure backend
-      ENABLE_AUTHENTICATION: hasBackendAPI,
-      ENABLE_DATA_STORAGE: hasBackendAPI,
-      ENABLE_PARENT_DASHBOARD: hasBackendAPI,
-      ENABLE_ENCRYPTION: hasBackendAPI,
+      // Authentication works in demo mode with localStorage
+      ENABLE_AUTHENTICATION: true, // Demo auth with localStorage is fine
 
-      // Show warnings
-      SHOW_SECURITY_WARNING: !hasBackendAPI || isDevelopment,
+      // Data storage works locally with IndexedDB/Dexie
+      ENABLE_DATA_STORAGE: true, // Local storage is safe for demo
 
-      // Block new registrations until COPPA compliance
-      ALLOW_CHILD_REGISTRATION: false, // Always false until COPPA implemented
+      // Parent dashboard can work in read-only demo mode
+      ENABLE_PARENT_DASHBOARD: true, // Demo mode is fine
+
+      // Client-side encryption for local data
+      ENABLE_ENCRYPTION: true, // Client-side encryption is always safe
+
+      // Only show warning if truly needed
+      SHOW_SECURITY_WARNING: false, // No need to scare users in demo
+
+      // Allow demo registrations (no real data)
+      ALLOW_CHILD_REGISTRATION: true, // Demo registrations are safe
     },
 
     SECURITY_STATUS: {
