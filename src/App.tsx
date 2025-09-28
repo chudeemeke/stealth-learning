@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { useAppSelector, useAppDispatch } from '@/store';
+import { restoreSession } from '@/store/slices/studentSlice';
 
 // Ultra-secure services
 import { securityHeaders } from '@/utils/security-headers';
@@ -69,70 +70,57 @@ function App() {
 
   // Initialize app
   useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+
     const initializeApp = async () => {
+      console.log('🎮 Initializing Stealth Learning platform...');
+
+      // Set a maximum timeout to prevent infinite loading
+      timeoutId = setTimeout(() => {
+        console.warn('⚠️ Initialization timeout - proceeding anyway');
+        setIsLoading(false);
+      }, 3000); // 3 second max timeout
+
       try {
-        console.log('🔒 Initializing ultra-secure Stealth Learning platform...');
+        // Initialize services in parallel for faster load
+        const initPromises = [
+          // Security headers - non-critical
+          securityHeaders.setupCSPViolationReporting()
+            .catch(err => console.warn('Security headers setup skipped:', err)),
 
-        // Initialize security services first (with error handling)
-        try {
-          securityHeaders.setupCSPViolationReporting();
-          console.log('✅ Security headers initialized');
-        } catch (error) {
-          console.warn('⚠️ Security headers initialization failed:', error);
-        }
+          // COPPA compliance - non-critical
+          coppaService.cleanupExpiredData()
+            .catch(err => console.warn('COPPA cleanup skipped:', err)),
 
-        try {
-          // Clean up expired data for COPPA compliance
-          await coppaService.cleanupExpiredData();
-          console.log('✅ COPPA service initialized');
-        } catch (error) {
-          console.warn('⚠️ COPPA service initialization failed:', error);
-        }
+          // Session restoration - non-critical for first load
+          dispatch(restoreSession())
+            .catch(() => console.log('No previous session found')),
 
-        try {
-          // Validate page security
-          const securityCheck = securityHeaders.validatePageSecurity();
-          if (!securityCheck.isSecure) {
-            console.warn('🔒 Security violations detected:', securityCheck.violations);
-          } else {
-            console.log('✅ Page security validated');
-          }
-        } catch (error) {
-          console.warn('⚠️ Security validation failed:', error);
-        }
+          // Preload assets - non-critical
+          preloadAssets()
+            .catch(err => console.warn('Asset preload failed:', err))
+        ];
 
-        // Attempt to restore session from persisted state and JWT tokens
-        try {
-          // Handle session restoration without startTransition since it's async
-          const restoreSessionAsync = async () => {
-            try {
-              const { restoreSession } = await import('@/store/slices/studentSlice');
-              await dispatch(restoreSession());
-              console.log('✅ Session restored successfully');
-            } catch (sessionError) {
-              console.log('ℹ️ No valid session to restore:', sessionError);
-              // This is expected for new users, don't treat as error
-            }
-          };
+        // Wait for all non-critical services, but don't block on failures
+        await Promise.allSettled(initPromises);
 
-          restoreSessionAsync();
-        } catch (sessionError) {
-          console.log('ℹ️ Session restoration initialization failed:', sessionError);
-        }
-
-        // Preload critical assets
-        await preloadAssets();
-
-        console.log('✅ Ultra-secure platform initialized successfully');
-
+        console.log('✅ Platform initialized');
       } catch (error) {
-        console.error('🔒 CRITICAL: Failed to initialize secure platform:', error);
+        console.error('Initialization error:', error);
       } finally {
+        // Always set loading to false to show the app
+        clearTimeout(timeoutId);
         setIsLoading(false);
       }
     };
 
+    // Start initialization immediately
     initializeApp();
+
+    // Cleanup
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [dispatch]);
 
   // Preload critical assets
