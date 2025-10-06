@@ -1,0 +1,108 @@
+# docTruth Configuration for stealth-learning
+# Enhanced with React-specific truth sources
+# Author: Chude <chude@emeke.org>
+
+version: 1
+project: stealth-learning
+output: CURRENT_TRUTH.md
+
+meta:
+  description: "stealth-learning - React application"
+  timeout_seconds: 15
+  fail_on_error: false
+
+truth_sources:
+  # Project Identity
+  - name: "Package Name"
+    command: "jq -r '.name // \"N/A\"' package.json"
+    essential: true
+    category: "Project"
+
+  - name: "Version"
+    command: "jq -r '.version // \"N/A\"' package.json"
+    essential: true
+    category: "Project"
+
+  # React Ecosystem
+  - name: "React Version"
+    command: "jq -r '.dependencies.react // .devDependencies.react // \"Not installed\"' package.json"
+    essential: true
+    category: "Framework"
+
+  - name: "Build Tool"
+    command: "if jq -e '.dependencies.vite or .devDependencies.vite' package.json >/dev/null 2>&1; then echo 'Vite'; elif jq -e '.dependencies.next or .devDependencies.next' package.json >/dev/null 2>&1; then echo 'Next.js'; elif jq -e '.dependencies.\"react-scripts\"' package.json >/dev/null 2>&1; then echo 'Create React App'; else echo 'Custom/Webpack'; fi"
+    category: "Framework"
+
+  - name: "TypeScript Enabled"
+    command: "[ -f 'tsconfig.json' ] && echo 'Yes' || echo 'No'"
+    category: "Framework"
+
+  # Component Structure
+  - name: "Components Count (JSX)"
+    command: "find src/components -name '*.jsx' 2>/dev/null | wc -l || echo '0'"
+    category: "Metrics"
+
+  - name: "Components Count (TSX)"
+    command: "find src/components -name '*.tsx' 2>/dev/null | wc -l || echo '0'"
+    category: "Metrics"
+
+  - name: "Total Components"
+    command: "find src/components -name '*.jsx' -o -name '*.tsx' -o -name '*.js' -o -name '*.ts' 2>/dev/null | wc -l || echo '0'"
+    essential: true
+    category: "Metrics"
+
+  - name: "Pages Count"
+    command: "find src/pages -type f 2>/dev/null | wc -l || find src/app -type f 2>/dev/null | wc -l || echo '0'"
+    category: "Metrics"
+
+  # Dependencies
+  - name: "UI Library"
+    command: "if jq -e '.dependencies.\"@mui/material\"' package.json >/dev/null 2>&1; then echo 'Material-UI'; elif jq -e '.dependencies.\"antd\"' package.json >/dev/null 2>&1; then echo 'Ant Design'; elif jq -e '.dependencies.\"@chakra-ui/react\"' package.json >/dev/null 2>&1; then echo 'Chakra UI'; elif jq -e '.dependencies.\"@radix-ui/react\"' package.json >/dev/null 2>&1; then echo 'Radix UI'; else echo 'Custom/None'; fi"
+    category: "Dependencies"
+
+  - name: "State Management"
+    command: "if jq -e '.dependencies.redux' package.json >/dev/null 2>&1; then echo 'Redux'; elif jq -e '.dependencies.zustand' package.json >/dev/null 2>&1; then echo 'Zustand'; elif jq -e '.dependencies.jotai' package.json >/dev/null 2>&1; then echo 'Jotai'; elif jq -e '.dependencies.recoil' package.json >/dev/null 2>&1; then echo 'Recoil'; else echo 'React Context/None'; fi"
+    category: "Dependencies"
+
+  - name: "Routing"
+    command: "if jq -e '.dependencies.\"react-router-dom\"' package.json >/dev/null 2>&1; then echo 'React Router'; elif jq -e '.dependencies.\"@tanstack/react-router\"' package.json >/dev/null 2>&1; then echo 'TanStack Router'; elif jq -e '.dependencies.next' package.json >/dev/null 2>&1; then echo 'Next.js (built-in)'; else echo 'None/Custom'; fi"
+    category: "Dependencies"
+
+  # Code Metrics
+  - name: "Total Dependencies"
+    command: "jq '(.dependencies // {} | length) + (.devDependencies // {} | length)' package.json"
+    category: "Metrics"
+
+  - name: "CSS/Styling Files"
+    command: "find src -name '*.css' -o -name '*.scss' -o -name '*.sass' 2>/dev/null | wc -l || echo '0'"
+    category: "Metrics"
+
+validations:
+  - name: "package.json exists"
+    command: "[ -f package.json ] && echo '✓ Found' || echo '✗ Missing'"
+    required: true
+
+  - name: "React is installed"
+    command: "jq -e '.dependencies.react or .devDependencies.react' package.json >/dev/null 2>&1 && echo '✓ React installed' || echo '✗ React not found'"
+    required: true
+
+  - name: "src directory exists"
+    command: "[ -d src ] && echo '✓ Found' || echo '⚠ Missing src/'"
+    required: false
+
+working_examples:
+  - name: "Install dependencies"
+    command: "echo 'npm install'"
+
+  - name: "Start dev server"
+    command: "echo 'npm run dev' # or npm start"
+
+  - name: "Build for production"
+    command: "echo 'npm run build'"
+
+platform:
+  - name: "Last Modified"
+    command: "stat -c %y . 2>/dev/null | cut -d' ' -f1 || stat -f %Sm -t '%Y-%m-%d' ."
+
+  - name: "Node Version"
+    command: "node --version 2>/dev/null || echo 'Not installed'"
